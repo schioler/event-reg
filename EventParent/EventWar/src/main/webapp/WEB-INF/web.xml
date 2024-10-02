@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="https://jakarta.ee/xml/ns/jakartaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee  https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd"
+   version="6.0">
+   <display-name>Welcome to event registration System</display-name>
+   <description> Welcome to event registration system </description>
+   <filter>
+      <filter-name>eventUser</filter-name>
+      <filter-class>dk.schioler.event.web.filter.UserFilter</filter-class>
+   </filter>   
+<!--   <default-context-path>/event</default-context-path>-->
+   <filter-mapping>
+      <filter-name>eventUser</filter-name>
+      <url-pattern>/secure</url-pattern>
+   </filter-mapping>
+ 
+ <filter>
+      <filter-name>eventToJsp</filter-name>
+      <filter-class>dk.schioler.event.web.filter.ToJspFilter</filter-class>
+   </filter>
+   <filter-mapping>
+      <filter-name>eventToJsp</filter-name>
+      <url-pattern>*.jsp</url-pattern>
+   </filter-mapping>   
+   <welcome-file-list>
+      <welcome-file>index.html</welcome-file>
+   </welcome-file-list>
+
+   <!-- Configure ContextLoaderListener to use AnnotationConfigWebApplicationContext
+      instead of the default XmlWebApplicationContext -->
+    <context-param>
+      <param-name>contextClass</param-name>
+      <param-value>org.springframework.web.context.support.AnnotationConfigWebApplicationContext</param-value>
+   </context-param>
+
+   <!-- Configuration locations must consist of one or more comma- or space-delimited
+      fully-qualified @Configuration classes. Fully-qualified packages may also be
+      specified for component-scanning -->
+    <context-param>
+      <param-name>contextConfigLocation</param-name>
+      <param-value>dk.schioler.event.base.configuration.EventBaseConfiguration, dk.schioler.event.web.configuration.EventWebConfiguration</param-value>
+   </context-param>
+
+   <!-- Bootstrap the root application context as usual using ContextLoaderListener -->
+    <!-- <listener>
+      <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+   </listener> -->
+    <!-- <listener>
+      <listener-class>dk.schioler.event.web.init.EventContextLoaderListener</listener-class>
+   </listener>  -->
+
+    <!-- <context-param>
+      <param-name>contextClass</param-name>
+      <param-value>org.springframework.web.context.support.AnnotationConfigWebApplicationContext</param-value>
+   </context-param> --> 
+   
+   <!--  <context-param>
+      <param-name>contextConfigLocation</param-name>
+      <param-value>/WEB-INF/dispatcher-servlet.xml</param-value>
+   </context-param>  -->
+   
+   <!-- <servlet>
+      <servlet-name>dispatcher</servlet-name>
+      <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+      <init-param>
+      <param-name>contextConfigLocation</param-name>
+      <param-value>/WEB-INF/dispatcher-servlet.xml</param-value>
+      </init-param>
+      <init-param>
+         <param-name>enableLoggingRequestDetails</param-name>
+         <param-value>true</param-value>
+      </init-param> 
+      <load-on-startup>1</load-on-startup>
+   </servlet>
+   <servlet-mapping>
+      <servlet-name>dispatcher</servlet-name>
+      <url-pattern>*.do</url-pattern>
+   </servlet-mapping> -->
+   <!-- <servlet-mapping>
+      <servlet-name>dispatcher</servlet-name>
+      <url-pattern>*.jsp</url-pattern>
+   </servlet-mapping> -->
+   <!-- <servlet-mapping>
+      <servlet-name>spring</servlet-name>
+      <url-pattern>home.jsp</url-pattern>
+   </servlet-mapping> -->   
+   
+</web-app>

@@ -1,0 +1,24 @@
+Learnings:
+   1: jsp: form tags outside include
+   
+   2: general:decide upon a req naming standard
+   
+   3: div/tables formatting?
+   
+   4: MessageBundle: create classes, that loads the properties files.
+   
+   5: Post/Redirect/Get
+      Use filter!.
+   
+   6: req flow autonmy
+      All state in session? 
+      
+   7: On expired session -> redieect to start.
+      jsp: implement in jsp filter
+      *.do: check pre-req-state
+         -> you must establish knowlegde of what is supposed to be session state on each request
+         Maybe establish a EventSessionCLass?
+      
+   7: What about (error) messages/ exception hierarchy
+   
+    

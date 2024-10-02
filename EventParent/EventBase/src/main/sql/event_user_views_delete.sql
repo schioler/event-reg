@@ -1,0 +1,2 @@
+
+DROP VIEW VW_LOGIN;

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<p:annotation-driven content-negotiation-manager="" conversion-service=""
+   enable-matrix-variables="true" ignore-default-model-on-redirect="true" message-codes-resolver="" validator=""
+   xmlns:p="http://www.springframework.org/schema/mvc" xmlns:p1="http://www.springframework.org/schema/beans"
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://www.springframework.org/schema/mvc spring-mvc.xsd ">
+   <p:path-matching path-helper="" path-matcher="" registered-suffixes-only="true" suffix-pattern="true"
+      trailing-slash="true"/>
+   <p:message-converters register-defaults="true">
+      <p1:bean abstract="true" autowire="default" autowire-candidate="default" class="" depends-on=""
+         destroy-method="" factory-bean="" factory-method="" id="" init-method="" lazy-init="default" name="" parent=""
+         primary="true" scope=""/>
+   </p:message-converters>
+   <p:argument-resolvers>
+      <p1:bean abstract="true" autowire="default" autowire-candidate="default" class="" depends-on=""
+         destroy-method="" factory-bean="" factory-method="" id="" init-method="" lazy-init="default" name="" parent=""
+         primary="true" scope=""/>
+   </p:argument-resolvers>
+   <p:return-value-handlers>
+      <p1:bean abstract="true" autowire="default" autowire-candidate="default" class="" depends-on=""
+         destroy-method="" factory-bean="" factory-method="" id="" init-method="" lazy-init="default" name="" parent=""
+         primary="true" scope=""/>
+   </p:return-value-handlers>
+   <p:async-support default-timeout="0" task-executor="">
+      <p:callable-interceptors>
+         <p1:bean abstract="true" autowire="default" autowire-candidate="default" class="" depends-on=""
+            destroy-method="" factory-bean="" factory-method="" id="" init-method="" lazy-init="default" name=""
+            parent="" primary="true" scope=""/>
+      </p:callable-interceptors>
+      <p:deferred-result-interceptors>
+         <p1:bean abstract="true" autowire="default" autowire-candidate="default" class="" depends-on=""
+            destroy-method="" factory-bean="" factory-method="" id="" init-method="" lazy-init="default" name=""
+            parent="" primary="true" scope=""/>
+      </p:deferred-result-interceptors>
+   </p:async-support>
+</p:annotation-driven>

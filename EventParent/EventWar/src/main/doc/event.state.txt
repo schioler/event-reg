@@ -1,0 +1,15 @@
+State handling
+
+Class= dk.schioler.event.web.EventSessionWrapper
+
+  Concept: 
+Each area has a set of states
+
+CreateEvent:
+sesEventTypes: list with all eventTypes
+   sesEventTypeId: id selectedEventType "event-type-select.do"
+   sesEventTemplates: list of templates related to selected type.
+   reqEventTemplateId: 
+   sesEventQueue: list of eventTemplates, to save as event, also used as confirmation
+   
+   

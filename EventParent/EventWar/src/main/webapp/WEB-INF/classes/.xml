@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+   xmlns:xs="http://www.w3.org/2001/XMLSchema-instance"
+   xmlns:context="http://www.springframework.org/schema/context"
+   xmlns:util="http://www.springframework.org/schema/util"
+   xs:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+                      http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd
+                      http://www.springframework.org/schema/util https://www.springframework.org/schema/util/spring-util.xsd">
+
+   <context:property-placeholder
+      location="classpath:/application-${event.env}.properties" />
+
+
+
+   <bean id="persistence-configuration"
+      class="dk.schioler.event.configuration.EventConfiguration" />
+
+   <bean id="dataSource" class="org.apache.commons.dbcp2.BasicDataSource"
+      destroy-method="close">
+      <property name="driverClassName" value="com.mysql.cj.jdbc.Driver" />
+      <property name="url" value="${event.db.url}" />
+      <property name="username" value="${event.db.user}" />
+      <property name="password" value="${event.db.password}" />
+
+      <property name="poolPreparedStatements" value="true" />
+      <property name="maxOpenPreparedStatements" value="5" />
+      <property name="logAbandoned" value="true" />
+      <property name="initialSize" value="2" />
+      <property name="defaultAutoCommit" value="true" />
+<!--      <property name="defaultTransactionIsolation" value="READ_COMMITTED" />-->
+   </bean>
+   <!-- Enables <context:component-scan, enables context:annotation-config
+   transparent -->
+   <context:component-scan base-package="dk.schioler.event" />
+
+</beans>

@@ -1,0 +1,25 @@
+<configuration>
+   <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+      <encoder>
+         <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{20} -%kvp- %msg%n</pattern>
+      </encoder>
+   </appender>
+   <appender name="FILE" class="ch.qos.logback.core.FileAppender">
+      <file>logFile.log</file>
+      <append>true</append>
+      <!-- set immediateFlush to false for much higher logging throughput -->
+      <immediateFlush>true</immediateFlush>
+      <encoder>
+         <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{20} -%kvp- %msg%n</pattern>
+      </encoder>
+   </appender>
+   <logger name="org.atmosphere" level="warn"/>
+   <logger name="org.springframework" level="info"/>
+   <logger name="com.vaadin" level="warn"/>
+   <logger name="dk.schioler" level="trace"/>
+      <logger name="test.dk.schioler" level="trace"/>
+   <root level="warn">
+      <appender-ref ref="STDOUT"/>
+      <!--<appender-ref ref="FILE"/>-->
+   </root>
+</configuration>
