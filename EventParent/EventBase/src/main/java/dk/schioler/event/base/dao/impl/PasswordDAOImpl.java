@@ -9,17 +9,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import org.postgresql.util.MD5Digest;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Service;
 
 import dk.schioler.event.base.dao.PasswordDAO;
-import dk.schioler.event.base.dao.UserProfileDAO;
 import dk.schioler.event.base.entity.Password;
-import dk.schioler.event.base.entity.UserProfile;
 
 @Service
-public class PasswordDAOImpl extends AbstractDAOImpl<Password> implements PasswordDAO {
+public class PasswordDAOImpl extends AbstractTSDAOImpl<Password> implements PasswordDAO {
 	public static final String TABLE = "PASSWORD";
 
 	public static final String FLD_ID = COL_ID;
@@ -99,20 +96,20 @@ public class PasswordDAOImpl extends AbstractDAOImpl<Password> implements Passwo
 
 		@Override
 		public Password mapRow(ResultSet rs, int rowNum) throws SQLException {
-			Password eventTmpl = new Password();
+			Password pwd = new Password();
 
-			eventTmpl.setId(rs.getInt(FLD_ID));
-			eventTmpl.setStartTS(rs.getTimestamp(FLD_START_TS).toLocalDateTime());
+			pwd.setId(rs.getInt(FLD_ID));
+			pwd.setStartTS(rs.getTimestamp(FLD_START_TS).toLocalDateTime());
 
 			Timestamp timestamp = rs.getTimestamp(FLD_END_TS);
 			if (timestamp != null) {
-				eventTmpl.setEndTS(timestamp.toLocalDateTime());
+				pwd.setEndTS(timestamp.toLocalDateTime());
 			}
 
-			eventTmpl.setLoginId(rs.getInt(FLD_LOGIN_ID));
+			pwd.setLoginId(rs.getInt(FLD_LOGIN_ID));
 
-			eventTmpl.setPwd(rs.getString(FLD_PWD));
-			return eventTmpl;
+			pwd.setPwd(rs.getString(FLD_PWD));
+			return pwd;
 		}
 
 	};
@@ -129,7 +126,7 @@ public class PasswordDAOImpl extends AbstractDAOImpl<Password> implements Passwo
 
 	@Override
 	public void refreshCache() {
-		// TODO Auto-generated method stub
+		// no cache on password
 
 	}
 

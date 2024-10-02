@@ -19,7 +19,7 @@ import dk.schioler.event.base.entity.ROLE;
 import dk.schioler.event.base.entity.RoleUtil;
 
 @Service
-public class LoginDAOImpl extends AbstractDAOImpl<Login> implements LoginDAO {
+public class LoginDAOImpl extends AbstractTSDAOImpl<Login> implements LoginDAO {
 	public static final String TABLE = "LOGIN";
 
 	public static final String FLD_ID = COL_ID;

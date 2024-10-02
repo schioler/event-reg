@@ -3,7 +3,7 @@ package dk.schioler.event.base.entity;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-public class Password extends AbstractUserEntity {
+public class Password extends AbstractTSEntity {
 
 	private Integer loginId;
 

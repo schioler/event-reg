@@ -3,7 +3,7 @@ package dk.schioler.event.base.entity;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-public class Login extends AbstractUserEntity {
+public class Login extends AbstractTSEntity {
 	
 	private ROLE role;
 	

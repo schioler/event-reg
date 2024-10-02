@@ -16,7 +16,7 @@ import dk.schioler.event.base.dao.UserProfileDAO;
 import dk.schioler.event.base.entity.UserProfile;
 
 @Service
-public class UserProfileDAOImpl extends AbstractDAOImpl<UserProfile> implements UserProfileDAO {
+public class UserProfileDAOImpl extends AbstractTSDAOImpl<UserProfile> implements UserProfileDAO {
 	public static final String TABLE = "USER_PROFILE";
 
 	public static final String FLD_ID = COL_ID;
@@ -31,7 +31,7 @@ public class UserProfileDAOImpl extends AbstractDAOImpl<UserProfile> implements 
 	public static final String FLD_PRIMARY_CITY = "PRIMARY_CITY"; 
 	public static final String FLD_PRIMARY_COUNTRY = "PRIMARY_COUNTRY";
 
-	private static final List<String> EVENT_COLS;
+	private static final List<String> USER_PROFILE_COLS;
 
 	static {
 		List<String> cols = new ArrayList<String>();
@@ -47,7 +47,7 @@ public class UserProfileDAOImpl extends AbstractDAOImpl<UserProfile> implements 
 		cols.add(FLD_PRIMARY_CITY);
 		cols.add(FLD_PRIMARY_COUNTRY);
 		
-		EVENT_COLS = Collections.unmodifiableList(cols);
+		USER_PROFILE_COLS = Collections.unmodifiableList(cols);
 	}
 
 	public UserProfileDAOImpl() {
@@ -56,7 +56,6 @@ public class UserProfileDAOImpl extends AbstractDAOImpl<UserProfile> implements 
 
 	@Override
 	public String getInsertSQL(UserProfile event) {
-//		boolean useEventDate = event != null && event.geteventts() != null;
 		StringBuffer sb = new StringBuffer();
 
 		sb.append(INSERT_INTO).append(TABLE).append(SPACE);
@@ -119,10 +118,10 @@ public class UserProfileDAOImpl extends AbstractDAOImpl<UserProfile> implements 
 
 	@Override
 	public RowMapper<UserProfile> getRowMapper() {
-		return eventRowMapper;
+		return userProfileMapper;
 	}
 
-	private RowMapper<UserProfile> eventRowMapper = new RowMapper<UserProfile>() {
+	private RowMapper<UserProfile> userProfileMapper = new RowMapper<UserProfile>() {
 
 		@Override
 		public UserProfile mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -158,12 +157,12 @@ public class UserProfileDAOImpl extends AbstractDAOImpl<UserProfile> implements 
 
 	@Override
 	public List<String> getSelectColumns() {
-		return EVENT_COLS;
+		return USER_PROFILE_COLS;
 	}
 
 	@Override
 	public void refreshCache() {
-		// TODO Auto-generated method stub
+		// no cache
 
 	}
 

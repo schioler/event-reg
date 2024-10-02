@@ -3,14 +3,14 @@ package dk.schioler.event.base.entity;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-public abstract class AbstractUserEntity extends AbstractEntity {
+public abstract class AbstractTSEntity extends AbstractEntity {
 	
 	
 	private LocalDateTime startTS;
 	
 	private LocalDateTime endTS;
 
-	public AbstractUserEntity(Integer id, LocalDateTime startTS, LocalDateTime endTS) {
+	public AbstractTSEntity(Integer id, LocalDateTime startTS, LocalDateTime endTS) {
 		super(id);
 		this.startTS = startTS;
 		this.endTS = endTS;
@@ -48,7 +48,7 @@ public abstract class AbstractUserEntity extends AbstractEntity {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		AbstractUserEntity other = (AbstractUserEntity) obj;
+		AbstractTSEntity other = (AbstractTSEntity) obj;
 		return Objects.equals(endTS, other.endTS) && Objects.equals(startTS, other.startTS);
 	}
 

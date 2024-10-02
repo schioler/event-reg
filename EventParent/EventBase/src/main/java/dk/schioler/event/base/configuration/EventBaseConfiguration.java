@@ -11,11 +11,13 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 
+import dk.schioler.event.base.security.Encrypter;
+import dk.schioler.event.base.security.EncrypterSHA256;
 
 @Configuration
 @PropertySource("classpath:/event-base-${event.env}.properties")
 @ComponentScan("dk.schioler.event.base")
-public class EventBaseConfiguration  {
+public class EventBaseConfiguration {
 
 	Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -39,6 +41,9 @@ public class EventBaseConfiguration  {
 	@Value("${event.db.url}")
 	private String dbUrl;
 
+	@Value("${event.salt}")
+	private String salt;
+
 	@Bean
 	public DataSource getDataSource() {
 		logger.debug("getDatasource: dbUrl = " + dbUrl);
@@ -58,12 +63,23 @@ public class EventBaseConfiguration  {
 		return dataSource;
 	}
 
-//	@Override
-//	public void configureViewResolvers(ViewResolverRegistry registry) {
-//
-//		WebMvcConfigurer.super.configureViewResolvers(registry);
-//	}
+	private Object encLock = new Object();
 
-	
+	private Encrypter e = null;
+
+	@Bean
+	public Encrypter getEncrypter() {
+		logger.debug("getEncrypter called");
+		synchronized (encLock) {
+			logger.debug("in synchronized block");
+			if (this.e == null) {
+				logger.debug("e == null");
+				this.e = new EncrypterSHA256();
+				this.e.setSalt(salt);
+			}
+		}
+		logger.debug("returning: " + this.e);
+		return this.e;
+	}
 
 }
