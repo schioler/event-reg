@@ -3,6 +3,8 @@ package test.dk.schioler.event.dao;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.time.LocalDateTime;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -42,23 +44,29 @@ public class EventDAOTest extends AbstractJUnit4SpringContextTests {
 	EventDAO eventDAO;
 
 	@Test
-	public void testParseInputStream() {
+	public void testStoreEventObjects() {
 		Integer eventTypeIid = null;
 		Integer eventTmplid = null;
 		Integer eventId = null;
 		try {
 			EventType et = new EventType(null, "eventType1", "et1", "EventypeTest nr 1");
-			EventType insert = eventTypeDAO.insert(et);
+			EventType eventType = eventTypeDAO.insert(et);
 			logger.debug("et=" + et);
-			logger.debug("insert=" + insert);
-			assertTrue(insert != null);
-			assertTrue(insert.getId() != null);
-			eventTypeIid = insert.getId();
+			logger.debug("insert=" + eventType);
+			assertTrue(eventType != null);
+			assertTrue(eventType.getId() != null);
+			eventTypeIid = eventType.getId();
+			
+			eventType.setDescription("updated");
+			eventTypeDAO.update(eventType);
 
 			EventTemplate eTmpl = new EventTemplate(null, eventTypeIid, "eTmpl", "Simet", "desc", "unit", "dose");
-			EventTemplate insert2 = eventTemplateDAO.insert(eTmpl);
-			eventTmplid = insert2.getId();
+			EventTemplate eventTmpl = eventTemplateDAO.insert(eTmpl);
+			eventTmplid = eventTmpl.getId();
 
+			eventTmpl.setDescription("added description");
+			eventTemplateDAO.update(eventTmpl);
+			
 			Event e = new Event();
 			//null, eventTmplid, "" , null
 			e.setEventTemplateId(eTmpl.getId());
@@ -67,16 +75,23 @@ public class EventDAOTest extends AbstractJUnit4SpringContextTests {
 			e.setNote("note");
 			e.setDose("dose");
 			e.setUnit("unit");
+			e.setEventTS(LocalDateTime.now());
+			
 			Event e1 = eventDAO.insert(e);
 			eventId = e1.getId();
 
+			
+			
+			e1.setNote("note added");
+			int update = eventDAO.update(e1);
+			
 		} catch (Exception e) {
 			logger.error("", e);
 			fail(e.getMessage());
 		} finally {
-			eventDAO.delete(eventId);
-			eventTemplateDAO.delete(eventTmplid);
-			eventTypeDAO.delete(eventTypeIid);  
+//			eventDAO.delete(eventId);
+//			eventTemplateDAO.delete(eventTmplid);
+//			eventTypeDAO.delete(eventTypeIid);  
 			
 		}
 	}

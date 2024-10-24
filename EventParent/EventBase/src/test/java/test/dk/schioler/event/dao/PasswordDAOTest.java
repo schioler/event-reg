@@ -16,14 +16,17 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
 import dk.schioler.event.base.configuration.EventBaseConfiguration;
-import dk.schioler.event.base.dao.LoginDAO;
-import dk.schioler.event.base.dao.PasswordDAO;
-import dk.schioler.event.base.dao.UserProfileDAO;
-import dk.schioler.event.base.entity.Login;
-import dk.schioler.event.base.entity.Password;
-import dk.schioler.event.base.entity.ROLE;
-import dk.schioler.event.base.entity.UserProfile;
-import dk.schioler.event.base.security.Encrypter;
+import dk.schioler.event.base.encrypt.Encrypter;
+import dk.schioler.secure.dao.LoginDAO;
+import dk.schioler.secure.dao.PasswordDAO;
+import dk.schioler.secure.dao.UserProfileDAO;
+import dk.schioler.secure.entity.Login;
+import dk.schioler.secure.entity.Password;
+import dk.schioler.secure.entity.ROLE;
+import dk.schioler.secure.entity.UserProfile;
+import dk.schioler.secure.entity.impl.LoginImpl;
+import dk.schioler.secure.entity.impl.PasswordImpl;
+import dk.schioler.secure.entity.impl.UserProfileImpl;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 //@ContextConfiguration("/ApplicationContext.xml")
@@ -52,7 +55,7 @@ public class PasswordDAOTest extends AbstractJUnit4SpringContextTests {
 	public void testParseInputStream() {
 		
 		try {
-			UserProfile profile = new UserProfile();
+			UserProfileImpl profile = new UserProfileImpl();
 			profile.setFirstName("Poul");
 			profile.setLastName("Hansen");
 			profile.setPrimaryStreet1("Hans Hansensvej 12");
@@ -61,17 +64,17 @@ public class PasswordDAOTest extends AbstractJUnit4SpringContextTests {
 			profile.setPrimaryCountry("Denmark");
 			profile.setPrimaryPhone("+45 51517997");
 
-			UserProfile insert = userProfileDAO.insert(profile);
+			UserProfile insert = userProfileDAO.insert(profile, null);
 			assertNotNull(insert);
 			assertNotNull(insert.getId());
 			assertNotNull(insert.getStartTS());
 			assertNull(insert.getEndTS());
 
-			Login login = new Login();
+			Login login = new LoginImpl();
 			login.setLogin("hans@hansen.dk");
 			login.setRole(ROLE.ADMIN);
 			login.setUserProfileId(insert.getId());
-			login = loginDAO.insert(login);
+			login = loginDAO.insert(login, null);
 			
 			assertNotNull(login);
 			assertNotNull(login.getId());
@@ -80,14 +83,14 @@ public class PasswordDAOTest extends AbstractJUnit4SpringContextTests {
 
 			String pwdEnc = encrypter.encrypt("password");
 			
-			Password pwd = new Password();
+			Password pwd = new PasswordImpl();
 			pwd.setPwd(pwdEnc);
 			pwd.setLoginId(login.getId());
-			pwd = passwordDAO.insert(pwd);
+			pwd = passwordDAO.insert(pwd, null);
 			
 			String pwdVerify = encrypter.encrypt("password");
 			
-			Password password = passwordDAO.get(pwd.getId());
+			Password password = passwordDAO.get(pwd.getId(), null);
 			assertEquals(pwdVerify, password.getPwd());			
 			
 			

@@ -67,4 +67,7 @@ public interface WebTokens {
 //	public static String RES_EVENT_TMPL_JSP = "event-tmpl.jsp";
 	public static final String KEY_LOGIN = "KEY_LOGIN";
 
+	public static String LOGIN = "username";
+	public static String PASSWORD = "password";
+	
 }

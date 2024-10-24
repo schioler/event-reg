@@ -18,8 +18,10 @@
 		 <a href="./search-new.do">
 		 <fmt:message  key="search.menu" /></a>
 		 
+	</span>
+	<span class="col-4">
+	   <a href="./logout.do">Logout
 		 </a>
 	</span>
-	<span class="col-4">&nbsp;</span>
   
 

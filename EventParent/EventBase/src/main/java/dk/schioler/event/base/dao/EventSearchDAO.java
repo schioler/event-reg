@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import dk.schioler.event.base.dao.impl.SQLConstructs;
 import dk.schioler.event.base.entity.Event;
 
 @Service

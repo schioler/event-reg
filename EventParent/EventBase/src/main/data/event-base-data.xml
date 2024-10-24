@@ -14,9 +14,9 @@
       <event-template name="Betmiga 25mg" dose="25" unit="mg" short-name="BETM-25"/>
       <event-template name="Imozop 7.5mg" dose="7.5" unit="mg" short-name="IMOZ-7.5"/>
       <event-template name="Melatonin 2mg" dose="2" unit="mg" short-name="MELATONIN"/>
-      <event-template name="Microlax" dose="" unit="" short-name="MICROLAX"/>
+      <event-template name="Microlax" dose="25" unit="ml" short-name="MICROLAX"/>
       <event-template name="Kodipar 1stk" dose="500/30.6" unit="mg" short-name="KODIPAR_1STK"/>
-      <event-template name="Kodipar + Panodil" dose="" unit="mg" short-name="KODIPAR_PANO"/>
+      <event-template name="Kodipar + Panodil" dose="50" unit="mg" short-name="KODIPAR_PANO"/>
       <event-template name="Ipren" dose="200" unit="mg" short-name="IPREN"/>
       <event-template name="Ipren" dose="500" unit="mg" short-name="IPREN"/>
    </event-type>
@@ -32,7 +32,7 @@
       <event-template name="B12 1mg" dose="1" unit="mg" short-name="B12-1MG"/>
       <event-template name="Multi" dose="10" unit="mg" short-name="MULTI"/>
       <event-template name="Magnesia 2x500" dose="500" unit="mg" short-name="MAGNESIA"/>
-      <event-template name="Olivir" dose="" unit="" short-name="OLIVIR-XX"/>
+      <event-template name="Olivir" dose="50" unit="mg" short-name="OLIVIR-XX"/>
    </event-type>
    <event-type name="Fysik" short-name="FYSIK">
       <event-template name="afføring" dose="STOR" unit="ml" short-name="AFFØR-STOR"/>
@@ -46,15 +46,15 @@
       <event-template name="Hash" dose="1" unit="drag" short-name="HASH"/>
    </event-type>
    <event-type name="Tilstand" short-name="TILSTAND">
-      <event-template name="Fantastic - feeling free" dose="" unit="registration" short-name="STATE-10"/>
-      <event-template name="Fantastic" dose="" unit="registration" short-name="STATE-09"/>
-      <event-template name="Good - pretty good " dose="" unit="registration" short-name="STATE-08"/>
-      <event-template name="Good - can do stuff" dose="" unit="registration" short-name="STATE-07"/>
-      <event-template name="Could be better - hesitant on doing stuff" dose="" unit="registration" short-name="STATE-06"/>
-      <event-template name="Could be better - too warm, tired, ok movements" dose="" unit="registration" short-name="STATE-05"/>
-      <event-template name="Bad - too warm, no energy, reduced agility" dose="" unit="registration" short-name="STATE-04"/>
-      <event-template name="Bad - full stop" dose="" unit="registration" short-name="STATE-03"/>
-      <event-template name="Bad - want to lie down" dose="" unit="registration" short-name="STATE-02"/>
-      <event-template name="Bad - want to Die" dose="" unit="registration" short-name="STATE-01"/>
+      <event-template name="Fantastic - feeling free" dose="n/a" unit="registration" short-name="STATE-10"/>
+      <event-template name="Fantastic" dose="n/a" unit="registration" short-name="STATE-09"/>
+      <event-template name="Good - pretty good " dose="n/a" unit="registration" short-name="STATE-08"/>
+      <event-template name="Good - can do stuff" dose="n/a" unit="registration" short-name="STATE-07"/>
+      <event-template name="Could be better - hesitant on doing stuff" dose="n/a" unit="registration" short-name="STATE-06"/>
+      <event-template name="Could be better - too warm, tired, ok movements" dose="n/a" unit="registration" short-name="STATE-05"/>
+      <event-template name="Bad - too warm, no energy, reduced agility" dose="n/a" unit="registration" short-name="STATE-04"/>
+      <event-template name="Bad - full stop" dose="n/a" unit="registration" short-name="STATE-03"/>
+      <event-template name="Bad - want to lie down" dose="n/a" unit="registration" short-name="STATE-02"/>
+      <event-template name="Bad - want to Die" dose="n/a" unit="registration" short-name="STATE-01"/>
    </event-type>
 </root>

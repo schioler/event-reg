@@ -11,12 +11,12 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 
-import dk.schioler.event.base.security.Encrypter;
-import dk.schioler.event.base.security.EncrypterSHA256;
+import dk.schioler.event.base.encrypt.Encrypter;
+import dk.schioler.event.base.encrypt.EncrypterSHA256;
 
 @Configuration
 @PropertySource("classpath:/event-base-${event.env}.properties")
-@ComponentScan("dk.schioler.event.base")
+@ComponentScan("dk.schioler.event.base, dk.schioler.secure")
 public class EventBaseConfiguration {
 
 	Logger logger = LoggerFactory.getLogger(getClass());

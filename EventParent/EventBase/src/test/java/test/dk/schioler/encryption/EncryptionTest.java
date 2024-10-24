@@ -14,7 +14,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
 import dk.schioler.event.base.configuration.EventBaseConfiguration;
-import dk.schioler.event.base.security.Encrypter;
+import dk.schioler.event.base.encrypt.Encrypter;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 //@ContextConfiguration("/ApplicationContext.xml")
