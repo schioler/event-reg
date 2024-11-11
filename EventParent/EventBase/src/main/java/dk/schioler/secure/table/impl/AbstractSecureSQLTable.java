@@ -1,8 +1,10 @@
 package dk.schioler.secure.table.impl;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -43,6 +45,19 @@ public abstract class AbstractSecureSQLTable<T extends SecureEntity> implements 
 		sql.append(insertSqlFromColumns).append(SPACE);
 		logger.debug("sql=" + sql.toString());
 		return sql;
+	}
+	
+	
+
+	@Override
+	public Map<String, Object> getInsertMappings(T type) {
+		Map<String, Object> mappings = new TreeMap<String, Object>();
+		if (type.getStartTS() == null) {			
+			type.setStartTS(LocalDateTime.now());
+		}
+		mappings.put(FLD_START_TS, type.getStartTS());
+
+		return mappings;
 	}
 
 	@Override
@@ -104,7 +119,7 @@ public abstract class AbstractSecureSQLTable<T extends SecureEntity> implements 
 	}
 
 	@Override
-	public StringBuffer getRetrieveSQL(Map<String, Object> criteria, int maxRows) {
+	public StringBuffer getRetrieveSQL(T criteria, int maxRows) {
 		StringBuffer sql = new StringBuffer();
 		sql.append(SELECT).append(SPACE);
 		StringBuffer columns = getSelectSqlFromColumns(getSelectColumns());
@@ -124,6 +139,20 @@ public abstract class AbstractSecureSQLTable<T extends SecureEntity> implements 
 		}
 
 		return sql;
+	}
+	
+	protected Map<String, Object> getCommonMappings(T type){
+		Map<String, Object> map = new HashMap<String, Object>();
+		if(type.getStartTS()!= null) {
+			map.put(FLD_START_TS, type.getStartTS());
+		}
+		if(type.getEndTS()!= null) {
+			map.put(FLD_END_TS, type.getEndTS());
+		}
+		if (type.getId() != null) {
+			map.put(FLD_ID, type.getId());
+		}
+		return map;
 	}
 
 	public StringBuffer getSelectSqlFromColumns(List<String> columns) {

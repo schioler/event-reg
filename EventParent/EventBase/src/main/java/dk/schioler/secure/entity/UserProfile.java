@@ -22,7 +22,6 @@ public interface UserProfile extends SecureEntity {
 
 	public String getPrimaryCountry();
 
-	public List<Login> getLogins();
 
 	
 	public void setFirstName(String param);
@@ -44,9 +43,17 @@ public interface UserProfile extends SecureEntity {
 	public void setPrimaryCountry(String param);
 
 
+	public List<Login> getLogins();
+
 	public void setLogins(List<Login> logins);
 	
 	public void addLogin(Login login);
 	
+
+	@Override
+	public int hashCode() ;
 	
+	@Override
+	public boolean equals(Object obj);
+
 }

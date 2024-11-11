@@ -16,8 +16,11 @@ import dk.schioler.secure.table.impl.LoginTableImpl;
 @Service
 public class LoginDAOImpl extends AbstractSecureBaseDAOImpl<Login> implements LoginDAO {
 
+	public LoginDAOImpl() {
+		super(new LoginTableImpl());
+	}
 	@Override
-	public Login getSecLogin(String login) {
+	public Login getLogin(String login) {
 		LoginTable lt = (LoginTable) table;
 		Map<String, Object> values = new HashMap<String, Object>();
 
@@ -29,9 +32,6 @@ public class LoginDAOImpl extends AbstractSecureBaseDAOImpl<Login> implements Lo
 		return query.get(0);
 	}
 
-	public LoginDAOImpl() {
-		super(new LoginTableImpl());
-	}
 //	public StringBuffer getSelectColsAndWhere() {
 //		StringBuffer sql = new StringBuffer();
 //		sql.append(SELECT).append(SPACE);

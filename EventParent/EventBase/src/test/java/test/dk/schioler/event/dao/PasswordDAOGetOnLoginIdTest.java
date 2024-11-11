@@ -64,7 +64,7 @@ public class PasswordDAOGetOnLoginIdTest extends AbstractJUnit4SpringContextTest
 		try {
 			String loginStr = "ls@ls.dk";
 			ROLE role = ROLE.ADMIN;
-			Login secLogin = loginDAO.getSecLogin(loginStr);
+			Login secLogin = loginDAO.getLogin(loginStr);
 			
 			profile = new UserProfileImpl();
 			profile.setFirstName("Poul");
@@ -76,7 +76,7 @@ public class PasswordDAOGetOnLoginIdTest extends AbstractJUnit4SpringContextTest
 			profile.setPrimaryPhone("+45 51517997");
 			profile.setStartTS(LocalDateTime.now());
 
-			profile = userProfileDAO.insert(profile,secLogin);
+			profile = userProfileDAO.insert(profile);
 			assertNotNull(profile);
 			assertNotNull(profile);
 			assertNotNull(profile);
@@ -86,7 +86,7 @@ public class PasswordDAOGetOnLoginIdTest extends AbstractJUnit4SpringContextTest
 			login.setLogin("hans@hansen.dk");
 			login.setRole(ROLE.ADMIN);
 			login.setUserProfileId(profile.getId());
-			login = loginDAO.insert(login, null);
+			login = loginDAO.insert(login);
 
 			assertNotNull(login);
 			assertNotNull(login.getId());
@@ -98,18 +98,18 @@ public class PasswordDAOGetOnLoginIdTest extends AbstractJUnit4SpringContextTest
 			pwd = new PasswordImpl();
 			pwd.setPwd(pwdEnc);
 			pwd.setLoginId(login.getId());
-			pwd = passwordDAO.insert(pwd, null);
+			pwd = passwordDAO.insert(pwd);
 
 			String pwdVerify = encrypter.encrypt("password");
 
-			Password password = passwordDAO.get(pwd.getId(), null);
+			Password password = passwordDAO.get(pwd.getId());
 			assertEquals(pwdVerify, password.getPwd());
 
 			
 			pwd2 = new PasswordImpl();
 			pwd2.setPwd(pwdEnc);
 			pwd2.setLoginId(login.getId());
-			pwd2 = passwordDAO.insert(pwd2, null);
+			pwd2 = passwordDAO.insert(pwd2);
 			
 			
 		} catch (Exception e) {

@@ -6,8 +6,8 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.jdbc.core.RowMapper;
 
 import dk.schioler.secure.entity.Password;
@@ -42,14 +42,11 @@ public class PasswordTableImpl extends AbstractSecureSQLTable<Password> implemen
 
 	@Override
 	public Map<String, Object> getInsertMappings(Password event) {
-		Map<String, Object> mappings = new TreeMap<String, Object>();
+		Map<String, Object> mappings = super.getInsertMappings(event);
 
 		mappings.put(FLD_LOGIN_ID, event.getLoginId());
 
-		if (event.getStartTS() != null) {
-			mappings.put(FLD_START_TS, event.getStartTS());
-		}
-
+		
 		mappings.put(FLD_PWD, event.getPwd());
 
 		return mappings;
@@ -132,6 +129,21 @@ public class PasswordTableImpl extends AbstractSecureSQLTable<Password> implemen
 		orderBy.add(FLD_LOGIN_ID);
 
 		return orderBy;
+	}
+
+	@Override
+	public Map<String, Object> getRetrieveMappings(Password type) {
+		Map<String,Object> map = super.getCommonMappings(type);
+		Integer loginId = type.getLoginId();
+		String pwd = type.getPwd();
+		if (loginId != null) {
+			map.put(FLD_LOGIN_ID, loginId);
+		}
+		if (StringUtils.isNotBlank(pwd)) {
+			map.put(FLD_PWD, pwd);
+		}
+		
+		return map;
 	}
 
 }

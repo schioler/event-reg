@@ -29,7 +29,10 @@ public interface SecureTable<T extends SecureEntity> extends SQLConstructs {
 
 	public String getFromIdSQL(Integer id);
 
-	public StringBuffer getRetrieveSQL(Map<String, Object> criteria, int maxRows);
+	public StringBuffer getRetrieveSQL(T criteria, int maxRows);
+	
+	public Map<String, Object> getRetrieveMappings(T type);
+	
 
 	public RowMapper<T> getRowMapper();
 }

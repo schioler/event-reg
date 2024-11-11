@@ -1,6 +1,5 @@
 package dk.schioler.event.web.controller;
 
-
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -26,7 +25,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 
 @Controller
-public class UserController extends WebTokensAbstract {
+public class UserController extends AbstractController {
 
 	@Autowired
 	private LoginDAO loginDAO;
@@ -44,23 +43,26 @@ public class UserController extends WebTokensAbstract {
 
 	}
 
-	@RequestMapping(value = "nopublic/user-authenticate.do", method = RequestMethod.POST)
+	@RequestMapping(value = "public/user-authenticate.do", method = RequestMethod.POST)
 	public String userAuthenticate(@RequestParam Map<String, String> params, Model model, HttpServletRequest request) {
 		logger.debug("user-authenticate.dk: params=" + params);
 
 		String retVal = "redirect:public/login.jsp";
+
+		HttpSession session = request.getSession();
+
 		String username = (String) params.get(LOGIN);
 		if (StringUtils.isNotBlank(username)) {
-			Login login = loginDAO.getSecLogin(username);
+			Login login = loginDAO.getLogin(username);
 			logger.debug("Found login=" + login);
 			if (login != null) {
 
 				Password lookedUpPwd = null;
 				String password = (String) params.get(PASSWORD);
 				if (StringUtils.isNotBlank(password)) {
-					logger.debug("looking up pwd, login.id="+ login.getId());
+					logger.debug("looking up pwd, login.id=" + login.getId());
 					List<Password> passwordList = passwordDAO.getPassword(login.getId(), false);
-					logger.debug("pwdList="+ passwordList);
+					logger.debug("pwdList=" + passwordList);
 					if (passwordList != null) {
 						if (passwordList.size() == 1) {
 							lookedUpPwd = passwordList.get(0);
@@ -68,10 +70,10 @@ public class UserController extends WebTokensAbstract {
 							String encrypted = encrypter.encrypt(password);
 							logger.debug("received pwd=" + encrypted);
 							if (encrypted.equals(lookedUpPwd.getPwd())) {
-								retVal = "redirect:../event-show.do";
-								WebLogin wl = new WebLogin(login, LocalDateTime.now());
-								HttpSession session = request.getSession();
-								session.setAttribute(KEY_LOGIN, wl);
+								retVal = FAVORITES_SHOW; 
+//										"redirect:../event-show.do";
+								WebLogin wl = new WebLogin(login, LocalDateTime.now(), true);
+								session.setAttribute(SES_AUTHENTICATED_USER, wl);
 							}
 						} else {
 							retVal = "redirect:./login.jsp";
@@ -89,11 +91,12 @@ public class UserController extends WebTokensAbstract {
 			retVal = "redirect:./login.jsp";
 
 		}
+
 		logger.debug("returns:" + retVal);
 		return retVal;
 	}
 
-	@RequestMapping(value = "nopublic/set-new-password.do", method = RequestMethod.POST)
+	@RequestMapping(value = "public/set-new-password.do", method = RequestMethod.POST)
 	public String userSetNewPassword(@RequestParam Map<String, String> params, Model model,
 			HttpServletRequest request) {
 		logger.debug("set-new-password.dk: params=" + params);
@@ -104,7 +107,7 @@ public class UserController extends WebTokensAbstract {
 		String password2 = (String) params.get(PASSWORD + 2);
 
 		if (StringUtils.isNotBlank(loginId)) {
-			Login login = loginDAO.getSecLogin(loginId);
+			Login login = loginDAO.getLogin(loginId);
 			logger.debug("login" + login);
 			if (login != null) {
 				logger.debug("login found=" + login);
@@ -124,7 +127,7 @@ public class UserController extends WebTokensAbstract {
 								logger.debug("will update current pwd");
 								lookedUpPwd = passwordList.get(0);
 								lookedUpPwd.setEndTS(LocalDateTime.now());
-								passwordDAO.update(lookedUpPwd, null);
+								passwordDAO.update(lookedUpPwd);
 							}
 						}
 
@@ -132,7 +135,7 @@ public class UserController extends WebTokensAbstract {
 						PasswordImpl newPwd = new PasswordImpl();
 						newPwd.setLoginId(login.getId());
 						newPwd.setPwd(encrypt);
-						Password inserted = passwordDAO.insert(newPwd, null);
+						Password inserted = passwordDAO.insert(newPwd);
 						logger.debug("Login, password, inserted=" + inserted);
 						retVal = "redirect:login.jsp";
 					}
@@ -143,7 +146,7 @@ public class UserController extends WebTokensAbstract {
 		return retVal;
 	}
 
-	@RequestMapping(value = "nopublic/show-forgot-password.do", method = RequestMethod.GET)
+	@RequestMapping(value = "public/show-forgot-password.do", method = RequestMethod.GET)
 	public String userShowForgotPassword(@RequestParam Map<String, String> params, Model model,
 			HttpServletRequest request) {
 		logger.debug("public/show-forgot-password.dk: params=" + params);
@@ -153,12 +156,12 @@ public class UserController extends WebTokensAbstract {
 		return retVal;
 	}
 
-	@RequestMapping(value = "nologout.do", method = RequestMethod.GET)
+	@RequestMapping(value = "logout.do", method = RequestMethod.GET)
 	public String userLogout(@RequestParam Map<String, String> params, Model model, HttpServletRequest request) {
 		String retval = "redirect:public/login.jsp";
-		
+
 		request.getSession().invalidate();
-		
+
 		return retval;
 	}
 

@@ -14,6 +14,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
 import dk.schioler.event.base.configuration.EventBaseConfiguration;
+import dk.schioler.event.base.entity.AbstractEntity;
 import dk.schioler.event.base.entity.EventTemplate;
 import dk.schioler.event.base.entity.EventType;
 import dk.schioler.event.base.xml.EventTypeXMLHelper;
@@ -36,28 +37,28 @@ public class EventXMLTest extends AbstractJUnit4SpringContextTests {
 		
 		String filePath = "src/main/data/event-base-data.xml";
 		
-		List<EventType> eventTypes = xmlHelper.buildEventTypes(filePath);
+		List<AbstractEntity> eventTypes = xmlHelper.buildEventTypes(filePath);
 		
 		assertEquals(6, eventTypes.size());
 		
 		
-		EventType eType = eventTypes.get(0);
+		EventType eType = (EventType) eventTypes.get(0);
 		assertEquals("Medicin-parkinson", eType.getName());
 		assertEquals("MEDICIN-PARK", eType.getShortName());
 				
-		List<EventTemplate> templates = eType.getEventTemplates();
+		List<AbstractEntity> templates = eType.getChildren();
 		assertEquals(7, templates.size());
 				
-		EventTemplate template = templates.get(0);		
+		EventTemplate template = (EventTemplate) templates.get(0);		
 		assertEquals("Sinemet 25/100", template.getName());
 		assertEquals("SINE_25100",template.getShortName() );
 		
-		template = templates.get(6);
+		template = (EventTemplate) templates.get(6);
 		
 		assertEquals("Entacapone", template.getName());
 		assertEquals("ENTACAP-200",template.getShortName() );
 
-		eType = eventTypes.get(4);
+		eType = (EventType) eventTypes.get(4);
 		 
 		assertEquals("Fysik", eType.getName());
 		assertEquals("FYSIK", eType.getShortName());

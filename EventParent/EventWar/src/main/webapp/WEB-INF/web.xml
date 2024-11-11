@@ -4,8 +4,16 @@
 	version="6.0">
 	<display-name>Welcome to event registration System</display-name>
 	<description> Welcome to event registration system </description>
+
 	
-	
+	 <filter>
+      <filter-name>loggingFilter</filter-name>
+      <filter-class>dk.schioler.event.web.filter.LoggingFilter</filter-class>
+   </filter>
+   <filter-mapping>
+      <filter-name>loggingFilter</filter-name>
+      <url-pattern>/*</url-pattern>
+   </filter-mapping> 
 	<!-- <filter>
       <filter-name>htmlFilter</filter-name>
       <filter-class>dk.schioler.event.web.filter.HTMLFilter</filter-class>

@@ -3,7 +3,6 @@ package dk.schioler.secure.entity;
 import java.time.LocalDateTime;
 
 public interface SecureEntity {
-	public static final String FLD_ID = "ID";
 
 	public void setId(Integer id);
 
@@ -16,5 +15,6 @@ public interface SecureEntity {
 	public void setEndTS(LocalDateTime ts);
 
 	public LocalDateTime getEndTS();
+
 
 }

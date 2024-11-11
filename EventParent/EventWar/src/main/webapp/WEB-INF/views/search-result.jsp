@@ -11,7 +11,7 @@
 <%@ page import="java.util.List"%>
 <%@ page import="dk.schioler.event.base.entity.EventTemplate"%>
 <%@ page import="dk.schioler.event.base.entity.EventType"%>
-<%@ page import="dk.schioler.event.web.controller.WebTokensAbstract"%>
+<%@ page import="dk.schioler.event.web.controller.AbstractController"%>
 <%@ page import="dk.schioler.event.web.init.SearchResultStruct"%>
 
 <html>

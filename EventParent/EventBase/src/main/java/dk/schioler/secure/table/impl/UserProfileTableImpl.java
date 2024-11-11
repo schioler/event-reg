@@ -6,8 +6,8 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.jdbc.core.RowMapper;
 
 import dk.schioler.secure.entity.UserProfile;
@@ -54,11 +54,7 @@ public class UserProfileTableImpl extends AbstractSecureSQLTable<UserProfile> im
 
 	@Override
 	public Map<String, Object> getInsertMappings(UserProfile event) {
-		Map<String, Object> mappings = new TreeMap<String, Object>();
-
-		if (event.getStartTS() != null) {
-			mappings.put(FLD_START_TS, event.getStartTS());
-		}
+		Map<String, Object> mappings = super.getInsertMappings(event);
 
 		mappings.put(FLD_LAST_NAME, event.getLastName());
 		mappings.put(FLD_FIRST_NAME, event.getFirstName());
@@ -139,6 +135,31 @@ public class UserProfileTableImpl extends AbstractSecureSQLTable<UserProfile> im
 	public List<String> getOrderBy() {
 
 		return orderByColumns;
+	}
+
+	@Override
+	public Map<String, Object> getRetrieveMappings(UserProfile type) {
+		Map<String,Object> map = super.getCommonMappings(type);
+		
+		String firstName = type.getFirstName();
+		String lastName = type.getLastName();
+		String primaryEmail = type.getPrimaryEmail();
+		String primaryPhone = type.getPrimaryPhone();
+		
+		if (StringUtils.isNotBlank(firstName)) {
+			map.put(FLD_FIRST_NAME, firstName);
+		}
+		if (StringUtils.isNotBlank(lastName)) {
+			map.put(FLD_LAST_NAME, lastName);
+		}
+		if (StringUtils.isNotBlank(firstName)) {
+			map.put(FLD_FIRST_NAME, firstName);
+		}
+		if (StringUtils.isNotBlank(firstName)) {
+			map.put(FLD_FIRST_NAME, firstName);
+		}
+		
+		return map;
 	}
 
 }

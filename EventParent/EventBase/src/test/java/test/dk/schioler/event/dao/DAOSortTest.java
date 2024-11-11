@@ -1,5 +1,6 @@
 package test.dk.schioler.event.dao;
 
+
 import java.util.List;
 
 import org.junit.Test;
@@ -14,8 +15,11 @@ import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import dk.schioler.event.base.configuration.EventBaseConfiguration;
 import dk.schioler.event.base.dao.EventTemplateDAO;
 import dk.schioler.event.base.dao.EventTypeDAO;
+import dk.schioler.event.base.dao.criteria.EventTypeCriteria;
 import dk.schioler.event.base.entity.EventTemplate;
 import dk.schioler.event.base.entity.EventType;
+import dk.schioler.secure.dao.LoginDAO;
+import dk.schioler.secure.entity.Login;
 
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -35,21 +39,25 @@ public class DAOSortTest {
 	@Autowired
 	EventTemplateDAO eventTemplateDAO;
 	
-		
+	@Autowired
+	LoginDAO loginDAO;
 
 	@Test
 	public void test() {
-		List<EventType> lookup = eventTypeDAO.lookup();
+		Login login = loginDAO.getLogin("");
+		
+		EventTypeCriteria eType = new EventTypeCriteria();
+		eType.addLoginId(login.getId());
+		
+		
+		List<EventType> lookup = eventTypeDAO.retrieve(eType, 0);
+		
 		for (EventType l : lookup) {
 			
 			logger.debug(l.getName());
 		}
 		
-		List<EventTemplate> lookup2 = eventTemplateDAO.lookup();
-		for (EventTemplate eventTemplate : lookup2) {
-			logger.debug(eventTemplate.getName() );
-			
-		}
+		
 	}
 
 }

@@ -24,4 +24,12 @@ public interface Login extends SecureEntity {
 	public void setPasswords(List<Password> passwords);
 	
 	public List<Password> getPasswords();
+	
+	@Override
+	public int hashCode() ;
+	
+	@Override
+	public boolean equals(Object obj);
+
+
 }

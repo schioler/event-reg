@@ -7,74 +7,72 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import dk.schioler.event.base.dao.EventDAO;
-import dk.schioler.event.base.dao.EventTemplateDAO;
-import dk.schioler.event.base.dao.EventTypeDAO;
 import dk.schioler.event.base.entity.Event;
+import dk.schioler.event.web.WebLogin;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 
 @Controller
-public class EventQueueController extends WebTokensAbstract {
-	Logger logger = LoggerFactory.getLogger(getClass());
+public class EventQueueController extends AbstractController {
+//	Logger logger = LoggerFactory.getLogger(getClass());
+//
+//	@Autowired
+//	protected EventTypeDAO eventTypeDAO;
+//
+//	@Autowired
+//	protected EventTemplateDAO eventTemplateDAO;
+//
+//	@Autowired
+//	protected EventDAO eventDAO;
 
-	@Autowired
-	protected EventTypeDAO eventTypeDAO;
-
-	@Autowired
-	protected EventTemplateDAO eventTemplateDAO;
-
-	@Autowired
-	protected EventDAO eventDAO;
-
-
-	
 	/**
 	 * QUEUE
+	 * 
 	 * @param params
 	 * @param model
-	 * @param httpServletRequest
+	 * @param request
 	 * @return
 	 */
 	@RequestMapping(value = "/event-queue-add.do", method = RequestMethod.POST)
-	public String eventAddToQueue(@RequestParam Map<String, String> params, Model model,
-			HttpServletRequest httpServletRequest) {
+	public String eventAddToQueue(@RequestParam Map<String, String> params, Model model, HttpServletRequest request) {
 		logger.debug("event-add-to-queue-do: RequestParams params = " + params);
-		List<String> errors = new ArrayList<String>();
+		HttpSession session = request.getSession();
+		WebLogin wl = this.isValidLogin(session);
+		if (wl != null) {
+			Integer loginId = wl.getLogin().getId();
 
-		Event event = EventController.createEvent(params, errors);
+			List<String> errors = new ArrayList<String>();
 
-		List<Event> eventsToInsert = new ArrayList<Event>();
-		eventsToInsert.add(event);
+			Event event = createEventInstance(params, loginId);
 
-		HttpSession session = httpServletRequest.getSession();
-		
-		@SuppressWarnings("unchecked")
-		List<Event> eventQ = (List<Event>) session.getAttribute(SES_EVENT_QUEUE);
-		if (eventQ == null) {
-			logger.debug("found " + SES_EVENT_QUEUE + " = null");
-			eventQ = new ArrayList<Event>();
+			List<Event> eventsToInsert = new ArrayList<Event>();
+			eventsToInsert.add(event);
+
+			@SuppressWarnings("unchecked")
+			List<Event> eventQ = (List<Event>) session.getAttribute(SES_EVENT_QUEUE);
+			if (eventQ == null) {
+				logger.debug("found " + SES_EVENT_QUEUE + " = null");
+				eventQ = new ArrayList<Event>();
+			} else {
+				logger.debug("found " + SES_EVENT_QUEUE + " =" + eventQ);
+			}
+
+			eventQ.add(event);
+
+			logger.debug("eventQueue=" + eventQ);
+			session.setAttribute(SES_EVENT_QUEUE, eventQ);
+
+			return "redirect:event.jsp";
 		} else {
-			logger.debug("found " + SES_EVENT_QUEUE + " ="+ eventQ);
+			return PUBLIC_LOGIN_JSP;
 		}
-		
-		eventQ.add(event);
-		
-		logger.debug("eventQueue="+ eventQ);
-		session.setAttribute(SES_EVENT_QUEUE, eventQ);
-
-		return "redirect:event.jsp";
 	}
-
 
 	@RequestMapping(value = "/event-queue-store.do", method = RequestMethod.POST)
 	public String storeQueue(Locale locale, Model model, HttpServletRequest request) {
@@ -111,7 +109,7 @@ public class EventQueueController extends WebTokensAbstract {
 		if (name != null) {
 			name = name.trim();
 		}
-		
+
 		String templateId = params.get("templateId");
 		Integer integer = null;
 		if (StringUtils.isNotBlank(templateId)) {
@@ -128,7 +126,7 @@ public class EventQueueController extends WebTokensAbstract {
 				Event event = eventQueue.get(i);
 				logger.debug("inQueue=" + event);
 				if (name.equals(event.getName().trim())) {
-					if (integer != null && integer.equals(event.getEventTemplateId())) {
+					if (integer != null && integer.equals(event.getParentId())) {
 						logger.debug("removing event from Queue");
 
 						eventQueue.remove(i);
@@ -146,7 +144,5 @@ public class EventQueueController extends WebTokensAbstract {
 		return "redirect:event.jsp";
 
 	}
-
-
 
 }

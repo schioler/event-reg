@@ -1,7 +1,8 @@
 package dk.schioler.event.base;
 
-public class EventBaseException extends RuntimeException {
+import org.apache.xpath.operations.String;
 
+public class EventBaseException extends RuntimeException {
 
 	private static final long serialVersionUID = -8954349845393276047L;
 

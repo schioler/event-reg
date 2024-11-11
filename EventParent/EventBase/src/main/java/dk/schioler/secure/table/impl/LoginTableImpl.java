@@ -6,7 +6,6 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 
 import org.springframework.jdbc.core.RowMapper;
 
@@ -15,6 +14,7 @@ import dk.schioler.secure.entity.ROLE;
 import dk.schioler.secure.entity.RoleUtil;
 import dk.schioler.secure.entity.impl.LoginImpl;
 import dk.schioler.secure.table.LoginTable;
+import io.micrometer.common.util.StringUtils;
 
 public class LoginTableImpl extends AbstractSecureSQLTable<Login> implements LoginTable {
 
@@ -48,15 +48,13 @@ public class LoginTableImpl extends AbstractSecureSQLTable<Login> implements Log
 
 	@Override
 	public Map<String, Object> getInsertMappings(Login event) {
-		Map<String, Object> mappings = new TreeMap<String, Object>();
+		Map<String, Object> mappings = super.getInsertMappings(event);
 		mappings.put(FLD_USER_PROFILE_ID, event.getUserProfile().getId());
 
-		if (event.getStartTS() != null) {
-			mappings.put(FLD_START_TS, event.getStartTS());
-		}
-
 		mappings.put(FLD_LOGIN, event.getLogin());
-		mappings.put(FLD_ROLE, event.getRole());
+		String roleAsString = RoleUtil.getRoleAsString(event.getRole());
+		
+		mappings.put(FLD_ROLE,roleAsString );
 
 		return mappings;
 
@@ -67,6 +65,29 @@ public class LoginTableImpl extends AbstractSecureSQLTable<Login> implements Log
 		Map<String, Object> map = getInsertMappings(type);
 		map.put(FLD_ID, type.getId());
 		map.put(FLD_END_TS, type.getEndTS());
+		return map;
+	}
+	@Override
+	public Map<String, Object> getRetrieveMappings(Login criteria) {
+		Map<String, Object> map  = super.getCommonMappings(criteria);
+		
+		
+		String login = criteria.getLogin();
+		ROLE role = criteria.getRole();
+		
+		Integer userProfileId = criteria.getUserProfileId();
+		
+		
+		if (StringUtils.isNotEmpty(login)) {
+			map.put(FLD_LOGIN, login);
+		}
+		if (role != null) {
+			map.put(FLD_ROLE, RoleUtil.getRoleAsString(role));
+		}
+		if (userProfileId != null) {
+			map.put(FLD_USER_PROFILE_ID, userProfileId);
+		}
+		
 		return map;
 	}
 
@@ -137,5 +158,6 @@ public class LoginTableImpl extends AbstractSecureSQLTable<Login> implements Log
 		
 		return sql.toString();
 	}
+
 
 }

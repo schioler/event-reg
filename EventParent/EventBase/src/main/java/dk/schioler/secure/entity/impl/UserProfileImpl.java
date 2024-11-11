@@ -163,7 +163,9 @@ public class UserProfileImpl extends AbstractSecureEntity implements UserProfile
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		builder.append("UserProfileImpl [firstName=");
+		builder.append("UserProfileImpl [");
+		builder.append(super.toString());
+		builder.append("firstName=");
 		builder.append(firstName);
 		builder.append(", lastName=");
 		builder.append(lastName);

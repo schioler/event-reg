@@ -34,6 +34,9 @@ public interface SQLConstructs {
 	public static final String SMALLER_THAN = "<";
 	public static final String ISNULL = "IS NULL";
 	public static final String LIKE = "LIKE";
+	public static final String HYPHEN = "'";
+	public static final String CONCAT = "CONCAT";
+	public static final String SQL_WILDCARD = "%";
 	
 	public static final String OR = "OR";
 	public static final String DOT = ".";

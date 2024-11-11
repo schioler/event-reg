@@ -8,8 +8,11 @@ import dk.schioler.secure.entity.Login;
 public class WebLogin {
 	private final Login login;
 	private final LocalDateTime authenticateTime;
-	public WebLogin(Login login, LocalDateTime authenticateTime) {
+	private final boolean isAuthenticated;
+	
+	public WebLogin(Login login, LocalDateTime authenticateTime, boolean isAuthenticated) {
 		super();
+		this.isAuthenticated = isAuthenticated;
 		this.login = login;
 		this.authenticateTime = authenticateTime;
 	}
@@ -19,10 +22,17 @@ public class WebLogin {
 	public LocalDateTime getAuthenticateTime() {
 		return authenticateTime;
 	}
+	
+	
+	public boolean isAuthenticated() {
+		return isAuthenticated;
+	}
+		
 	@Override
 	public int hashCode() {
-		return Objects.hash(authenticateTime, login);
+		return Objects.hash(authenticateTime, isAuthenticated, login);
 	}
+	
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -32,7 +42,8 @@ public class WebLogin {
 		if (getClass() != obj.getClass())
 			return false;
 		WebLogin other = (WebLogin) obj;
-		return Objects.equals(authenticateTime, other.authenticateTime) && Objects.equals(login, other.login);
+		return Objects.equals(authenticateTime, other.authenticateTime) && isAuthenticated == other.isAuthenticated
+				&& Objects.equals(login, other.login);
 	}
 	@Override
 	public String toString() {
@@ -41,8 +52,12 @@ public class WebLogin {
 		builder.append(login);
 		builder.append(", authenticateTime=");
 		builder.append(authenticateTime);
+		builder.append(", isAuthenticated=");
+		builder.append(isAuthenticated);
 		builder.append("]");
 		return builder.toString();
 	}
+
+	
 	
 }

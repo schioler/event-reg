@@ -6,12 +6,14 @@ public interface EventTemplateTable extends ISQLTable<EventTemplate> {
 	public static final String TABLE = "EVENT_TEMPLATE";
 
 	public static final String FLD_EVENT_TYPE_ID = "EVENT_TYPE_ID";
-	
-	public static final String FLD_NAME = "NAME";
-	public static final String FLD_SHORT_NAME = "SHORT_NAME";
+
 	public static final String FLD_DESCRIPTION = "DESCRIPTION";
 	public static final String FLD_DOSE = "DOSE";
 	public static final String FLD_UNIT = "UNIT";
+	
+	public static final String FLD_IS_FAVOURITE = "IS_FAVORITE";
+	public static final String FLD_SORT_ORDER = "SORT_ORDER";
+	
 
 	public static final String FLD_FQ_ID = TABLE + "_" + FLD_ID;
 	public static final String FLD_FQ_EVENT_TYPE_ID = TABLE + "_" + FLD_EVENT_TYPE_ID;

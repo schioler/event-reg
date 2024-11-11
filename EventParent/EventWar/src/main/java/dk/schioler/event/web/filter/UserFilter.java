@@ -1,7 +1,6 @@
 package dk.schioler.event.web.filter;
 
 import java.io.IOException;
-import java.util.Enumeration;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,10 +8,8 @@ import org.springframework.stereotype.Component;
 
 import dk.schioler.event.web.WebLogin;
 import dk.schioler.event.web.controller.WebTokens;
-import dk.schioler.secure.entity.impl.LoginImpl;
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
-import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;

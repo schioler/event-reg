@@ -64,7 +64,7 @@ public class PasswordDAOTest extends AbstractJUnit4SpringContextTests {
 			profile.setPrimaryCountry("Denmark");
 			profile.setPrimaryPhone("+45 51517997");
 
-			UserProfile insert = userProfileDAO.insert(profile, null);
+			UserProfile insert = userProfileDAO.insert(profile);
 			assertNotNull(insert);
 			assertNotNull(insert.getId());
 			assertNotNull(insert.getStartTS());
@@ -74,7 +74,7 @@ public class PasswordDAOTest extends AbstractJUnit4SpringContextTests {
 			login.setLogin("hans@hansen.dk");
 			login.setRole(ROLE.ADMIN);
 			login.setUserProfileId(insert.getId());
-			login = loginDAO.insert(login, null);
+			login = loginDAO.insert(login);
 			
 			assertNotNull(login);
 			assertNotNull(login.getId());
@@ -86,11 +86,11 @@ public class PasswordDAOTest extends AbstractJUnit4SpringContextTests {
 			Password pwd = new PasswordImpl();
 			pwd.setPwd(pwdEnc);
 			pwd.setLoginId(login.getId());
-			pwd = passwordDAO.insert(pwd, null);
+			pwd = passwordDAO.insert(pwd);
 			
 			String pwdVerify = encrypter.encrypt("password");
 			
-			Password password = passwordDAO.get(pwd.getId(), null);
+			Password password = passwordDAO.get(pwd.getId());
 			assertEquals(pwdVerify, password.getPwd());			
 			
 			

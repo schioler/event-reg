@@ -10,6 +10,8 @@ public abstract class AbstractSecureEntity {
 	private LocalDateTime startTS;
 	
 	private LocalDateTime endTS;
+	
+	
 
 	public AbstractSecureEntity(Integer id, LocalDateTime startTS, LocalDateTime endTS) {
 		this.id = id;
@@ -41,6 +43,7 @@ public abstract class AbstractSecureEntity {
 		this.id = id;
 	}
 
+	
 	@Override
 	public int hashCode() {
 		return Objects.hash(endTS, id, startTS);

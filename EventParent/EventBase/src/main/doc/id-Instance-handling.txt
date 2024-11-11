@@ -1,0 +1,62 @@
+﻿rules: 	
+	1: last provided wins.
+	Say instance ID, it is propagated to the relevant instance: parameter if present, otherwise the instance, if already present.
+	Special cases:
+		Specifying id = null, it will not be propagated to the new state.
+	Example:
+		Method: setXX(ID, instance); 
+		A: setXX(null, null)	:  	
+					if(this.instance != null: this.instance remove(this)
+					this.instance = new Instance, 
+					(this.instance.id will be null
+					this.instance.add(this)
+		
+		B: setXX(null, inst)	: 	
+					if(this.instance != null) this.instance.remove(this) 
+					set this.instance = inst. 
+					// Not setting id explicitly, since null was provided
+					
+		C: setXX(ID, null)		:	
+					if (this.instance != null) 
+						if(!this.instance.getID().equals(ID)
+							this.instance = new Instance
+							this.instance.setID(ID)
+						else 
+							// leave the instance, to value the ID Nature of ID
+							
+					
+		D: setXX(ID, inst)		:
+					if(this.instance != null)
+						if(this.instance.getID().equals(ID)
+							if(inst.equals(this.instance){
+								// all equal - no change
+							} else {
+							}
+						
+						this.instance.remove(this)
+					this.instance=inst
+					this.instance.add(this)
+		
+	
+	
+	2: set ID could be lost, if not specified explicitly  
+		Potential: id on provided instance is lost, since it can be overriden by provided id. OBS
+		Make sure to proide an ID value, if you want it to
+	
+	
+		last provided wins, all values on this.instance is lost				
+	
+
+	
+					
+	id 		instance	this.instance	Action	call listholder
+	null	null		null			This.instance =new instance(), this.instance.setId(null)	Instance.add(this)
+					
+	set		null		null	This.instance =new instance(), this.instance.setId	Instance.add(this)
+	set		set			null	this.instance = instance, this.instance.setId	Instance.add(this)
+	set		null		set		this.instance.setId	
+	set		set			set		this.instance = instance, this.instance.setId()	this.instance.remove(this),  this.instance = instance,  This.instance.add(this)
+					
+	null	set			null	this.instance=instance, this.instance.setId(null)	Instance.add(this)
+	null	set			set		this.instance=instance	this.instance.remove(this),  this.instance = instance,  This.instance.add(this)
+	null	null		set		this.instance=null	na

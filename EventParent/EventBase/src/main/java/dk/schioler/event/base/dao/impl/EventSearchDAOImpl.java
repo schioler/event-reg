@@ -3,12 +3,7 @@ package dk.schioler.event.base.dao.impl;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.sql.DataSource;
 
@@ -41,7 +36,7 @@ public class EventSearchDAOImpl implements EventSearchDAO {
 	}
 
 	@Override
-	public List<Event> searchEvents(LocalDateTime startTime, LocalDateTime endTime, List<Integer> templateIds)
+	public List<Event> searchEvents(LocalDateTime startTime, LocalDateTime endTime, List<Integer> templateIds, Integer loginId)
 			throws EventDAOException {
 		logger.debug("searchEvents: startTime=" + startTime + ", endTime=" + endTime + " templateIds=" + templateIds);
 
@@ -105,16 +100,16 @@ public class EventSearchDAOImpl implements EventSearchDAO {
 
 		@Override
 		public Event mapRow(ResultSet rs, int rowNum) throws SQLException {
-			Event eventType = new Event();
-			eventType.setId(rs.getInt(1));
-			eventType.setEventTemplateId(rs.getInt(2));
-			eventType.setEventTS(rs.getTimestamp(3).toLocalDateTime());
-			eventType.setName(rs.getString(4));
-			eventType.setDose(rs.getString(5));
-			eventType.setUnit(rs.getString(6));
-			eventType.setNote(rs.getString(7));
-			logger.debug("row=" + eventType);
-			return eventType;
+			Event event = new Event();
+			event.setId(rs.getInt(1));
+			event.setParentId(rs.getInt(2));
+			event.setEventTS(rs.getTimestamp(3).toLocalDateTime());
+			event.setName(rs.getString(4));
+			event.setDose(rs.getString(5));
+			event.setUnit(rs.getString(6));
+			event.setNote(rs.getString(7));
+			logger.debug("row=" + event);
+			return event;
 		}
 
 	};

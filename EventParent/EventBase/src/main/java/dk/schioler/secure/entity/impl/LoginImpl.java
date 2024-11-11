@@ -59,7 +59,7 @@ public class LoginImpl extends AbstractSecureEntity implements Login {
 	}
 
 	public void setUserProfileId(Integer userProfileId) {
-		if(this.userProfile != null) {
+		if (this.userProfile != null) {
 			this.userProfile.setId(userProfileId);
 		} else {
 			this.userProfile = new UserProfileImpl();
@@ -114,17 +114,22 @@ public class LoginImpl extends AbstractSecureEntity implements Login {
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		builder.append("LoginImpl [role=");
+		builder.append("LoginImpl [");
+		builder.append("super=" + super.toString());
+		builder.append(", role=");
 		builder.append(role);
 		builder.append(", login=");
 		builder.append(login);
 		builder.append(", userProfile=");
-		builder.append(userProfile);
+		if (userProfile != null) {
+			builder.append("id=" + userProfile.getId());
+		} else {
+			builder.append("is null");
+		}
 		builder.append(", passwords=");
 		builder.append(passwords);
 		builder.append("]");
 		return builder.toString();
 	}
 
-	
 }

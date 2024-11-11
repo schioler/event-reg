@@ -1,3 +1,4 @@
+
 package dk.schioler.event.base.xml;
 
 import java.io.File;
@@ -31,11 +32,11 @@ public class EventTypeXMLHelper implements EventTypeXMLELements {
 
 	}
 
-	public List<EventType> buildEventTypes(String srcFileName) {
+	public List<AbstractEntity> buildEventTypes(String srcFileName) {
 		return buildEventTypes(new File(srcFileName));
 	}
 
-	public List<EventType> buildEventTypes(File srcFile) {
+	public List<AbstractEntity> buildEventTypes(File srcFile) {
 		FileInputStream fis = null;
 		try {
 			fis = new FileInputStream(srcFile);
@@ -53,7 +54,7 @@ public class EventTypeXMLHelper implements EventTypeXMLELements {
 		}
 	}
 
-	public List<EventType> buildEventTypesFromXML(InputStream is) {
+	public List<AbstractEntity> buildEventTypesFromXML(InputStream is) {
 		logger.trace("buildEventTypesfromXML:" + is);
 		XMLRootElement rootNode = null;
 		try {
@@ -77,7 +78,7 @@ public class EventTypeXMLHelper implements EventTypeXMLELements {
 			}
 			
 			// all the EventTypes that has been discovered
-			return rootNode.getEventTypes();
+			return rootNode.getChildren();
 		} catch (Exception e) {
 			logger.error("parse caught ", e);
 		}
@@ -99,14 +100,14 @@ public class EventTypeXMLHelper implements EventTypeXMLELements {
 					logger.trace("found: event-type");
 					EventType eType = buildEventTypeInstance(xmlChildNode);
 					XMLRootElement rootE = (XMLRootElement) curObject;
-					rootE.addEventType(eType);
+					rootE.addChild(eType);
 					traverseNodes(xmlChildNode, eType);
 				} else if (ELEMENT_EVENT_TEMPLATE.equalsIgnoreCase(xmlNodeName)) {
 				   	logger.trace("found: event-template");
 					EventTemplate dTmppl  = buildEventTemplateInstance(xmlChildNode);
 					EventType e = (EventType) curObject;
 
-					e.addEventTemplate(dTmppl);
+					e.addChild(dTmppl);
 //					curObject.addChild(childTreeNode);
 
 //					traverseNodes(xmlChildNode, childTreeNode);

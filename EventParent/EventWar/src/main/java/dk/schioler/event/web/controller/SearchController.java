@@ -28,9 +28,11 @@ import dk.schioler.event.base.chart.ChartBuilder;
 import dk.schioler.event.base.dao.EventSearchDAO;
 import dk.schioler.event.base.dao.EventTemplateDAO;
 import dk.schioler.event.base.dao.EventTypeDAO;
+import dk.schioler.event.base.dao.criteria.EventTypeCriteria;
 import dk.schioler.event.base.entity.Event;
 import dk.schioler.event.base.entity.EventTemplate;
 import dk.schioler.event.base.entity.EventType;
+import dk.schioler.event.web.WebLogin;
 import dk.schioler.shared.timeline.TIMESLOT_LENGTH;
 import dk.schioler.shared.timeline.Timeline;
 import dk.schioler.shared.timeline.TimelineData;
@@ -43,7 +45,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 
 @Controller
-public class SearchController extends WebTokensAbstract {
+public class SearchController extends AbstractController {
 	Logger logger = LoggerFactory.getLogger(getClass());
 
 	@Autowired
@@ -64,20 +66,24 @@ public class SearchController extends WebTokensAbstract {
 	@RequestMapping(value = "/search-new.do", method = RequestMethod.GET)
 	public String searchSetup(@RequestParam Map<String, String> reqParams, Model model, HttpServletRequest request) {
 		logger.debug("GET /search-new.do, Requested ");
-
-		List<EventType> eventTypes = eventTypeDAO.lookup();
+		HttpSession session = request.getSession();
+		WebLogin attribute = (WebLogin) session.getAttribute(SES_AUTHENTICATED_USER);
+		
+		EventTypeCriteria criteria = new EventTypeCriteria();
+		criteria.addLoginId(attribute.getLogin().getId());
+		
+		List<EventType> eventTypes = eventTypeDAO.retrieve(criteria, 0);
 		logger.debug("eventTypes:" + eventTypes);
 
-//		Map<Integer, List<EventTemplate>> tmplMap = new TreeMap<Integer, List<EventTemplate>>();
-//
-//		for (EventType eventType : eventTypes) {
-//			Integer id = eventType.getId();
-//			List<EventTemplate> list = eventTemplateDAO.getFromEventTypeId(id);
-//			logger.debug("found Tmpls on id =" + id + ", tmpls=" + list);
-//			tmplMap.put(id, list);
-//		}
+		Map<Integer, List<EventTemplate>> tmplMap = new TreeMap<Integer, List<EventTemplate>>();
+
+		for (EventType eventType : eventTypes) {
+			Integer id = eventType.getId();
+			List<EventTemplate> list = eventTemplateDAO.getFromEventTypeId(id, attribute.getLogin().getId());
+			logger.debug("found Tmpls on id =" + id + ", tmpls=" + list);
+			tmplMap.put(id, list);
+		}
 		
-		HttpSession session = request.getSession();
 //		eventTypeController.verifySessionAttributes(session);
 		session.removeAttribute(SES_SEARCH_CRITERIA_TMPL_LIST);
 		session.removeAttribute(SES_EVENT_TEMPLATEMAP_ON_TID);
@@ -93,14 +99,19 @@ public class SearchController extends WebTokensAbstract {
 	public String searchTypesPost(@RequestParam Map<String, String> params, Model model, HttpServletRequest request) {
 		logger.debug("search-types.do: params=" + params);
 
-		String typeIdStr = (String) params.get(REQ_PARAM_EVENT_TYPE_ID);
+		HttpSession session = request.getSession();
+		WebLogin attribute = (WebLogin) session.getAttribute(SES_AUTHENTICATED_USER);
+		
+		String typeIdStr = (String) params.get(EVENT_TMPL_LIST_SHOW);
 		logger.debug("Home Page Requested, attribute = " + typeIdStr);
 
-//		List<EventType> eventTypes = eventTypeDAO.lookup();
+		EventTypeCriteria typeCrit = new EventTypeCriteria();
+		typeCrit.addLoginId(attribute.getLogin().getId());
+		
+//		List<EventType> eventTypes = eventTypeDAO.retrieve(typeCrit, 0);
 		Integer eT = Integer.valueOf(typeIdStr);
-		List<EventTemplate> eventTemplates = eventTemplateDAO.getFromEventTypeId(eT);
+		List<EventTemplate> eventTemplates = eventTemplateDAO.getFromEventTypeId(eT,attribute.getLogin().getId());
 
-		HttpSession session = request.getSession();
 //		session.setAttribute(SES_EVENT_TYPES, eventTypes);
 		session.setAttribute(SES_EVENT_TEMPLATES, eventTemplates);
 		session.setAttribute(SES_SELECTED_EVENT_TYPE_ID, eT);
@@ -115,14 +126,18 @@ public class SearchController extends WebTokensAbstract {
 	 * 
 	 * @param params
 	 * @param model
-	 * @param httpServletRequest
+	 * @param request
 	 * @return
 	 */
 	@RequestMapping(value = "/search.do", method = RequestMethod.POST)
 	public String doSearch(@RequestParam Map<String, String> params, Model model,
-			HttpServletRequest httpServletRequest) {
+			HttpServletRequest request) {
 
 		logger.debug("doSearch: RequestParams params = " + params);
+		HttpSession session = request.getSession();
+
+		WebLogin attribute = (WebLogin) session.getAttribute(SES_AUTHENTICATED_USER);
+		
 		String startDate = params.get("from-date");
 		String interval = params.get("interval");
 		String cStr = params.get("count");
@@ -140,7 +155,6 @@ public class SearchController extends WebTokensAbstract {
 				+ tl.getSlots().size());
 
 		
-		HttpSession session = httpServletRequest.getSession();
 		
 		// grabbing templateIds from session
 		List<Integer> templateIds = new ArrayList<Integer>();
@@ -156,7 +170,7 @@ public class SearchController extends WebTokensAbstract {
 
 		logger.debug("eventTemplateIds=" + templateIds);
 
-		List<Event> events = searchDAO.searchEvents(tl.getStartDate(), tl.getEndDate(), templateIds);
+		List<Event> events = searchDAO.searchEvents(tl.getStartDate(), tl.getEndDate(), templateIds, attribute.getLogin().getId());
 
 		for (Event event : events) {
 			TimelineData data = new TimelineDataEventImpl(event);
@@ -276,14 +290,17 @@ public class SearchController extends WebTokensAbstract {
 	 * 
 	 * @param params
 	 * @param model
-	 * @param httpServletRequest
+	 * @param request
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
 	@RequestMapping(value = "/search-add-tmpl.do", method = RequestMethod.POST)
 	public String searchAddTmpl(@RequestParam Map<String, String> params, Model model,
-			HttpServletRequest httpServletRequest) {
+			HttpServletRequest request) {
 		logger.debug("search-add-tmpl.do: RequestParams params = " + params);
+		HttpSession session = request.getSession();
+		WebLogin login = (WebLogin) session.getAttribute(SES_AUTHENTICATED_USER);
+		
 		int int1 = 0;
 		String tmplIdStr = params.get("templateId");
 		if (tmplIdStr != null) {
@@ -295,9 +312,8 @@ public class SearchController extends WebTokensAbstract {
 		}
 
 		EventTemplate eTemplate = null;
-		eTemplate = eventTemplateDAO.get(int1);
+		eTemplate = eventTemplateDAO.get(int1, login.getLogin().getId());
 
-		HttpSession session = httpServletRequest.getSession();
 		
 		List<EventTemplate> searchCrit = (List<EventTemplate>) session.getAttribute(SES_SEARCH_CRITERIA_TMPL_LIST);
 		if (searchCrit == null) {
@@ -317,8 +333,9 @@ public class SearchController extends WebTokensAbstract {
 	@SuppressWarnings("unchecked")
 	@RequestMapping(value = "/search-remove-template.do", method = RequestMethod.POST)
 	public String removeTmplFromSearch(@RequestParam Map<String, String> params, Model model,
-			HttpServletRequest httpServletRequest) {
+			HttpServletRequest request) {
 		logger.debug("/search-remove-template.do: RequestParams params = " + params);
+
 		Integer id = null;
 		String tmplIdStr = params.get("eventTemplateId");
 		if (tmplIdStr != null) {
@@ -329,7 +346,7 @@ public class SearchController extends WebTokensAbstract {
 			}
 		}
 
-		HttpSession session = httpServletRequest.getSession();
+		HttpSession session = request.getSession();
 		List<EventTemplate> list = (List<EventTemplate>) session.getAttribute(SES_SEARCH_CRITERIA_TMPL_LIST);
 
 		if (list != null) {

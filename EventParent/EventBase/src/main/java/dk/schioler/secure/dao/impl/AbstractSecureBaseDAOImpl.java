@@ -17,7 +17,6 @@ import org.springframework.stereotype.Service;
 
 import dk.schioler.event.base.dao.EventDAOException;
 import dk.schioler.secure.dao.SecureBaseDAO;
-import dk.schioler.secure.entity.Login;
 import dk.schioler.secure.entity.SecureEntity;
 import dk.schioler.secure.table.SecureTable;
 
@@ -53,7 +52,7 @@ public abstract class AbstractSecureBaseDAOImpl<T extends SecureEntity> implemen
 	protected abstract boolean validateInsertObject(T type);
 
 	@Override
-	public T insert(T type, Login login) {
+	public T insert(T type) {
 		logger.trace("insert of " + type);
 		try {
 			if (validateInsertObject(type)) {
@@ -104,7 +103,7 @@ public abstract class AbstractSecureBaseDAOImpl<T extends SecureEntity> implemen
 	}
 
 	@Override
-	public int update(T type, Login login) {
+	public int update(T type) {
 		StringBuffer sql = table.getUpdateSQL();
 
 		Map<String, Object> updateMappings = table.getUpdatetMappings(type);
@@ -118,7 +117,7 @@ public abstract class AbstractSecureBaseDAOImpl<T extends SecureEntity> implemen
 	}
 
 	@Override
-	public int delete(Integer id, Login login) {
+	public int delete(Integer id) {
 		StringBuffer sb = table.getDeleteSQL();
 		Map<String, Object> deleteMapping = table.getIdMapping(id);
 
@@ -131,18 +130,20 @@ public abstract class AbstractSecureBaseDAOImpl<T extends SecureEntity> implemen
 	}
 
 	@Override
-	public List<T> retrieve(Map<String, Object> criteria, Login login) {
+	public List<T> retrieve(T criteria, int maxRows) {
 		StringBuffer retrieveSQL = table.getRetrieveSQL(criteria, 0);
 		logger.debug("retrieve: sql = " + retrieveSQL);
-
-		MapSqlParameterSource paramSource = new MapSqlParameterSource(criteria);
+		
+		Map<String,Object> crit = table.getRetrieveMappings(criteria);
+		
+		MapSqlParameterSource paramSource = new MapSqlParameterSource(crit);
 
 		return jdbcTemplate.query(retrieveSQL.toString(), paramSource, table.getRowMapper());
 
 	}
 
 	@Override
-	public T get(Integer id, Login login) {
+	public T get(Integer id) {
 		String sql = table.getFromIdSQL(id);
 		Map<String, Object> map = table.getIdMapping(id);
 

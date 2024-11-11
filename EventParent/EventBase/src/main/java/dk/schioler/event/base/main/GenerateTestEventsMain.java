@@ -65,41 +65,44 @@ public class GenerateTestEventsMain {
 
 	
 	public void generate(int count ) {
-		List<EventTemplate> eventTemplate = eventTemplateDAO.lookup();
-
-		UniformRandomProvider rng = RandomSource.XO_RO_SHI_RO_128_PP.create();
-
-		for (int i = 0; i < count; i++) {
-			int nextInt = rng.nextInt(0, eventTemplate.size());
-
-			EventTemplate tmpl = eventTemplate.get(nextInt);
-			Event randomEvent = generateRandomEvent(tmpl);
-			eventDAO.insert(randomEvent);
-		}
+//		EventTemplate crit = new EventTemplate();
+//		
+//		
+//		List<EventTemplate> eventTemplate = eventTemplateDAO.retrieve(crit, 0);
+//
+//		UniformRandomProvider rng = RandomSource.XO_RO_SHI_RO_128_PP.create();
+//
+//		for (int i = 0; i < count; i++) {
+//			int nextInt = rng.nextInt(0, eventTemplate.size());
+//
+//			EventTemplate tmpl = eventTemplate.get(nextInt);
+//			Event randomEvent = generateRandomEvent(tmpl);
+//			eventDAO.insert(randomEvent);
+//		}
 	}
 
-	public Event generateRandomEvent(EventTemplate template) {
-		Event e = new Event();	
-		e.setEventTemplateId(template.getId());
-		e.setName(template.getName());
-		e.setShortName(template.getShortName());
-		e.setDose(template.getDose());
-		e.setUnit(template.getUnit());
+//	public Event generateRandomEvent(EventTemplate template) {
+//		Event e = new Event();	
+//		e.setEventTemplateId(template.getId());
+//		e.setName(template.getName());
+//		e.setShortName(template.getShortName());
+//		e.setDose(template.getDose());
+//		e.setUnit(template.getUnit());
+//
+//		UniformRandomProvider rng = RandomSource.XO_RO_SHI_RO_128_PP.create();
+//
+//		int year = rng.nextInt(2020, 2023);
+//		int month = rng.nextInt(1, 13);
+//		int day = rng.nextInt(1, 28);
+//		int hour = rng.nextInt(0, 12);
+//		int minute = rng.nextInt(1, 60);
+//		int sec = rng.nextInt(1, 60);
+//		
+//
+//		LocalDateTime eventTS = LocalDateTime.of(year, month, day, hour, minute, sec);
+//		
+//		e.setEventTS(eventTS);
+//		return e;
 
-		UniformRandomProvider rng = RandomSource.XO_RO_SHI_RO_128_PP.create();
-
-		int year = rng.nextInt(2020, 2023);
-		int month = rng.nextInt(1, 13);
-		int day = rng.nextInt(1, 28);
-		int hour = rng.nextInt(0, 12);
-		int minute = rng.nextInt(1, 60);
-		int sec = rng.nextInt(1, 60);
-		
-
-		LocalDateTime eventTS = LocalDateTime.of(year, month, day, hour, minute, sec);
-		
-		e.setEventTS(eventTS);
-		return e;
-
-	}
+//	}
 }

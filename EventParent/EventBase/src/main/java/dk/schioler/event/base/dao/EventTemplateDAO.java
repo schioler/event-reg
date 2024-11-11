@@ -8,6 +8,6 @@ import dk.schioler.event.base.entity.EventTemplate;
 
 @Service
 public interface EventTemplateDAO extends BaseEventDAO<EventTemplate> {
-	public List<EventTemplate> getFromEventTypeId(Integer eventTypeId);
-
+	public List<EventTemplate> getFromEventTypeId(Integer eventTypeId, Integer loginId);
+	public List<EventTemplate> getFavourites(Integer loginId);
 }

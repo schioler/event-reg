@@ -2,11 +2,9 @@ package dk.schioler.event.base.entity;
 
 import java.util.Objects;
 
-public class EventTemplate extends AbstractEntity {
+import dk.schioler.event.base.EventBaseException;
 
-	private Integer eventTypeId;
-	
-	private String name;
+public class EventTemplate extends AbstractEntity {
 
 	private String shortName;
 
@@ -15,29 +13,59 @@ public class EventTemplate extends AbstractEntity {
 	private String unit;
 
 	private String dose;
-	
-	
+
+	private Integer sortOrder;
+
+	private boolean isFavorite;
+
 	public EventTemplate() {
-		super(null);
-	
+		super(null, null, null);
+
 	}
 
-	
-	
-	
-	public EventTemplate(Integer id, Integer eventTypeId, String name, String shortName, String description,
-			String unit, String dose) {
-		super(id);
-		this.eventTypeId = eventTypeId;
-		this.name = name;
-		this.shortName = shortName;
-		this.description = description;
-		this.unit = unit;
-		this.dose = dose;
+	public EventTemplate(Integer id, Integer loginId, String name) {
+		super(id, loginId, name);
 	}
 
+	@Override
+	public AbstractEntity instantiateParent() {
+		return new EventType();
+	}
 
+	@Override
+	public void setParent(AbstractEntity parent) {
+		if (parent instanceof EventType) {
+			super.setParent(parent);
+		} else {
+			throw new EventBaseException("EventTemplate can only have EventType as parent");
+		}
+	}
 
+	@Override
+	public void addChild(AbstractEntity child) {
+		if (child instanceof Event) {
+			super.addChild(child);
+		} else {
+			throw new EventBaseException("EventTemplate can only have Event as child");
+		}
+
+	}
+
+	public Integer getSortOrder() {
+		return sortOrder;
+	}
+
+	public void setSortOrder(Integer sortOrder) {
+		this.sortOrder = sortOrder;
+	}
+
+	public boolean isFavorite() {
+		return isFavorite;
+	}
+
+	public void setFavorite(boolean isFavorite) {
+		this.isFavorite = isFavorite;
+	}
 
 	public String getUnit() {
 		return unit;
@@ -63,14 +91,6 @@ public class EventTemplate extends AbstractEntity {
 		this.description = description;
 	}
 
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
 	public String getShortName() {
 		return shortName;
 	}
@@ -79,19 +99,26 @@ public class EventTemplate extends AbstractEntity {
 		this.shortName = shortName;
 	}
 
-	public Integer getEventTypeId() {
-		return eventTypeId;
-	}
-
-	public void setEventTypeId(Integer eventTypeId) {
-		this.eventTypeId = eventTypeId;
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append(super.toString());
+		builder.append("[ ");
+		builder.append("shortName=").append(shortName);
+		builder.append(", description=").append(description);
+		builder.append(", unit=").append(unit);
+		builder.append(", dose=").append(dose);
+		builder.append(", sortOrder=").append(sortOrder);
+		builder.append(", isFavorite=").append(isFavorite);
+		builder.append("]");
+		return builder.toString();
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + Objects.hash(description, dose, eventTypeId, name, shortName, unit);
+		result = prime * result + Objects.hash(description, dose, isFavorite, shortName, sortOrder, unit);
 		return result;
 	}
 
@@ -105,30 +132,8 @@ public class EventTemplate extends AbstractEntity {
 			return false;
 		EventTemplate other = (EventTemplate) obj;
 		return Objects.equals(description, other.description) && Objects.equals(dose, other.dose)
-				&& Objects.equals(eventTypeId, other.eventTypeId) && Objects.equals(name, other.name)
-				&& Objects.equals(shortName, other.shortName) && Objects.equals(unit, other.unit);
+				&& isFavorite == other.isFavorite && Objects.equals(shortName, other.shortName)
+				&& Objects.equals(sortOrder, other.sortOrder) && Objects.equals(unit, other.unit);
 	}
 
-	@Override
-	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		builder.append("EventTemplate [eventTypeId=");
-		builder.append(eventTypeId);
-		builder.append(", name=");
-		builder.append(name);
-		builder.append(", shortName=");
-		builder.append(shortName);
-		builder.append(", description=");
-		builder.append(description);
-		builder.append(", unit=");
-		builder.append(unit);
-		builder.append(", dose=");
-		builder.append(dose);
-		builder.append(", getId()=");
-		builder.append(getId());
-		builder.append("]");
-		return builder.toString();
-	}
-
-		
 }

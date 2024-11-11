@@ -62,7 +62,7 @@ public class EventDAOImpl extends AbstractDAOImpl<Event> implements EventDAO {
 	protected boolean validateInsertObject(Event type) {
 		boolean retVal = false;
 		if (type != null) {
-			if (type.getEventTemplateId() != null) {
+			if (type.getParent() != null) {
 				if (type.getName() != null) {
 					if (StringUtils.isNotEmpty(type.getDose())) {
 						if (StringUtils.isNotEmpty(type.getUnit())) {
@@ -163,10 +163,10 @@ public class EventDAOImpl extends AbstractDAOImpl<Event> implements EventDAO {
 //
 //	};
 
-	@Override
-	public void refreshCache() {
-		// TODO Auto-generated method stub
-
-	}
+//	@Override
+//	public void refreshCache() {
+//		// TODO Auto-generated method stub
+//
+//	}
 
 }

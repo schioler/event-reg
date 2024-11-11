@@ -54,7 +54,7 @@ public class SearchDAOTest extends AbstractJUnit4SpringContextTests {
 			Timeline timeline = new Timeline("testTL", TIMESLOT_LENGTH.MONTH, startdt,12 , factory);
 			logger.debug("timeline="+timeline.toString());
 			
-			List<Event> searchEvents = searchDAO.searchEvents(timeline.getStartDate(), timeline.getEndDate(), null);
+			List<Event> searchEvents = searchDAO.searchEvents(timeline.getStartDate(), timeline.getEndDate(), null, null);
 			
 			for (Event event : searchEvents) {
 				logger.debug("eI="+event);

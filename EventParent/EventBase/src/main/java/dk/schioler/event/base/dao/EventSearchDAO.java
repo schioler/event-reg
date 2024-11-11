@@ -11,7 +11,7 @@ import dk.schioler.event.base.entity.Event;
 @Service
 public interface EventSearchDAO extends SQLConstructs {
 
-	public List<Event> searchEvents(LocalDateTime startTime, LocalDateTime endTime, List<Integer> templateIds) throws EventDAOException;
+	public List<Event> searchEvents(LocalDateTime startTime, LocalDateTime endTime, List<Integer> templateIds, Integer loginId) throws EventDAOException;
 	
 	
 //	public void setRowsMax(int rowCount);

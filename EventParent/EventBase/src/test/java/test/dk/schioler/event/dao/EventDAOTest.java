@@ -22,6 +22,8 @@ import dk.schioler.event.base.dao.EventTypeDAO;
 import dk.schioler.event.base.entity.Event;
 import dk.schioler.event.base.entity.EventTemplate;
 import dk.schioler.event.base.entity.EventType;
+import dk.schioler.secure.dao.LoginDAO;
+import dk.schioler.secure.entity.Login;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 //@ContextConfiguration("/ApplicationContext.xml")
@@ -42,6 +44,9 @@ public class EventDAOTest extends AbstractJUnit4SpringContextTests {
 
 	@Autowired
 	EventDAO eventDAO;
+	
+	@Autowired
+	LoginDAO loginDAO;
 
 	@Test
 	public void testStoreEventObjects() {
@@ -49,7 +54,12 @@ public class EventDAOTest extends AbstractJUnit4SpringContextTests {
 		Integer eventTmplid = null;
 		Integer eventId = null;
 		try {
-			EventType et = new EventType(null, "eventType1", "et1", "EventypeTest nr 1");
+			Login login = loginDAO.getLogin("");
+			
+			EventType et = new EventType();
+			et.setName("eventType1");
+			et.setShortName("et");
+			et.setDescription("EventypeTest nr 1");
 			EventType eventType = eventTypeDAO.insert(et);
 			logger.debug("et=" + et);
 			logger.debug("insert=" + eventType);
@@ -60,7 +70,16 @@ public class EventDAOTest extends AbstractJUnit4SpringContextTests {
 			eventType.setDescription("updated");
 			eventTypeDAO.update(eventType);
 
-			EventTemplate eTmpl = new EventTemplate(null, eventTypeIid, "eTmpl", "Simet", "desc", "unit", "dose");
+			EventTemplate eTmpl = new EventTemplate();
+			// null, eventTypeIid, "eTmpl", "Simet", "desc", "unit", "dose"
+			eTmpl.setParentId(et.getId());
+			eTmpl.setLoginId(login.getId());			
+			eTmpl.setName("Sinemet");
+			eTmpl.setShortName("SIN");
+			eTmpl.setDescription("Tmpl Description");
+			eTmpl.setDose("dose");
+			eTmpl.setUnit("unit");
+			
 			EventTemplate eventTmpl = eventTemplateDAO.insert(eTmpl);
 			eventTmplid = eventTmpl.getId();
 
@@ -69,7 +88,8 @@ public class EventDAOTest extends AbstractJUnit4SpringContextTests {
 			
 			Event e = new Event();
 			//null, eventTmplid, "" , null
-			e.setEventTemplateId(eTmpl.getId());
+			e.setParentId(eTmpl.getId());
+			e.setLoginId(login.getId());
 			e.setName("eName");
 			e.setShortName("sName");
 			e.setNote("note");

@@ -17,15 +17,16 @@ import org.springframework.stereotype.Service;
 
 import dk.schioler.event.base.dao.BaseEventDAO;
 import dk.schioler.event.base.dao.EventDAOException;
+import dk.schioler.event.base.dao.criteria.AbstractCriteria;
 import dk.schioler.event.base.dao.table.ISQLTable;
 import dk.schioler.event.base.entity.AbstractEntity;
+import dk.schioler.secure.dao.LoginDAO;
+import dk.schioler.secure.entity.Login;
 
 @Service
 public abstract class AbstractDAOImpl<T extends AbstractEntity> implements BaseEventDAO<T> {
 
 	protected Logger logger = LoggerFactory.getLogger(getClass());
-
-	protected final int CACHE_VALID_HOURS = 1;
 
 	protected ISQLTable<T> table;
 
@@ -45,6 +46,25 @@ public abstract class AbstractDAOImpl<T extends AbstractEntity> implements BaseE
 		return jdbcTemplate;
 	}
 
+	@Autowired
+	private LoginDAO loginDAO;
+	
+	
+
+	protected boolean verifyLoginId(Integer loginId) {
+		if (loginId == null) {
+			throw new EventDAOException("Provided loginId == null");
+		}
+		if (loginId.intValue()<1) {
+			throw new EventDAOException("Provided loginId is not valid");
+		}
+		Login login = loginDAO.get(loginId);
+		if (login == null) {
+			throw new EventDAOException("Could not verify the provided loginId");
+		}
+		return true;
+	}
+	
 	@Override
 	public T insert(T type) {
 		logger.trace("insert of " + type);
@@ -106,9 +126,9 @@ public abstract class AbstractDAOImpl<T extends AbstractEntity> implements BaseE
 	}
 
 	@Override
-	public int delete(Integer id) {
+	public int delete(Integer id, Integer loginId) {
 		StringBuffer sb = table.getDeleteSQL();
-		Map<String, Object> deleteMapping = table.getIdMapping(id);
+		Map<String, Object> deleteMapping = table.getIdMapping(id, loginId);
 
 		logger.trace("delete: sql=" + sb.toString());
 		logger.trace("delete: map=" + deleteMapping);
@@ -119,21 +139,24 @@ public abstract class AbstractDAOImpl<T extends AbstractEntity> implements BaseE
 	}
 
 	@Override
-	public List<T> retrieve(Map<String, Object> criteria) {
-		StringBuffer retrieveSQL = table.getRetrieveSQL(criteria, 0);
+	public List<T> retrieve(AbstractCriteria criteria, int maxRows) {
+		StringBuffer retrieveSQL = table.getRetrieveSQL(criteria, maxRows);
 		logger.debug("retrieve: sql = "+ retrieveSQL);
-		
-		MapSqlParameterSource paramSource = new MapSqlParameterSource(criteria);
+		Map<String,Object> retrieveMappings = table.getRetrieveMappings(criteria);
+		MapSqlParameterSource paramSource = new MapSqlParameterSource(retrieveMappings);
 
 		return jdbcTemplate.query(retrieveSQL.toString(), paramSource, table.getRowMapper());
 		
 	}
 
 	@Override
-	public T get(Integer id) {
-		String sql = table.getFromIdSQL(id);
-		Map<String, Object> map = table.getIdMapping(id);
+	public T get(Integer id, Integer loginId) {
+		String sql = table.getFromIdSQL();
+		
+		Map<String, Object> map = table.getIdMapping(id, loginId);
 
+		logger.debug("sql="+sql.toString());
+		
 		MapSqlParameterSource paramSource = new MapSqlParameterSource(map);
 
 		List<T> query = jdbcTemplate.query(sql.toString(), paramSource, table.getRowMapper());
@@ -141,101 +164,8 @@ public abstract class AbstractDAOImpl<T extends AbstractEntity> implements BaseE
 		return query.get(0);
 	}
 
-//	public StringBuffer getColumnsAsUpdateSQL() {
-//		StringBuffer sql = new StringBuffer();
-//
-//		List<String> updateColumns = table.getUpdateColumns();
-//		int size = updateColumns.size();
-//		for (int i = 0; i < size; i++) {
-//			String column = updateColumns.get(i);
-//			if (!FLD_ID.equals(column)) {
-//				sql.append(column).append(EQ).append(BIND).append(column);
-//				if (i + 1 < size) {
-//					sql.append(SEP);
-//				} else {
-//					sql.append(SPACE);
-//				}
-//			}
-//		}
-//
-//		return sql;
-//	}
 
-//	@Override
-//	public StringBuffer getInsertSqlFromColumns(List<String> columns) {
-//		StringBuffer sql = new StringBuffer();
-//
-//		sql.append(LEFT_PARENTHIS);
-//		int size = columns.size();
-//		for (int i = 0; i < size; i++) {
-//			String column = columns.get(i);
-//			if (!FLD_ID.equals(column)) {
-//				sql.append(column);
-//				if (i + 1 < size) {
-//					sql.append(SEP);
-//				}
-//			}
-//		}
-//		sql.append(RIGHT_PARENTHIS).append(SPACE);
-//		sql.append(VALUES).append(SPACE);
-//		sql.append(LEFT_PARENTHIS);
-//		size = columns.size();
-//		for (int i = 0; i < size; i++) {
-//			String column = columns.get(i);
-//			if (!FLD_ID.equals(column)) {
-//				sql.append(BIND).append(column);
-//				if (i + 1 < size) {
-//					sql.append(SEP);
-//				}
-//			}
-//		}
-//		sql.append(RIGHT_PARENTHIS).append(SPACE);
-//
-//		return sql;
-//	}
+	protected abstract boolean validateInsertObject(T type) throws EventDAOException;
 
-//	@Override
-//	public StringBuffer getSelectSqlFromColumns(List<String> columns) {
-//		StringBuffer sql = new StringBuffer();
-//
-//		int size = columns.size();
-//		for (int i = 0; i < size;) {
-//			String column = columns.get(i);
-//			sql.append(column);
-//			i++;
-//			if (i < size) {
-//				sql.append(SEP);
-//			} else {
-//				sql.append(SPACE);
-//			}
-//		}
-//
-//		return sql;
-//	}
-
-//	public abstract Map<String, Object> getUpdateMappings(T t);
-
-//	public abstract String getInsertSQL(T type);
-
-//	public abstract Map<String, Object> getInsertMappings(T t);
-
-	protected abstract boolean validateInsertObject(T type);
-
-	@Override
-	public List<T> lookup() {
-		StringBuffer sql = table.getRetrieveSQL(null, 20);
-//		StringBuffer sql = new StringBuffer();
-//		sql.append(SELECT).append(SPACE);
-//		sql.append(getSelectSqlFromColumns(table.getSelectColumns())).append(SPACE);
-//		sql.append(FROM).append(SPACE).append(getSQLTableName()).append(SPACE);
-//
-//		String orderBy = getOrderBy();
-//		if (StringUtils.isNoneEmpty(orderBy)) {
-//			sql.append(SPACE).append(ORDER_BY).append(SPACE).append(orderBy).append(SPACE);
-//		}
-		List<T> query = jdbcTemplate.query(sql.toString(), table.getRowMapper());
-
-		return query;
-	}
 
 }

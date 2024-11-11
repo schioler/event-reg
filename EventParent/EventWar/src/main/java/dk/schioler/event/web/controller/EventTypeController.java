@@ -1,22 +1,21 @@
 package dk.schioler.event.web.controller;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.View;
-import org.springframework.web.servlet.view.RedirectView;
 
-import dk.schioler.event.base.dao.EventTemplateDAO;
-import dk.schioler.event.base.dao.EventTypeDAO;
+import dk.schioler.event.base.dao.criteria.EventTypeCriteria;
 import dk.schioler.event.base.entity.EventType;
+import dk.schioler.event.web.WebLogin;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 
@@ -31,152 +30,192 @@ import jakarta.servlet.http.HttpSession;
  * 
  */
 @Controller
-public class EventTypeController extends WebTokensAbstract {
+public class EventTypeController extends AbstractController {
 	Logger logger = LoggerFactory.getLogger(getClass());
 
-	@Autowired
-	protected EventTypeDAO eventTypeDAO;
-
-	@Autowired
-	protected EventTemplateDAO eventTemplateDAO;
-
-	public void verifySessionAttributes(HttpSession session) {
-		@SuppressWarnings("unchecked")
-		List<EventType> typeList = (List<EventType>) session.getAttribute(SES_EVENT_TYPES);
-		if (typeList == null) {
-			typeList = eventTypeDAO.lookup();
-		}
-		session.setAttribute(SES_EVENT_TYPES, typeList);
-	}
-
-	@RequestMapping(value = REQ_EVENT_TYPE_LIST_SHOW, method = RequestMethod.GET)
+	@RequestMapping(value = EVENT_TYPE_LIST_SHOW, method = RequestMethod.GET)
 	public String showEventTypeListGet(@RequestParam Map<String, String> params, Model model,
 			HttpServletRequest request) {
-		logger.debug("event-type-list-show.do: params=" + params);
+		logger.debug(EVENT_TYPE_LIST_SHOW + ": params=" + params);
 
-		List<EventType> lookup = eventTypeDAO.lookup();
 		HttpSession session = request.getSession();
-		session.setAttribute(SES_EVENT_TYPES, lookup);
-		session.removeAttribute(SES_EVENT_TYPE);
-		return "redirect:event-type-list.jsp";
+		WebLogin wl = this.isValidLogin(session);
+		if (wl != null) {
+			EventTypeCriteria crit = new EventTypeCriteria();
+			crit.addLoginId(wl.getLogin().getId());
+
+			List<EventType> eventTypes = eventTypeDAO.retrieve(crit, 0);
+			session.setAttribute(SES_EVENT_TYPES, eventTypes);
+			session.removeAttribute(SES_EVENT_TYPE);
+
+			return EVENT_TYPE_LIST_JSP;
+		} else {
+			return PUBLIC_LOGIN_JSP;
+		}
 
 	}
 
-	@RequestMapping(value = REQ_EVENT_TYPE_CREATE_SHOW, method = RequestMethod.POST)
+	@RequestMapping(value = EVENT_TYPE_CREATE_SHOW, method = RequestMethod.POST)
 	public String eventTypeCreateShow(@RequestParam Map<String, String> params, Model model,
 			HttpServletRequest request) {
-		logger.debug("event-type-show.do: params=" + params);
-
-		// we want to create new
-//			session.removeAttribute(SES_EVENT_TYPE);
-		logger.debug("received no ID, will prepare for create");
-
-		return "redirect:event-type-create.jsp";
-
-	}
-
-	@RequestMapping(value = REQ_EVENT_TYPE_CREATE, method = RequestMethod.POST)
-	public View createEventTypePost(@RequestParam Map<String, String> params, Model model, HttpServletRequest request) {
-		logger.debug("event-type-create.do: params=" + params);
-
-		String name = params.get("name");
-		String shortName = params.get("shortName");
-		String description = params.get("description");
-
-		EventType eventType = new EventType();
-		eventType.setName(name);
-		eventType.setShortName(shortName);
-		eventType.setDescription(description);
-		eventTypeDAO.insert(eventType);
-		eventTypeDAO.refreshCache();
-		List<EventType> typeList = eventTypeDAO.lookup();
+		logger.debug(EVENT_TYPE_CREATE_SHOW + ": params=" + params);
 		HttpSession session = request.getSession();
-		session.setAttribute(SES_EVENT_TYPES, typeList);
-		session.removeAttribute(SES_EVENT_TYPE);
 
-		RedirectView view = new RedirectView("event-type-list.jsp");
+		WebLogin wl = this.isValidLogin(session);
+		if (wl != null && wl.isAuthenticated()) {
+			// we want to create new
+			session.removeAttribute(SES_EVENT_TYPE);
 
-		return view;
+			return EVENT_TYPE_JSP;
+		} else {
+			return PUBLIC_LOGIN_JSP;
+		}
+
 	}
 
-	@RequestMapping(value = REQ_EVENT_TYPE_UPDATE_SHOW, method = RequestMethod.POST)
+	@RequestMapping(value = EVENT_TYPE_CREATE, method = RequestMethod.POST)
+	public String createEventTypePost(@RequestParam Map<String, String> params, Model model,
+			HttpServletRequest request) {
+		logger.debug(EVENT_TYPE_CREATE + ": params=" + params);
+		HttpSession session = request.getSession();
+
+		WebLogin wl = this.isValidLogin(session);
+		if (wl != null) {
+			Integer loginId = wl.getLogin().getId();
+
+			EventType eventTypeInstance = this.createEventTypeInstance(params, wl.getLogin().getId());
+
+			eventTypeInstance = eventTypeDAO.insert(eventTypeInstance);
+
+			EventTypeCriteria c = new EventTypeCriteria();
+			c.addLoginId(wl.getLogin().getId());
+
+			List<EventType> typeList = eventTypeDAO.retrieve(c, 0);
+			session.setAttribute(SES_EVENT_TYPES, typeList);
+			session.removeAttribute(SES_EVENT_TYPE);
+
+			return EVENT_TYPE_LIST_JSP;
+
+		} else {
+			return PUBLIC_LOGIN_JSP;
+		}
+
+	}
+
+//	"redirect:event-type-update.jsp"
+	@RequestMapping(value = EVENT_TYPE_UPDATE_SHOW, method = RequestMethod.POST)
 	public String eventTypeUpdateShow(@RequestParam Map<String, String> params, Model model,
 			HttpServletRequest request) {
-		logger.debug("event-type-update-show.do: params=" + params);
+		logger.debug(EVENT_TYPE_UPDATE_SHOW + ": params=" + params);
 
 		HttpSession session = request.getSession();
+		WebLogin wl = this.isValidLogin(session);
 
-		String selectedEventTypeId = params.get("id");
+		if (wl != null && wl.isAuthenticated()) {
+			String selectedEventTypeId = params.get("id");
+			logger.debug("received an ID, will prepare for update");
 
-		// we want to update
-		Integer id = Integer.parseInt(selectedEventTypeId);
-		EventType eventType = eventTypeDAO.get(id);
+			// we want to update
+			Integer id = Integer.parseInt(selectedEventTypeId);
 
-		session.setAttribute(SES_EVENT_TYPE, eventType);
-		logger.debug("received an ID, will prepare for update");
+			EventTypeCriteria etC = new EventTypeCriteria();
+			etC.setLoginId(Collections.singletonList(wl.getLogin().getId()));
+			etC.setId(id);
+			List<EventType> eventTypes = eventTypeDAO.retrieve(etC, 0);
 
-		return "redirect:event-type-update.jsp";
+			if (eventTypes != null && eventTypes.size() == 1) {
+				EventType eventType = eventTypes.getFirst();
+				session.setAttribute(SES_EVENT_TYPE, eventType);
+			} else {
+				throw new EventWebControllerException(
+						"Did not recieve exactly one eventType, when attempting to lookup");
+			}
+
+			return EVENT_TYPE_JSP;
+
+		} else {
+			return PUBLIC_LOGIN_JSP;
+		}
 
 	}
 
-	@RequestMapping(value = REQ_EVENT_TYPE_UPDATE, method = RequestMethod.POST)
+	@RequestMapping(value = EVENT_TYPE_UPDATE, method = RequestMethod.POST)
 	public String eventTypeUpdate(@RequestParam Map<String, String> params, Model model, HttpServletRequest request) {
-		logger.debug("event-type-update.do: params=" + params);
-
-		String id = params.get("id");
-		String name = params.get("name");
-		String shortName = params.get("shortName");
-		String description = params.get("description");
-
-		EventType eventType = eventTypeDAO.get(Integer.valueOf(id));
-		eventType.setName(name);
-		eventType.setShortName(shortName);
-		eventType.setDescription(description);
-		eventTypeDAO.update(eventType);
-		eventTypeDAO.refreshCache();
-		List<EventType> typeList = eventTypeDAO.lookup();
+		logger.debug(EVENT_TYPE_UPDATE + " params=" + params);
 		HttpSession session = request.getSession();
+		WebLogin wl = this.isValidLogin(session);
+		if (wl != null) {
+			Integer loginId = wl.getLogin().getId();
 
-		session.setAttribute(SES_EVENT_TYPES, typeList);
-		session.removeAttribute(SES_EVENT_TYPE);
+			EventType eventTypeInstance = this.createEventTypeInstance(params, loginId);
+			int update = eventTypeDAO.update(eventTypeInstance);
+			logger.debug("updated " + update + " row(s)");
 
-		return "redirect:event-type-list.jsp";
+			EventTypeCriteria crit = new EventTypeCriteria();
+			crit.setLoginId(Collections.singletonList(loginId));
+			List<EventType> list = eventTypeDAO.retrieve(crit, 0);
+
+			session.setAttribute(SES_EVENT_TYPES, list);
+			session.removeAttribute(SES_EVENT_TYPE);
+
+			return EVENT_TYPE_LIST_JSP;
+		} else {
+			return PUBLIC_LOGIN_JSP;
+		}
+
 	}
 
-	@RequestMapping(value = REQ_EVENT_TYPE_DELETE_SHOW, method = RequestMethod.POST)
+	public static final String EVENT_TYPE_DELETE_JSP = "redirect:event-type-delete.jsp";
+
+	@RequestMapping(value = EVENT_TYPE_DELETE_SHOW, method = RequestMethod.POST)
 	public String eventTypeDeleteShow(@RequestParam Map<String, String> params, Model model,
 			HttpServletRequest request) {
-		logger.debug(REQ_EVENT_TYPE_DELETE_SHOW + ": params=" + params);
-
-		String id = params.get("id");
-
-//		eventTypeDAO.delete(Integer.valueOf(id));
-//		eventTypeDAO.refreshCache();
-//		List<EventType> typeList = eventTypeDAO.lookup();
-		EventType eventType = eventTypeDAO.get(Integer.valueOf(id));
+		logger.debug(EVENT_TYPE_DELETE_SHOW + ": params=" + params);
 		HttpSession session = request.getSession();
+		WebLogin wl = this.isValidLogin(session);
+		if (wl != null) {
+			Integer loginId = wl.getLogin().getId();
+			String id = params.get("id");
+			if (StringUtils.isBlank(id)) {
+				throw new EventWebInsufficientParameterValuesException("received insufficient value for id=" + id);
+			}
+//			
+			EventType eventType = eventTypeDAO.get(Integer.valueOf(id), loginId);
 
-		session.setAttribute(SES_EVENT_TYPE, eventType);
+			session.setAttribute(SES_EVENT_TYPE, eventType);
 
-		return "redirect:event-type-delete.jsp";
+			return EVENT_TYPE_DELETE_JSP;
+		} else {
+			return PUBLIC_LOGIN_JSP;
+		}
+
 	}
 
-	@RequestMapping(value = REQ_EVENT_TYPE_DELETE, method = RequestMethod.POST)
+	@RequestMapping(value = EVENT_TYPE_DELETE, method = RequestMethod.POST)
 	public String eventTypeDelete(@RequestParam Map<String, String> params, Model model, HttpServletRequest request) {
-		logger.debug(REQ_EVENT_TYPE_DELETE + ": params=" + params);
-
-		String id = params.get("id");
-
-		eventTypeDAO.delete(Integer.valueOf(id));
-		eventTypeDAO.refreshCache();
-		List<EventType> typeList = eventTypeDAO.lookup();
+		logger.debug(EVENT_TYPE_DELETE + ": params=" + params);
 
 		HttpSession session = request.getSession();
+		WebLogin wl = this.isValidLogin(session);
+		if (wl != null) {
+			Integer loginId = wl.getLogin().getId();
 
-		session.setAttribute(SES_EVENT_TYPES, typeList);
-		session.removeAttribute(SES_EVENT_TYPE);
+			String id = params.get("id");
 
-		return "redirect:event-type-list.jsp";
+			eventTypeDAO.delete(Integer.valueOf(id), loginId);
+			
+			EventTypeCriteria c = new EventTypeCriteria();
+			c.setLoginId(Collections.singletonList(loginId));
+			
+			List<EventType> typeList = eventTypeDAO.retrieve(c, 0);
+
+			session.setAttribute(SES_EVENT_TYPES, typeList);
+			session.removeAttribute(SES_EVENT_TYPE);
+
+			return EVENT_TYPE_LIST_JSP;
+		} else {
+			return PUBLIC_LOGIN_JSP;
+		}
 	}
 
 }

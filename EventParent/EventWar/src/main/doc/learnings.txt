@@ -1,7 +1,8 @@
 Learnings:
    1: jsp: form tags outside include
    
-   2: general:decide upon a req naming standard
+   2: general:decide upon a req naming standard: 
+      
    
    3: div/tables formatting?
    
@@ -11,7 +12,7 @@ Learnings:
       Use filter!.
    
    6: req flow autonmy
-      All state in session? 
+      All state in session. Yes. 
       
    7: On expired session -> redieect to start.
       jsp: implement in jsp filter
@@ -20,5 +21,29 @@ Learnings:
          Maybe establish a EventSessionCLass?
       
    7: What about (error) messages/ exception hierarchy
+   
+   8: Security
+      1: User login/authentication.
+         UserFilter reads all reuests
+            requests the contains *public* will be allowed: 
+            - public/login.jsp
+            - public/user-authenticate.do.
+               check user password agains db. 
+                  if match: create web-login instance
+                     store in session, fwd to show-register-event.do or user-req location
+                  if !match: back to login.jsp.
+        
+    9: Events and security
+      All event_type, event_template and events are registered with a login_ID. 
+      ALL tables has a login_id, that refs a login.
+     
+   10: login roles:
+      OWNER: Can do all actions, on all users
+      ADMIN: Can do all actions on this users  
+      PLAIN: Can create events in this users ctx
+      MONITOR: has only read privileges.
+            
+   
+       
    
     
