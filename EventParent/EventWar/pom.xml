@@ -13,11 +13,20 @@
    <packaging>war</packaging>
 
    <dependencies>
+<!--      <dependency>
+         <groupId>dk.schioler.shared.security</groupId>
+         <artifactId>Security</artifactId>
+      </dependency>
+-->      <dependency>
+         <groupId>dk.schioler.shared.timeline</groupId>
+         <artifactId>Timeline</artifactId>
+      </dependency>
 
       <dependency>
          <groupId>dk.schioler.event</groupId>
          <artifactId>EventBase</artifactId>
       </dependency>
+      
       <dependency>
          <groupId>org.postgresql</groupId>
          <artifactId>postgresql</artifactId>

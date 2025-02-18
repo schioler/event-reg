@@ -2,8 +2,7 @@ Learnings:
    1: jsp: form tags outside include
    
    2: general:decide upon a req naming standard: 
-      
-   
+         
    3: div/tables formatting?
    
    4: MessageBundle: create classes, that loads the properties files.

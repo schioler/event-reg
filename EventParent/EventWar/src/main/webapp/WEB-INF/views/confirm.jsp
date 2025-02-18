@@ -8,7 +8,8 @@
 <html>
 <head>
 <title>Confirm</title>
-<link rel="stylesheet" href="styles/event.css">
+<link rel="stylesheet" href="public/styles/cols.css">
+<link rel="stylesheet" href="public/styles/event.css">
 </head>
 <body>
 	<h1>Congrats - you have saved the following event:</h1>

@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import dk.schioler.event.base.dao.EventDAOException;
 import dk.schioler.event.base.dao.EventSearchDAO;
 import dk.schioler.event.base.entity.Event;
+import dk.schioler.event.base.entity.UNIT;
 
 @Service
 public class EventSearchDAOImpl implements EventSearchDAO {
@@ -45,7 +46,7 @@ public class EventSearchDAOImpl implements EventSearchDAO {
 //		sb.append(SELECT).append(SPACE);
 //		sb.append(EventDAOImpl.TABLE).append(DOT).append(EventDAOImpl.FLD_ID).append(SEP);
 //		sb.append(EventDAOImpl.TABLE).append(DOT).append(EventDAOImpl.FLD_EVENT_TEMPLATE_ID).append(SEP);
-//		sb.append(EventDAOImpl.TABLE).append(DOT).append(EventDAOImpl.FLD_EVENT_DATE).append(SEP);
+		//		sb.append(EventDAOImpl.TABLE).append(DOT).append(EventDAOImpl.FLD_EVENT_DATE).append(SEP);
 //		sb.append(EventDAOImpl.TABLE).append(DOT).append(EventDAOImpl.FLD_NAME).append(SEP);
 //		sb.append(EventDAOImpl.TABLE).append(DOT).append(EventDAOImpl.FLD_DOSE).append(SEP);
 //		sb.append(EventDAOImpl.TABLE).append(DOT).append(EventDAOImpl.FLD_UNIT).append(SEP);
@@ -105,8 +106,8 @@ public class EventSearchDAOImpl implements EventSearchDAO {
 			event.setParentId(rs.getInt(2));
 			event.setEventTS(rs.getTimestamp(3).toLocalDateTime());
 			event.setName(rs.getString(4));
-			event.setDose(rs.getString(5));
-			event.setUnit(rs.getString(6));
+			event.setDose(rs.getBigDecimal(5));
+			event.setUnit(UNIT.getUnit(rs.getString(6)));
 			event.setNote(rs.getString(7));
 			logger.debug("row=" + event);
 			return event;

@@ -5,8 +5,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import dk.schioler.event.base.dao.criteria.EventTypeCriteria;
 import dk.schioler.event.base.entity.EventType;
 import dk.schioler.event.web.WebLogin;
+import dk.schioler.event.web.controller.exception.EventWebControllerException;
+import dk.schioler.event.web.controller.exception.EventWebInsufficientParameterValuesException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 
@@ -31,18 +31,19 @@ import jakarta.servlet.http.HttpSession;
  */
 @Controller
 public class EventTypeController extends AbstractController {
-	Logger logger = LoggerFactory.getLogger(getClass());
+
 
 	@RequestMapping(value = EVENT_TYPE_LIST_SHOW, method = RequestMethod.GET)
 	public String showEventTypeListGet(@RequestParam Map<String, String> params, Model model,
 			HttpServletRequest request) {
 		logger.debug(EVENT_TYPE_LIST_SHOW + ": params=" + params);
-
+		
 		HttpSession session = request.getSession();
-		WebLogin wl = this.isValidLogin(session);
+		WebLogin wl = this.getAuthenticatedLogin(session);
 		if (wl != null) {
+			session.removeAttribute(SES_STATUS_MSG_LIST);
 			EventTypeCriteria crit = new EventTypeCriteria();
-			crit.addLoginId(wl.getLogin().getId());
+			crit.addLoginId(wl.getOwner().getId());
 
 			List<EventType> eventTypes = eventTypeDAO.retrieve(crit, 0);
 			session.setAttribute(SES_EVENT_TYPES, eventTypes);
@@ -50,6 +51,7 @@ public class EventTypeController extends AbstractController {
 
 			return EVENT_TYPE_LIST_JSP;
 		} else {
+			resetStatus(session);
 			return PUBLIC_LOGIN_JSP;
 		}
 
@@ -61,12 +63,12 @@ public class EventTypeController extends AbstractController {
 		logger.debug(EVENT_TYPE_CREATE_SHOW + ": params=" + params);
 		HttpSession session = request.getSession();
 
-		WebLogin wl = this.isValidLogin(session);
+		WebLogin wl = this.getAuthenticatedLogin(session);
 		if (wl != null && wl.isAuthenticated()) {
 			// we want to create new
 			session.removeAttribute(SES_EVENT_TYPE);
 
-			return EVENT_TYPE_JSP;
+			return EVENT_TYPE_CREATE_JSP;
 		} else {
 			return PUBLIC_LOGIN_JSP;
 		}
@@ -79,16 +81,16 @@ public class EventTypeController extends AbstractController {
 		logger.debug(EVENT_TYPE_CREATE + ": params=" + params);
 		HttpSession session = request.getSession();
 
-		WebLogin wl = this.isValidLogin(session);
+		WebLogin wl = this.getAuthenticatedLogin(session);
 		if (wl != null) {
-			Integer loginId = wl.getLogin().getId();
+			Integer loginId = wl.getOwner().getId();
 
-			EventType eventTypeInstance = this.createEventTypeInstance(params, wl.getLogin().getId());
+			EventType eventTypeInstance = this.createEventTypeInstance(params, loginId);
 
 			eventTypeInstance = eventTypeDAO.insert(eventTypeInstance);
 
 			EventTypeCriteria c = new EventTypeCriteria();
-			c.addLoginId(wl.getLogin().getId());
+			c.addLoginId(wl.getOwner().getId());
 
 			List<EventType> typeList = eventTypeDAO.retrieve(c, 0);
 			session.setAttribute(SES_EVENT_TYPES, typeList);
@@ -109,7 +111,7 @@ public class EventTypeController extends AbstractController {
 		logger.debug(EVENT_TYPE_UPDATE_SHOW + ": params=" + params);
 
 		HttpSession session = request.getSession();
-		WebLogin wl = this.isValidLogin(session);
+		WebLogin wl = this.getAuthenticatedLogin(session);
 
 		if (wl != null && wl.isAuthenticated()) {
 			String selectedEventTypeId = params.get("id");
@@ -119,19 +121,19 @@ public class EventTypeController extends AbstractController {
 			Integer id = Integer.parseInt(selectedEventTypeId);
 
 			EventTypeCriteria etC = new EventTypeCriteria();
-			etC.setLoginId(Collections.singletonList(wl.getLogin().getId()));
-			etC.setId(id);
+			etC.setLoginId(Collections.singletonList(wl.getOwner().getId()));
+			etC.addId(id);
 			List<EventType> eventTypes = eventTypeDAO.retrieve(etC, 0);
 
 			if (eventTypes != null && eventTypes.size() == 1) {
-				EventType eventType = eventTypes.getFirst();
+				EventType eventType = eventTypes.get(0);
 				session.setAttribute(SES_EVENT_TYPE, eventType);
 			} else {
 				throw new EventWebControllerException(
 						"Did not recieve exactly one eventType, when attempting to lookup");
 			}
 
-			return EVENT_TYPE_JSP;
+			return EVENT_TYPE_UPDATE_JSP;
 
 		} else {
 			return PUBLIC_LOGIN_JSP;
@@ -143,9 +145,9 @@ public class EventTypeController extends AbstractController {
 	public String eventTypeUpdate(@RequestParam Map<String, String> params, Model model, HttpServletRequest request) {
 		logger.debug(EVENT_TYPE_UPDATE + " params=" + params);
 		HttpSession session = request.getSession();
-		WebLogin wl = this.isValidLogin(session);
+		WebLogin wl = this.getAuthenticatedLogin(session);
 		if (wl != null) {
-			Integer loginId = wl.getLogin().getId();
+			Integer loginId = wl.getOwner().getId();
 
 			EventType eventTypeInstance = this.createEventTypeInstance(params, loginId);
 			int update = eventTypeDAO.update(eventTypeInstance);
@@ -172,9 +174,9 @@ public class EventTypeController extends AbstractController {
 			HttpServletRequest request) {
 		logger.debug(EVENT_TYPE_DELETE_SHOW + ": params=" + params);
 		HttpSession session = request.getSession();
-		WebLogin wl = this.isValidLogin(session);
+		WebLogin wl = this.getAuthenticatedLogin(session);
 		if (wl != null) {
-			Integer loginId = wl.getLogin().getId();
+			Integer loginId = wl.getOwner().getId();
 			String id = params.get("id");
 			if (StringUtils.isBlank(id)) {
 				throw new EventWebInsufficientParameterValuesException("received insufficient value for id=" + id);
@@ -196,9 +198,9 @@ public class EventTypeController extends AbstractController {
 		logger.debug(EVENT_TYPE_DELETE + ": params=" + params);
 
 		HttpSession session = request.getSession();
-		WebLogin wl = this.isValidLogin(session);
+		WebLogin wl = this.getAuthenticatedLogin(session);
 		if (wl != null) {
-			Integer loginId = wl.getLogin().getId();
+			Integer loginId = wl.getOwner().getId();
 
 			String id = params.get("id");
 

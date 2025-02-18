@@ -7,9 +7,9 @@
 <%@ page session="true"%>
 <html>
 <head>
-<title>EventType</title>
-<link rel="stylesheet" href="styles/cols.css">
-<link rel="stylesheet" href="styles/event.css">
+<title>EventType - create</title>
+<!-- <link rel="stylesheet" href="public/styles/cols.css"> -->
+<link rel="stylesheet" href="public/styles/event.css">
 </head>
 <body>
 <fmt:bundle
@@ -17,13 +17,34 @@
 	<div class="menu-div">
 		<%@ include file="include/menu.jsp"%>
 	</div>
-	<div class="content-div">
-		<br>
-		<form action="./event-type-create.do" method="post">
-      <%@ include file="include/event-type.jsp"%>
-		</form>
-		<br>
-	</div>
+      <form action="./event-type-create.do" method="post">
+         <div class="container-2-col"> 
+         <div>
+             Navn
+         </div>
+         <div>
+         <input type="hidden" name="event-type-id" value="${sesEventType.id }">
+         <input type="text" name="name" value="${sesEventType.name }">
+         </div>
+         
+         <div>ShortName</div>
+         <div>
+         <input type="text" name="short-name" value="${sesEventType.shortName }">
+         </div>
+
+         <div>Desc</div>
+         <div>
+         <input type="text" name="description" value="${sesEventType.description }">
+         </div>
+         
+     
+         <div>&nbsp;</div>
+         <div>
+         <input type="submit" > 
+         </div>
+         </div>
+      </form>
+      <br>
 
 </fmt:bundle>
 </body>

@@ -20,129 +20,130 @@ import jakarta.servlet.http.HttpSession;
 
 @Controller
 public class EventQueueController extends AbstractController {
-//	Logger logger = LoggerFactory.getLogger(getClass());
-//
-//	@Autowired
-//	protected EventTypeDAO eventTypeDAO;
-//
-//	@Autowired
-//	protected EventTemplateDAO eventTemplateDAO;
-//
-//	@Autowired
-//	protected EventDAO eventDAO;
 
-	/**
-	 * QUEUE
-	 * 
-	 * @param params
-	 * @param model
-	 * @param request
-	 * @return
-	 */
-	@RequestMapping(value = "/event-queue-add.do", method = RequestMethod.POST)
-	public String eventAddToQueue(@RequestParam Map<String, String> params, Model model, HttpServletRequest request) {
-		logger.debug("event-add-to-queue-do: RequestParams params = " + params);
-		HttpSession session = request.getSession();
-		WebLogin wl = this.isValidLogin(session);
-		if (wl != null) {
-			Integer loginId = wl.getLogin().getId();
+   /**
+    * QUEUE
+    * 
+    * @param params
+    * @param model
+    * @param request
+    * @return
+    */
+   @RequestMapping(value = "/event-queue-add.do", method = RequestMethod.POST)
+   public String eventAddToQueue(@RequestParam Map<String, String> params, Model model, HttpServletRequest request) {
+      logger.debug("event-add-to-queue-do: RequestParams params = " + params);
+      HttpSession session = request.getSession();
+      WebLogin wl = this.getAuthenticatedLogin(session);
+      if (wl != null) {
+         Integer loginId = wl.getOwner().getId();
 
-			List<String> errors = new ArrayList<String>();
+         List<String> errors = new ArrayList<String>();
 
-			Event event = createEventInstance(params, loginId);
+         Event event = createEventInstance(params, loginId);
 
-			List<Event> eventsToInsert = new ArrayList<Event>();
-			eventsToInsert.add(event);
+         List<Event> eventsToInsert = new ArrayList<Event>();
+         eventsToInsert.add(event);
 
-			@SuppressWarnings("unchecked")
-			List<Event> eventQ = (List<Event>) session.getAttribute(SES_EVENT_QUEUE);
-			if (eventQ == null) {
-				logger.debug("found " + SES_EVENT_QUEUE + " = null");
-				eventQ = new ArrayList<Event>();
-			} else {
-				logger.debug("found " + SES_EVENT_QUEUE + " =" + eventQ);
-			}
+         @SuppressWarnings("unchecked")
+         List<Event> eventQ = (List<Event>) session.getAttribute(SES_EVENT_QUEUE);
+         if (eventQ == null) {
+            logger.debug("found " + SES_EVENT_QUEUE + " = null");
+            eventQ = new ArrayList<Event>();
+         } else {
+            logger.debug("found " + SES_EVENT_QUEUE + " =" + eventQ);
+         }
 
-			eventQ.add(event);
+         eventQ.add(event);
 
-			logger.debug("eventQueue=" + eventQ);
-			session.setAttribute(SES_EVENT_QUEUE, eventQ);
+         logger.debug("eventQueue=" + eventQ);
+         session.setAttribute(SES_EVENT_QUEUE, eventQ);
 
-			return "redirect:event.jsp";
-		} else {
-			return PUBLIC_LOGIN_JSP;
-		}
-	}
+         return "redirect:event.jsp";
+      } else {
+         return PUBLIC_LOGIN_JSP;
+      }
+   }
 
-	@RequestMapping(value = "/event-queue-store.do", method = RequestMethod.POST)
-	public String storeQueue(Locale locale, Model model, HttpServletRequest request) {
-		logger.debug("/event-queue-store.do called");
+   @RequestMapping(value = "/event-queue-store.do", method = RequestMethod.POST)
+   public String storeQueue(Locale locale, Model model, HttpServletRequest request) {
+      logger.debug("/event-queue-store.do called");
 
-		HttpSession session = request.getSession();
-		@SuppressWarnings("unchecked")
-		List<Event> eventQueue = (List<Event>) session.getAttribute(SES_EVENT_QUEUE);
+      HttpSession session = request.getSession();
+      WebLogin wl = this.getAuthenticatedLogin(session);
 
-		List<Event> eventsInserted = new ArrayList<Event>();
-		if (eventQueue != null) {
-			if (eventQueue.size() > 0) {
-				for (Event event : eventQueue) {
-					Event insert = eventDAO.insert(event);
-					eventsInserted.add(insert);
-				}
-			} else {
-				logger.debug("found no eventQueue in session");
-			}
-		}
-		session.removeAttribute(SES_EVENT_QUEUE);
+      if (wl != null) {
+         @SuppressWarnings("unchecked")
+         List<Event> eventQueue = (List<Event>) session.getAttribute(SES_EVENT_QUEUE);
 
-		session.setAttribute(SES_EVENTS_INSERTED, eventsInserted);
-		return "redirect:event.jsp";
-	}
+         List<Event> eventsInserted = new ArrayList<Event>();
+         if (eventQueue != null) {
+            if (eventQueue.size() > 0) {
+               for (Event event : eventQueue) {
+                  Event insert = eventDAO.insert(event);
+                  eventsInserted.add(insert);
+               }
+            } else {
+               logger.debug("found no eventQueue in session");
+            }
+         }
+         session.removeAttribute(SES_EVENT_QUEUE);
 
-	@RequestMapping(value = "/event-queue-remove.do", method = RequestMethod.POST)
-	public String removeFromEventQueue(@RequestParam Map<String, String> params, Locale locale, Model model,
-			HttpServletRequest request) {
-		logger.debug("/eventRemoveFromEventQueue.do called");
-		logger.debug("params=" + params.toString());
+         session.setAttribute(SES_EVENTS_INSERTED, eventsInserted);
+         return "redirect:event.jsp";
+      } else {
+         return PUBLIC_LOGIN_JSP;
+      }
+   }
 
-		String name = params.get("name");
-		if (name != null) {
-			name = name.trim();
-		}
+   @RequestMapping(value = "/event-queue-remove.do", method = RequestMethod.POST)
+   public String removeFromEventQueue(@RequestParam Map<String, String> params, Locale locale, Model model, HttpServletRequest request) {
+      logger.debug("/eventRemoveFromEventQueue.do called");
+      logger.debug("params=" + params.toString());
 
-		String templateId = params.get("templateId");
-		Integer integer = null;
-		if (StringUtils.isNotBlank(templateId)) {
-			integer = Integer.parseInt(templateId);
-		}
-		logger.debug("name=" + name + ", tmplId=" + integer);
+      HttpSession session = request.getSession();
+      WebLogin wl = this.getAuthenticatedLogin(session);
+      if (wl != null) {
 
-		try {
-			HttpSession session = request.getSession();
+         String name = params.get("name");
+         if (name != null) {
+            name = name.trim();
+         }
 
-			@SuppressWarnings("unchecked")
-			List<Event> eventQueue = (List<Event>) session.getAttribute(SES_EVENT_QUEUE);
-			for (int i = 0; i < eventQueue.size(); i++) {
-				Event event = eventQueue.get(i);
-				logger.debug("inQueue=" + event);
-				if (name.equals(event.getName().trim())) {
-					if (integer != null && integer.equals(event.getParentId())) {
-						logger.debug("removing event from Queue");
+         String templateId = params.get("templateId");
+         Integer integer = null;
+         if (StringUtils.isNotBlank(templateId)) {
+            integer = Integer.parseInt(templateId);
+         }
+         logger.debug("name=" + name + ", tmplId=" + integer);
 
-						eventQueue.remove(i);
-					}
+         try {
+//            HttpSession session = request.getSession();
 
-				}
-			}
-			session.removeAttribute(SES_EVENT_QUEUE);
+            @SuppressWarnings("unchecked")
+            List<Event> eventQueue = (List<Event>) session.getAttribute(SES_EVENT_QUEUE);
+            for (int i = 0; i < eventQueue.size(); i++) {
+               Event event = eventQueue.get(i);
+               logger.debug("inQueue=" + event);
+               if (name.equals(event.getName().trim())) {
+                  if (integer != null && integer.equals(event.getParentId())) {
+                     logger.debug("removing event from Queue");
 
-			session.setAttribute(SES_EVENT_QUEUE, eventQueue);
-		} catch (Exception e) {
-			logger.error(e.getLocalizedMessage(), e);
-		}
+                     eventQueue.remove(i);
+                  }
 
-		return "redirect:event.jsp";
+               }
+            }
+            session.removeAttribute(SES_EVENT_QUEUE);
 
-	}
+            session.setAttribute(SES_EVENT_QUEUE, eventQueue);
+         } catch (Exception e) {
+            logger.error(e.getLocalizedMessage(), e);
+         }
+         return "redirect:event.jsp";
+      } else {
+         return PUBLIC_LOGIN_JSP;
+      }
+
+   }
 
 }

@@ -1,4 +1,4 @@
-<select name="reqEventTypeId" id="reqEventTypeId"
+<select name="req-event-type-id" id="req-event-type-id"
 	onchange="this.form.submit()">
 	<c:choose>
 		<c:when test="${empty sesSelectedEventTypeId }">

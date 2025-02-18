@@ -8,42 +8,111 @@
 <head>
 
 <title>EventTmplList</title>
-<link rel="stylesheet" href="styles/cols.css">
-<link rel="stylesheet" href="styles/event.css">
+<!-- <link rel="stylesheet" href="public/styles/cols.css"> -->
+<link rel="stylesheet" href="public/styles/event.css">
 </head>
 <body>
 <fmt:bundle
    basename="dk.schioler.event.base.resources.EventListResources">
-	<div class="menu-div">	
-		<%@ include file="include/menu.jsp"%>
-	</div>
-	<div class="content-div">
-      <h3>Event Tmpl List</h3>
-                     
-						<form action="./event-tmpl-type-select.do" method="post">
-				            <%@ include file="include/event-type-select.jsp"%>
-						</form>               
+
+
+   
+   <%@ include file="include/menu.jsp"%>
+   <%@ include file="include/status.jsp"%>
+   
+   <H3>
+      <fmt:message key="event-template.list" />
+      </H3>
+<hr>
+	<form action="./event-tmpl-type-select.do" method="post">
+      <%@ include file="include/event-type-select.jsp"%>
+	</form>               
 
 <hr>
       <c:if test="${sesEventTemplates != null}">
-         <table>
-            <tr>
-               <th class="event-col-1">&nbsp;</th>
-               <th class="event-col-2">Name</th>
-               <th class="event-col-3">Short Name</th>
-               <th class="event-col-4">Dose</th>
-               <th class="event-col-5">Unit</th>
-               <th class="event-col-6">Description</th>
-               <th class="event-col-7">&nbsp;</th>
-            </tr>
 
-        
+			<div class="container-7-col-head">
+				<div>
+					<span class="tmpl-text-head">
+						<form action="event-tmpl-create-show.do" method="post">
+							<input type="hidden" name="event-type-id"
+								value="${sesSelectedEventTypeId}"> <input
+								class="header-text-btn" type="submit" value="New">
+						</form>
+					</span>
+				</div>
+				<div>
+					<span class="tmpl-text-head">Name</span>
+				</div>
+				<div>
+					<span class="tmpl-text-head">Short Name</span>
+				</div>
+				<div>
+					<span class="tmpl-text-head">Dose</span>
+				</div>
+				<div>
+					<span class="tmpl-text-head">Unit</span>
+				</div>
+				<div>
+					<span class="tmpl-text-head">Description</span>
+				</div>
+				<div>
+               <span class="tmpl-text-head">Is Favorite</span>
+            </div>
+			</div>
+
+			<c:forEach var="eventTemplate" items="${sesEventTemplates}">
+				<form method="post" action="./event-tmpl-delete-show.do">
+					<div class="container-7-col">
+						<div>
+							<input type="hidden" name="event-template-id" value="${eventTemplate.id}"> 
+							<input type="hidden" name="event" value="${eventTemplate.parentId}"> 
+							<input class="header-text-btn" type="submit" formaction="./event-tmpl-update-show.do" value="Update">
+							<input class="header-text-btn" type="submit" value="Delete">
+						</div>
+						<div>
+							<input class="tmpl-text" type="text" name="name"
+								value="${eventTemplate.name}">
+						</div>
+						<div>
+							<input class="tmpl-text" type="text" name="shortName"
+								value="${eventTemplate.shortName}">
+						</div>
+						<div>
+							<input class="tmpl-text" type="text" name="dose"
+								value="${eventTemplate.dose}">
+						</div>
+						<div>
+							<input class="tmpl-text" type="text" name="unit"
+								value="${eventTemplate.unit}">
+						</div>
+						<div>
+							<input class="tmpl-text" type="text" name="description" value="${eventTemplate.description }">
+						</div>
+                  <div>
+							<input class="tmpl-text" type="text" id="is-favorite" name="is-favorite" 
+							     value="${eventTemplate.favorite}">
+                  </div>
+					</div>
+				</form>
+			</c:forEach>
+		</c:if>
+
+
+
+	
+
+</fmt:bundle>
+<%@ include file="include/printSesVars.jsp"%>
+</body>
+</html>
+<%-- <table>        
             <c:forEach var="eventTemplate" items="${sesEventTemplates}">
                <tr>
                   <form method="post" action="./event-tmpl-delete-show.do">
-                     <td class="event-col-1">
+                     <div class="event-col-1">
                         <input type="hidden" name="id" value="${eventTemplate.id}"> 
-                        <input type="hidden" name="eventTypeId" value="${eventTemplate.eventTypeId}">
+                        <input type="hidden" name="eventTypeId" value="${eventTemplate.parentId}">
                         <input class="event-btn" type="submit" formaction="./event-tmpl-update-show.do" value="Update"> 
                         <input type="submit" value="Delete">
                      </td>
@@ -81,13 +150,4 @@
                   &nbsp;
                 </td>
                 </tr>
-         </table>
-      </c:if>
-
-
-
-	</div>
-
-</fmt:bundle>
-</body>
-</html>
+         </table> --%>

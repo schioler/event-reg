@@ -11,8 +11,8 @@
 
 <head>
 <title><fmt:message key="event-type.entity" /></title>
-<link rel="stylesheet" href="styles/cols.css">
-<link rel="stylesheet" href="styles/event.css">
+<!-- <link rel="stylesheet" href="public/styles/cols.css"> -->
+<link rel="stylesheet" href="public/styles/event.css">
 </head>
 <body>
 

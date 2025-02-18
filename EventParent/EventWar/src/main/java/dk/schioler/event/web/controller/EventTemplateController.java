@@ -12,8 +12,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.View;
-import org.springframework.web.servlet.view.RedirectView;
 
 import dk.schioler.event.base.dao.EventTemplateDAO;
 import dk.schioler.event.base.dao.EventTypeDAO;
@@ -22,27 +20,21 @@ import dk.schioler.event.base.dao.criteria.EventTypeCriteria;
 import dk.schioler.event.base.entity.EventTemplate;
 import dk.schioler.event.base.entity.EventType;
 import dk.schioler.event.web.WebLogin;
+import dk.schioler.event.web.controller.exception.EventWebInsufficientParameterValuesException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 
 @Controller
 public class EventTemplateController extends AbstractController {
-	Logger logger = LoggerFactory.getLogger(getClass());
-
-	@Autowired
-	protected EventTypeDAO eventTypeDAO;
-
-	@Autowired
-	protected EventTemplateDAO eventTemplateDAO;
 
 	@RequestMapping(value = EVENT_TMPL_LIST_SHOW, method = RequestMethod.GET)
 	public String eventTmplListShow(@RequestParam Map<String, String> params, Model model, HttpServletRequest request) {
 		logger.debug(EVENT_TMPL_LIST_SHOW + ": params=" + params);
 
 		HttpSession session = request.getSession();
-		WebLogin wl = this.isValidLogin(session);
+		WebLogin wl = this.getAuthenticatedLogin(session);
 		if (wl != null) {
-			Integer loginId = wl.getLogin().getId();
+			Integer loginId = wl.getOwner().getId();
 
 			EventTypeCriteria eTypeCrit = new EventTypeCriteria();
 			eTypeCrit.addLoginId(loginId);
@@ -67,11 +59,11 @@ public class EventTemplateController extends AbstractController {
 			HttpServletRequest request) {
 		logger.debug(EVENT_TMPL_TYPE_SELECT + ": params=" + params);
 		HttpSession session = request.getSession();
-		WebLogin wl = this.isValidLogin(session);
+		WebLogin wl = this.getAuthenticatedLogin(session);
 		if (wl != null) {
-			Integer loginId = wl.getLogin().getId();
+			Integer loginId = wl.getOwner().getId();
 
-			String typeIdStr = (String) params.get(REQ_PARAM_EVENT_TYPE_ID);
+			String typeIdStr = (String) params.get(REQ_EVENT_TYPE_ID);
 			logger.debug("eventTypeId = " + typeIdStr);
 
 			Integer eT = Integer.valueOf(typeIdStr);
@@ -98,11 +90,11 @@ public class EventTemplateController extends AbstractController {
 	public String showEventTypeGet(@RequestParam Map<String, String> params, Model model, HttpServletRequest request) {
 		logger.debug(EVENT_TMPL_CREATE_SHOW + ": params=" + params);
 		HttpSession session = request.getSession();
-		WebLogin wl = this.isValidLogin(session);
+		WebLogin wl = this.getAuthenticatedLogin(session);
 		if (wl != null) {
-			Integer loginId = wl.getLogin().getId();
+			Integer loginId = wl.getOwner().getId();
 
-			EventTemplate eventTemplate = buildEventTemplateFrom(params, loginId);
+			EventTemplate eventTemplate = createEventTemplateInstance(params, loginId);
 			session.setAttribute(SES_EVENT_TEMPLATE, eventTemplate);
 
 			// we want to create new
@@ -120,23 +112,23 @@ public class EventTemplateController extends AbstractController {
 		logger.debug(EVENT_TMPL_CREATE + ": params=" + params);
 		HttpSession session = request.getSession();
 
-		WebLogin wl = this.isValidLogin(session);
+		WebLogin wl = this.getAuthenticatedLogin(session);
 		if (wl != null) {
-			Integer loginId = wl.getLogin().getId();
+			Integer loginId = wl.getOwner().getId();
 
-			EventTemplate et = buildEventTemplateFrom(params, loginId);
+			EventTemplate et = createEventTemplateInstance(params, loginId);
 
 			et = eventTemplateDAO.insert(et);
-			
+
 			EventTemplateCriteria etC = new EventTemplateCriteria();
 			etC.addLoginId(loginId);
-			etC.setEventTypeId(et.getParentId());
-			
+			etC.addEventTypeId(et.getParentId());
+
 			List<EventTemplate> templateList = eventTemplateDAO.retrieve(etC, 0);
 
 			session.setAttribute(SES_EVENT_TEMPLATES, templateList);
 
-//		session.removeAttribute(SES_EVENT_TYPE);
+//			session.removeAttribute(SES_EVENT_TYPE);
 
 			return EVENT_TMPL_LIST_JSP;
 		} else {
@@ -144,13 +136,33 @@ public class EventTemplateController extends AbstractController {
 		}
 	}
 
-	@RequestMapping(value = REQ_EVENT_TMPL_UPDATE_SHOW, method = RequestMethod.POST)
+	@RequestMapping(value = EVENT_TMPL_UPDATE_SHOW, method = RequestMethod.POST)
 	public String eventTmplUpdateShow(@RequestParam Map<String, String> params, Model model,
 			HttpServletRequest request) {
-		logger.debug(REQ_EVENT_TMPL_UPDATE_SHOW + ": params=" + params);
+		logger.debug(EVENT_TMPL_UPDATE_SHOW + ": params=" + params);
 		HttpSession session = request.getSession();
+		resetStatus(session);
+		WebLogin wl = this.getAuthenticatedLogin(session);
+		if (wl != null) {
+			Integer loginId = wl.getOwner().getId();
+			String templateIdStr = params.get("event-template-id");
+			Integer etId = Integer.valueOf(templateIdStr);
+			EventTemplate eventTemplateDb = eventTemplateDAO.get(etId, loginId);
+			if(eventTemplateDb != null) {
+				session.setAttribute(SES_EVENT_TEMPLATE, eventTemplateDb);
+			} else {
+				String errorTemplateNotFound = "Can not update eventTemplate, since there was nothing to update";
+				addToStatus(session, errorTemplateNotFound);
+				return EVENT_TMPL_LIST_JSP;
+			}
+			
+			
+			return EVENT_TMPL_UPDATE_JSP;
+		} else {
+			return PUBLIC_LOGIN_JSP;
+		}
+		
 		// String eventTypeIdStr = params.get("eventTypeId");
-//		String templateIdStr = params.get("templateId");
 //		String shortName = params.get("shortName");
 //		String name = params.get("name");
 //		String unit = params.get("unit");
@@ -167,16 +179,14 @@ public class EventTemplateController extends AbstractController {
 //		eventTemplate.setDescription(note);
 //		logger.debug("eventTemplate:" + eventTemplate);
 
-
 		// we want to update
 		// verifying state...
-//		EventTemplate eventTemplateDb = eventTemplateDAO.get(eventTemplate.getId());
 //		if (eventTemplate.equals(eventTemplateDb)) {
 //		session.setAttribute(SES_EVENT_TEMPLATE, eventTemplate);
 
 //		}
 
-		return "redirect:" + RES_EVENT_TMPL_UPDATE_JSP;
+		
 
 	}
 
@@ -185,11 +195,11 @@ public class EventTemplateController extends AbstractController {
 		logger.debug(EVENT_TMPL_UPDATE + ": params=" + params);
 		HttpSession session = request.getSession();
 
-		WebLogin wl = this.isValidLogin(session);
+		WebLogin wl = this.getAuthenticatedLogin(session);
 		if (wl != null) {
-			Integer loginId = wl.getLogin().getId();
+			Integer loginId = wl.getOwner().getId();
 
-			EventTemplate et = buildEventTemplateFrom(params, loginId);
+			EventTemplate et = createEventTemplateInstance(params, loginId);
 
 			eventTemplateDAO.update(et);
 
@@ -209,11 +219,11 @@ public class EventTemplateController extends AbstractController {
 			HttpServletRequest request) {
 		logger.debug(EVENT_TMPL_DELETE_SHOW + ": params=" + params);
 		HttpSession session = request.getSession();
-
-		WebLogin wl = this.isValidLogin(session);
+		resetStatus(session);
+		WebLogin wl = this.getAuthenticatedLogin(session);
 		if (wl != null) {
-			Integer loginId = wl.getLogin().getId();
-			String tmplId = params.get("id");
+			Integer loginId = wl.getOwner().getId();
+			String tmplId = params.get(PAR_EVENT_TEMPLATE_ID);
 			if (StringUtils.isNotBlank(tmplId)) {
 				Integer id = Integer.valueOf(tmplId);
 				EventTemplate eventTemplate = eventTemplateDAO.get(id, loginId);
@@ -236,18 +246,21 @@ public class EventTemplateController extends AbstractController {
 		logger.debug(EVENT_TMPL_DELETE + ": params=" + params);
 		HttpSession session = request.getSession();
 
-		WebLogin wl = this.isValidLogin(session);
+		WebLogin wl = this.getAuthenticatedLogin(session);
 		if (wl != null) {
-			Integer loginId = wl.getLogin().getId();
+			Integer loginId = wl.getOwner().getId();
 
-			String id = params.get("id");
+			String id = params.get(PAR_EVENT_TEMPLATE_ID);
+			String typeId = params.get(PAR_EVENT_TYPE_ID);
 			if (StringUtils.isNotBlank(id)) {
 				Integer idInt = Integer.valueOf(id);
 
 				int delete = eventTemplateDAO.delete(idInt, loginId);
+				addToStatus(session, "deleted template");
 				logger.debug("Deleted " + delete + " eventTemplates");
 
-				List<EventTemplate> typeList = eventTemplateDAO.getFromEventTypeId(idInt, loginId);
+				List<EventTemplate> typeList = eventTemplateDAO.getFromEventTypeId(Integer.valueOf(typeId), loginId);
+				
 				session.setAttribute(SES_EVENT_TEMPLATES, typeList);
 			} else {
 				throw new EventWebInsufficientParameterValuesException("id could not be parsed");

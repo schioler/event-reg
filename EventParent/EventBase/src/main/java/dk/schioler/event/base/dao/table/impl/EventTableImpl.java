@@ -1,145 +1,181 @@
 package dk.schioler.event.base.dao.table.impl;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.jdbc.core.RowMapper;
 
-import dk.schioler.event.base.dao.EventDAOException;
-import dk.schioler.event.base.dao.criteria.AbstractCriteria;
+import dk.schioler.event.base.dao.criteria.AbstractIdCriteria;
+import dk.schioler.event.base.dao.criteria.EventCriteria;
+import dk.schioler.event.base.dao.rowmapper.impl.EventRowMapper;
 import dk.schioler.event.base.dao.table.EventTable;
 import dk.schioler.event.base.entity.Event;
+import dk.schioler.event.base.entity.UNIT;
 
-public class EventTableImpl extends AbstractSQLTable<Event> implements EventTable {
+public class EventTableImpl extends AbstractSQLTableParentChild<Event> implements EventTable {
 
-	protected static List<String> insertColumns = new ArrayList<String>();
-	protected static List<String> selectColumns = new ArrayList<String>();
-	protected static List<String> orderByColumns = new ArrayList<String>();
+   public EventTableImpl() {
+      super();
 
-	static {
-		insertColumns.add(FLD_EVENT_TEMPLATE_ID);
-		insertColumns.add(FLD_LOGIN_ID);
-		
-		insertColumns.add(FLD_NAME);
-		insertColumns.add(FLD_NOTE);
-		insertColumns.add(FLD_SHORT_NAME);
+      insertColumns.add(FLD_EVENT_TEMPLATE_ID);
+      insertColumns.add(FLD_NOTE);
+      insertColumns.add(FLD_DOSE);
+      insertColumns.add(FLD_UNIT);
+      insertColumns.add(FLD_EVENT_TS);
 
-		insertColumns.add(FLD_DOSE);
-		insertColumns.add(FLD_UNIT);
-				
-		
-		selectColumns.add(FLD_ID);
-		selectColumns.add(FLD_EVENT_TS);
-		
-		selectColumns.addAll(insertColumns);
+      selectColumns.add(FLD_EVENT_TEMPLATE_ID);
+      selectColumns.add(FLD_NOTE);
+      selectColumns.add(FLD_DOSE);
+      selectColumns.add(FLD_UNIT);
+      selectColumns.add(FLD_EVENT_TS);
 
-		orderByColumns.add(FLD_NAME);
-	}
+   }
 
-	
-	@Override
-	public String getTableName() {
-		return TABLE;
-	}
+   @Override
+   public String getTableName() {
+      return TABLE;
+   }
 
-	@Override
-	public Map<String, Object> getInsertMappings(Event event) {
-		Map<String, Object> mappings = new TreeMap<String, Object>();
-		mappings.put(FLD_EVENT_TEMPLATE_ID, event.getParentId());
-		mappings.put(FLD_LOGIN_ID, event.getLoginId());
+   @Override
+   public Map<String, Object> getInsertMappings(Event event) {
+      Map<String, Object> map = super.getInsertMappings(event);
+      map.put(FLD_EVENT_TEMPLATE_ID, event.getParentId());
 
-		if (event.getEventTS() != null) {
-			mappings.put(FLD_EVENT_TS, event.getEventTS());
-		}
+      if (event.getEventTS() != null) {
+         map.put(FLD_EVENT_TS, event.getEventTS());
+      }
 
-		mappings.put(FLD_NOTE, event.getNote());
-		mappings.put(FLD_NAME, event.getName());
-		mappings.put(FLD_SHORT_NAME, event.getShortName());
-		mappings.put(FLD_DOSE, event.getDose());
-		mappings.put(FLD_UNIT, event.getUnit());
+      map.put(FLD_NOTE, event.getNote());
+      map.put(FLD_DOSE, event.getDose());
+      map.put(FLD_UNIT, event.getUnit().toString());
 
-		return mappings;
-	}
+      return map;
+   }
 
-	@Override
-	public Map<String, Object> getUpdatetMappings(Event type) {
-		Map<String, Object> map = getInsertMappings(type);
-		map.put(FLD_ID, type.getId());
-		return map;
-	}
-	
-	
-	
-	@Override
-	public Map<String, Object> addSpecificRetrieveMappings(AbstractCriteria criteria) {
-		Map<String, Object> map = new HashMap<String, Object>();
-		if (criteria != null) {
+   @Override
+   public Map<String, Object> getUpdateMappings(Event event) {
+      Map<String, Object> map = super.getUpdateMappings(event);
+      map.put(FLD_EVENT_TEMPLATE_ID, event.getParentId());
 
-		
-		}
-		return map;
-	}
-	
+      if (event.getEventTS() != null) {
+         map.put(FLD_EVENT_TS, event.getEventTS());
+      }
 
-	@Override
-	public List<StringBuffer> addSpecificRetrieveCriteria(AbstractCriteria criteria) {
-		List<StringBuffer> sql = new ArrayList<StringBuffer>();
+      map.put(FLD_NOTE, event.getNote());
+      map.put(FLD_DOSE, event.getDose());
+      map.put(FLD_UNIT, event.getUnit().toString());
+      return map;
+   }
 
-		if (criteria == null) {
-			throw new EventDAOException("criteria can not be null");
-		}
+   @Override
+   public RowMapper<Event> getRowMapper() {
+      return new EventRowMapper();
+   }
 
-		return sql;
+   @Override
+   public List<String> getOrderBy() {
+      List<String> orderBy = new ArrayList<String>();
+      orderBy.add(FLD_NAME);
 
-	}
-	
-	
+      return orderBy;
+   }
 
-	@Override
-	public RowMapper<Event> getRowMapper() {
-		return eventRowMapper;
-	}
+   @Override
+   public List<StringBuffer> addLevelSpecificCriteriaFrom(AbstractIdCriteria idCrit) {
+      List<StringBuffer> eventCrit = super.addLevelSpecificCriteriaFrom(idCrit);
+      if (idCrit != null) {
+         EventCriteria ec = (EventCriteria) idCrit;
 
-	private RowMapper<Event> eventRowMapper = new RowMapper<Event>() {
+         BigDecimal doseMax = ec.getDoseMax();
+         BigDecimal doseMin = ec.getDoseMin();
+         if (doseMax != null && doseMin != null) {
+            StringBuffer sb = createDoseCriteria(FLD_DOSE_MIN, FLD_DOSE_MAX, FLD_DOSE);
+            if (sb != null) {
+               eventCrit.add(sb);
+            }
+         }
 
-		@Override
-		public Event mapRow(ResultSet rs, int rowNum) throws SQLException {
-			Event eventTmpl = new Event();
-			eventTmpl.setId(rs.getInt(FLD_ID));
-			eventTmpl.setLoginId(rs.getInt(FLD_LOGIN_ID));
-			eventTmpl.setParentId(rs.getInt(FLD_EVENT_TEMPLATE_ID));
-			eventTmpl.setDose(rs.getString(FLD_DOSE));
-			eventTmpl.setUnit(rs.getString(FLD_UNIT));
-			eventTmpl.setName(rs.getString(FLD_NAME));
-			eventTmpl.setShortName(rs.getString(FLD_SHORT_NAME));
-			eventTmpl.setNote(rs.getString(FLD_NOTE));
-			eventTmpl.setEventTS(rs.getTimestamp(FLD_EVENT_TS).toLocalDateTime());
-			return eventTmpl;
-		}
+         UNIT unit = ec.getUnit();
+         if (unit != null) {
+            String unitAsString = UNIT.unitAsString(unit);
+            if (StringUtils.isNotBlank(unitAsString)) {
+               StringBuffer sb = new StringBuffer();
+               sb.append(FLD_UNIT).append(SPACE).append(EQ).append(SPACE).append(BIND).append(FLD_UNIT);
+               eventCrit.add(sb);
+            }
+         }
+         
+         
+         
+         List<Integer> eventTemplateIds = ec.getEventTemplateIds();
+         if (eventTemplateIds.size() > 0) {
+            StringBuffer eventTemplateIdCriteria = createIntegerCriteria(eventTemplateIds, FLD_EVENT_TEMPLATE_ID);
+            if (eventTemplateIdCriteria != null) {
+               eventCrit.add(eventTemplateIdCriteria);
+            }
+         }
 
-	};
 
-	@Override
-	public List<String> getSelectColumns() {
-		return selectColumns;
-	}
 
-	@Override
-	public List<String> getUpdateColumns() {
-		return insertColumns;
-	}
+         LocalDateTime eventTSStartDate = ec.getEventTSStartDate();
+         LocalDateTime eventTSEndDate = ec.getEventTSEndDate();
+         if (eventTSStartDate != null && eventTSStartDate != null) {
+            if (eventTSStartDate.isBefore(eventTSEndDate)) {
+               StringBuffer criteria = createLocalDateTimeCriteria(FLD_EVENT_TS_START, FLD_EVENT_TS_END, FLD_EVENT_TS);
+               if(criteria != null) {
+                  eventCrit.add(criteria);
+               }
+               
+            }
+         }
 
-	@Override
-	public List<String> getOrderBy() {
-		List<String> orderBy =  new ArrayList<String>();
-		orderBy.add(FLD_NAME);
-		
-		return orderBy;
-	}
+      }
+
+      return eventCrit;
+   }
+
+   @Override
+   public Map<String, Object> addLevelSpecificRetrieveMappings(AbstractIdCriteria criteria) {
+      Map<String, Object> map = super.addLevelSpecificRetrieveMappings(criteria);
+
+      if (criteria != null) {
+         EventCriteria ec = (EventCriteria) criteria;
+
+         BigDecimal doseMin = ec.getDoseMin();
+         BigDecimal doseMax = ec.getDoseMax();
+         if (doseMin != null && doseMax != null) {
+            map.put(FLD_DOSE_MIN, doseMin);
+            map.put(FLD_DOSE_MAX, doseMax);
+         }
+
+         List<Integer> eventTemplateIds = ec.getEventTemplateIds();
+         if (eventTemplateIds != null && eventTemplateIds.size() > 0) {
+            Map<String, Object> integerMappings = createIntegerMappings(FLD_EVENT_TEMPLATE_ID, eventTemplateIds);
+            map.putAll(integerMappings);
+
+         }
+
+         LocalDateTime eventTSStartDate = ec.getEventTSStartDate();
+         LocalDateTime eventTSEndDate = ec.getEventTSEndDate();
+         if (eventTSStartDate != null && eventTSEndDate != null) {
+            map.put(FLD_EVENT_TS_START, eventTSStartDate);
+            map.put(FLD_EVENT_TS_END, eventTSEndDate);
+          
+         }
+
+         UNIT unit = ec.getUnit();
+         if (unit != null) {
+            map.put(FLD_UNIT, UNIT.unitAsString(unit));
+         }
+         
+      }
+
+      return map;
+
+   }
 
 }

@@ -4,9 +4,9 @@ import java.util.List;
 
 import org.springframework.jdbc.core.RowMapper;
 
-import dk.schioler.event.base.entity.AbstractEntity;
+import dk.schioler.event.base.entity.AbstractEntityName;
 
-public interface DAOUtil<T extends AbstractEntity> {
+public interface DAOUtil<T extends AbstractEntityName> {
 	public RowMapper<T> getRowMapper();
 	public String getSQLTableName();
 	public List<String> getSQLSelectColumns();

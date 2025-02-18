@@ -1,6 +1,6 @@
 <!DOCTYPE html>
-<%@page import="dk.schioler.shared.timeline.TimelineSlot"%>
-<%@page import="dk.schioler.shared.timeline.Timeline"%>
+<%@page import="dk.schioler.shared.timeline.api.entity.TimelineSlot"%>
+<%@page import="dk.schioler.shared.timeline.api.entity.*"%>
 <%@page import="dk.schioler.event.base.entity.EventType"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
@@ -17,8 +17,8 @@
 <html>
 <head>
 <title>Search Result</title>
-<link rel="stylesheet" href="styles/cols.css">
-<link rel="stylesheet" href="styles/event.css">
+<link rel="stylesheet" href="public/styles/cols.css">
+<link rel="stylesheet" href="public/styles/event.css">
 </head>
 <body>
 <fmt:bundle basename="dk.schioler.event.base.resources.EventListResources">

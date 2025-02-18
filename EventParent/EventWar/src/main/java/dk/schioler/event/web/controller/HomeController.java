@@ -1,22 +1,16 @@
 package dk.schioler.event.web.controller;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-
-import dk.schioler.event.base.dao.EventTemplateDAO;
-import dk.schioler.event.base.dao.EventTypeDAO;
 
 @Controller
 public class HomeController extends AbstractController {
-	Logger logger = LoggerFactory.getLogger(getClass());
-
-	@Autowired
-	protected EventTypeDAO eventTypeDAO;
-
-	@Autowired
-	protected EventTemplateDAO eventTemplateDAO;
+//	Logger logger = LoggerFactory.getLogger(getClass());
+//
+//	@Autowired
+//	protected EventTypeDAO eventTypeDAO;
+//
+//	@Autowired
+//	protected EventTemplateDAO eventTemplateDAO;
 
 	public HomeController() {
 		super();

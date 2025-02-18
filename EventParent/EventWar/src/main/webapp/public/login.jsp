@@ -12,35 +12,46 @@
 <link rel="stylesheet" href="styles/cols.css">
 <link rel="stylesheet" href="styles/event.css">
 </head>
-<body>
+<body >
 	<fmt:bundle
 		basename="dk.schioler.event.base.resources.EventListResources">
 
 		<div class="content-div">
 			<br>
 			<p>Login</p>
+         <hr>
 			<form action="user-authenticate.do" method="post">
-				<table>
-					<tr>
-						<td>Username/Email:</td>
-						<td><input type="text" name="username"></td>
-					</tr>
-					<tr>
-						<td>Password:</td>
-						<td><input type="password" name="password"></td>
-					</tr>
-					<tr>
-						<td><input type="submit" name="submit"></td>
-						</form>
-						<td>
-							<form action="show-forgot-password.do">
-								<input type="submit" name="new-password" value="New-password" method="GET">
-							</form>
-						</td>
+			   <div class="container-3-col" style="text-align:center;width:100%;">
+			       <div>&nbsp;</div>
+			        <div>&nbsp;</div>
+			         <div>&nbsp;</div>
+			      
+			      <div class="text-input-head">
+			         <span  >Username</span>
+			      </div>
+				   <div >
+						<input class="text-input" type="text" name="username" autofocus="true">
+					</div>
+			      <div>&nbsp;</div>
+				
+               <div class="text-input-head">
+                  <span  style="width:90%">Password</span>
+                  </div>
+               <div>
+                  <input class="text-input" type="password" name="password">
+               </div>
+				   <div>&nbsp;</div>
 
-					</tr>
+               <div>&nbsp;</div>
+               <div style="text-align: right; margin-bottom: 8px;">
+                  <input class="text-input-btn" type="submit" name="submit" value="Send">
+               </div>   				  	
+               <div >&nbsp;</div>
+			   
+			   </div>
+			   
 
-				</table>
+				</form>
 				<br>
 		</div>
 

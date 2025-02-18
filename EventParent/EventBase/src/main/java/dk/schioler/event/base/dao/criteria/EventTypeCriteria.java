@@ -3,7 +3,7 @@ package dk.schioler.event.base.dao.criteria;
 import org.springframework.stereotype.Component;
 
 @Component
-public class EventTypeCriteria extends AbstractCriteria {
+public class EventTypeCriteria extends AbstractNameCriteria {
 
 	@Override
 	public int hashCode() {

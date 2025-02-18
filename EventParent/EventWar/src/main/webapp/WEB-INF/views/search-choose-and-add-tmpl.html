@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Template choose and add</title>
+<link rel="stylesheet" href="public/styles/cols.css">
+<link rel="stylesheet" href="public/styles/event.css">
+</head>
+<body>
+         <table>
+            <tr>
+               <td class="td-right">
+                  <form action="./search-select-type.do" method="post">
+                     <%@ include file="include/event-type-select.jsp"%>
+                  </form>
+               </td>
+               <td>
+                  <table>
+                     <%
+                     int i = 0;
+                     %>
+                     <c:choose>
+                        <c:when test="${not empty sesEventTemplates}">
+                           <c:forEach var="eventTemplate" items="${sesEventTemplates}">
+                              <form action="./search-add-tmpl.do" method="post">
+                                 <tr>
+                                    <td class="event-col-1"><input type="hidden"
+                                       name="templateId" value="${eventTemplate.id}"> <input
+                                       class="event-cnt-1" type="submit" value="Add"></td>
+                                    <td class="event-col-2"><label class="event-cnt-2"
+                                       for="eventTemplate.id"> ${eventTemplate.name}</label></td>
+                                    <td class="event-col-3"><input class="event-cnt-3"
+                                       type="text" name="dose" value="${eventTemplate.dose}">
+                                    </td>
+                                    <td class="event-col-4"><input class="event-cnt-4"
+                                       type="text" name="unit" value="${eventTemplate.unit}">
+                                    </td>
+                                    <td class="event-col-5">&nbsp;</td>
+                                    <td class="event-col-6">&nbsp;</td>
+                                    <td class="event-col-7"><input class="event-cnt-7"
+                                       type="text" name="note"></td>
+                                    <%
+                                    i++;
+                                    %>
+                                 </tr>
+                              </form>
+                           </c:forEach>
+                        </c:when>
+                        <c:otherwise>
+                           <tr>
+                              <td class="event-col-1"></td>
+                              <td class="event-col-2">&nbsp;</td>
+                              <td class="event-col-3">&nbsp;</td>
+                              <td class="event-col-4">&nbsp;</td>
+                              <td class="event-col-5">&nbsp;</td>
+                              <td class="event-col-6">&nbsp;</td>
+                              <td class="event-col-7">Booh</td>
+                           </tr>
+                        </c:otherwise>
+                     </c:choose>
+                  </table>
+               </td>
+            </tr>
+         </table>
+      </div>
+
+</body>
+</html>

@@ -2,65 +2,66 @@ package dk.schioler.event.base.dao.impl;
 
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
-import dk.schioler.event.base.dao.EventDAOException;
 import dk.schioler.event.base.dao.EventTemplateDAO;
 import dk.schioler.event.base.dao.criteria.EventTemplateCriteria;
 import dk.schioler.event.base.dao.table.impl.EventTemplateTableImpl;
 import dk.schioler.event.base.entity.EventTemplate;
+import dk.schioler.event.base.exception.EventTemplateDAOException;
 
 @Service
-public class EventTemplateDAOImpl extends AbstractDAOImpl<EventTemplate> implements EventTemplateDAO {
+public class EventTemplateDAOImpl extends AbstractNameDAOImpl<EventTemplate> implements EventTemplateDAO {
 
-	public EventTemplateDAOImpl() {
-		super(new EventTemplateTableImpl());
-	}
+   public EventTemplateDAOImpl() {
+      super(new EventTemplateTableImpl());
+   }
 
-	@Override
-	protected boolean validateInsertObject(EventTemplate type) {
-		if (type == null) {
-			throw new EventDAOException("EventTemplate can not be null");
-		}
-		super.verifyLoginId(type.getLoginId());
+   @Override
+   protected boolean isValidInsertObject(EventTemplate type) {
+      boolean isValid = super.isValidInsertObject(type);
+      if (isValid) {
+         if (type.getParentId() != null) {
+            if (type.getUnit() != null) {
+               if (type.getDose() != null) {
+                  isValid = true;
+               } else {
+                  throw new EventTemplateDAOException("Dose can not be null");
+               }
+            } else {
+               throw new EventTemplateDAOException("Unit can not be null");
+            }
+         } else {
+            throw new EventTemplateDAOException("parentId can not be null");
+         }
 
-		if (type.getParentId() == null) {
-			throw new EventDAOException("EventTypeId can not be empty");
-		}
-		if (StringUtils.isBlank(type.getName())) {
-			throw new EventDAOException("Name can not be empty");
-		}
-		if (StringUtils.isBlank(type.getUnit())) {
-			throw new EventDAOException("Unit can not be empty");
-		}
-		if (StringUtils.isBlank(type.getDose())) {
-			throw new EventDAOException("Dose can not be empty");
-		}
-		return true;
-	}
+      } else {
+         logger.info("super returned false on isValidInsertObject");
+      }
+      return isValid;
 
-	@Override
-	public List<EventTemplate> getFromEventTypeId(Integer eventTypeId, Integer loginId) {
-		EventTemplateCriteria et = new EventTemplateCriteria();
-		et.setEventTypeId(eventTypeId);
-		et.addLoginId(loginId);
-		List<EventTemplate> list = retrieve(et, 0);
+   }
 
-		return list;
-	}
+   @Override
+   public List<EventTemplate> getFromEventTypeId(Integer eventTypeId, Integer loginId) {
+      EventTemplateCriteria et = new EventTemplateCriteria();
+      et.addEventTypeId(eventTypeId);
+      et.addLoginId(loginId);
+      List<EventTemplate> list = retrieve(et, 0);
 
-	@Override
-	public List<EventTemplate> getFavourites(Integer loginId) {
-		EventTemplateCriteria et = new EventTemplateCriteria();
-		
-		et.addLoginId(loginId);
-		et.setFavourite(true);
-		List<EventTemplate> list = retrieve(et, 0);
+      return list;
+   }
 
-		return list;
+   @Override
+   public List<EventTemplate> getFavourites(Integer loginId) {
+      EventTemplateCriteria et = new EventTemplateCriteria();
 
-		
-	}
+      et.addLoginId(loginId);
+      et.setFavourite(true);
+      List<EventTemplate> list = retrieve(et, 0);
+
+      return list;
+
+   }
 
 }

@@ -5,6 +5,6 @@ import org.springframework.stereotype.Service;
 import dk.schioler.event.base.entity.Event;
 
 @Service
-public interface EventDAO extends BaseEventDAO<Event> {
+public interface EventDAO extends BaseNameDAO<Event> {
 
 }

@@ -10,13 +10,13 @@
 <%@ page import="dk.schioler.event.base.entity.EventTemplate"%>
 <%@ page import="dk.schioler.event.base.entity.EventType"%>
 <%@ page import="dk.schioler.event.web.controller.AbstractController"%>
-<%@ page import="dk.schioler.shared.timeline.TIMESLOT_LENGTH"%>
+<%@ page import="dk.schioler.shared.timeline.api.entity.TIMESLOT_LENGTH"%>
 
 <html>
 <head>
 <title>Search</title>
-<link rel="stylesheet" href="styles/cols.css">
-<link rel="stylesheet" href="styles/event.css">
+<link rel="stylesheet" href="public/styles/cols.css">
+<link rel="stylesheet" href="public/styles/event.css">
 </head>
 <body>
 <fmt:bundle basename="dk.schioler.event.base.resources.EventListResources">

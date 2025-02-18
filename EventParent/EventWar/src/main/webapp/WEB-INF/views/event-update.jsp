@@ -14,8 +14,8 @@
 	basename="dk.schioler.event.base.resources.EventListResources">
 	<title><fmt:message key="home.title" /></title>
 </fmt:bundle>
-<link rel="stylesheet" href="styles/cols.css">
-<link rel="stylesheet" href="styles/event.css">
+<link rel="stylesheet" href="public/styles/cols.css">
+<link rel="stylesheet" href="public/styles/event.css">
 </head>
 <body>
 	<div class="menu-div">

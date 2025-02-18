@@ -1,8 +1,10 @@
 ﻿rules: 	
 	1: last provided wins.
 	Say instance ID, it is propagated to the relevant instance: parameter if present, otherwise the instance, if already present.
+
 	Special cases:
 		Specifying id = null, it will not be propagated to the new state.
+
 	Example:
 		Method: setXX(ID, instance); 
 		A: setXX(null, null)	:  	
@@ -49,14 +51,20 @@
 
 	
 					
-	id 		instance	this.instance	Action	call listholder
-	null	null		null			This.instance =new instance(), this.instance.setId(null)	Instance.add(this)
-					
-	set		null		null	This.instance =new instance(), this.instance.setId	Instance.add(this)
-	set		set			null	this.instance = instance, this.instance.setId	Instance.add(this)
-	set		null		set		this.instance.setId	
-	set		set			set		this.instance = instance, this.instance.setId()	this.instance.remove(this),  this.instance = instance,  This.instance.add(this)
-					
-	null	set			null	this.instance=instance, this.instance.setId(null)	Instance.add(this)
-	null	set			set		this.instance=instance	this.instance.remove(this),  this.instance = instance,  This.instance.add(this)
-	null	null		set		this.instance=null	na
+	  id 		instance	   this.instance	  Action	call listholder
+	
+	 null	    null		    null			           This.instance =new instance(), this.instance.setId(null)	Instance.add(this)
+	
+	!null		 null		    null	                 This.instance =new instance(), this.instance.setId	Instance.add(this)
+	!null		!null		    null	                 this.instance = instance, this.instance.setId	Instance.add(this)
+	!null		!null		   !null		              this.instance = instance, this.instance.setId()	this.instance.remove(this),  this.instance = instance,  This.instance.add(this)
+	
+	!null		 null		   !null		              this.instance.setId				
+	 null	   !null		    null	                 this.instance=instance, this.instance.setId(null)	Instance.add(this)
+	 null	   !null		   !null		              this.instance=instance	this.instance.remove(this),  this.instance = instance,  This.instance.add(this)
+	 null	    null		   !null		              this.instance=null	na
+
+	
+	
+	
+	

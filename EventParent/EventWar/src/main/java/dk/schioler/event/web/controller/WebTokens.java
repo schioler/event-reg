@@ -3,6 +3,7 @@ package dk.schioler.event.web.controller;
 public interface WebTokens {
 	
 	public static String SES_AUTHENTICATED_USER = "sesAuthenticatedUser";
+	
 	public static String CTX_CHARTS_TO_BE_DELETED = "ctxChartsToBeDeleted";
 	
 	public static String SES_SELECTED_EVENT_TYPE_ID = "sesSelectedEventTypeId";
@@ -16,11 +17,7 @@ public interface WebTokens {
 	public static String SES_EVENTS_INSERTED = "sesEventsInserted";
 	public static String SES_EVENT_QUEUE = "sesEventQueue";
 
-	public static String SES_SEARCH_CRITERIA_TMPL_LIST = "sesSearchCriteriaTmplList";
-	public static String SES_SEARCH_RESULT = "sesSearchResult";
-	public static String SES_SEARCH_RESULT_START_DATE = "sesSearchResultStartDate";
-	public static String SES_SEARCH_RESULT_END_DATE = "sesSearchResultEndDate";
-
+	
 	/*
 	 * EVENT TYPE 	
 	 **/
@@ -39,12 +36,13 @@ public interface WebTokens {
 	/*
 	 * Views
 	 */
-	public static final String EVENT_TYPE_JSP = "redirect:event-type.jsp "; // create % update
+	public static final String EVENT_TYPE_CREATE_JSP = "redirect:event-type-create.jsp "; // create % update
+	public static final String EVENT_TYPE_UPDATE_JSP = "redirect:event-type-update.jsp";
 	public static final String EVENT_TYPE_DELETE_JSP = "redirect:event-type-delete.jsp";
 	public static final String EVENT_TYPE_LIST_JSP = "redirect:event-type-list.jsp";
 //	
 
-	public static final String REQ_PARAM_EVENT_TYPE_ID = "eventTypeId";
+	public static final String REQ_EVENT_TYPE_ID = "req-event-type-id";
 	
 	/*
 	 *	EVENT TEMPLATE 
@@ -57,11 +55,11 @@ public interface WebTokens {
 
 	public static String EVENT_TMPL_CREATE_SHOW = "/event-tmpl-create-show.do";
 	public static String EVENT_TMPL_CREATE = "/event-tmpl-create.do";
-	public static String EVENT_TMPL_CREATE_JSP = "redirect:revent-tmpl-create.jsp";
+	public static String EVENT_TMPL_CREATE_JSP = "redirect:event-tmpl-create.jsp";
 
-	public static String REQ_EVENT_TMPL_UPDATE_SHOW = "/event-tmpl-update-show.do";
+	public static String EVENT_TMPL_UPDATE_SHOW = "/event-tmpl-update-show.do";
 	public static String EVENT_TMPL_UPDATE = "/event-tmpl-update.do";
-	public static String RES_EVENT_TMPL_UPDATE_JSP = "redirect:event-tmpl-update.jsp";
+	public static String EVENT_TMPL_UPDATE_JSP = "redirect:event-tmpl-update.jsp";
 
 	public static String EVENT_TMPL_DELETE_SHOW = "/event-tmpl-delete-show.do";
 	public static String EVENT_TMPL_DELETE = "/event-tmpl-delete.do";	

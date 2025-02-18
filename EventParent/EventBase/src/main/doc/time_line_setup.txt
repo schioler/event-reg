@@ -1,0 +1,15 @@
+Timeline templates: 
+   DataStructures of a timeline, with no specific dates applied.
+   Relevant templates
+   - 12 months in MONTH interval
+   - 7 days in DAY interval
+   - 1 day in HOUR interval
+   - 1 Hour in MINUTE interval
+   (Should probably line a java class)
+
+
+When needed:
+  1: select template
+  2: set start_time and establish specific time_slots 
+  3: persist the timeline
+  4: establish SQL based upon timeline start+end and the selected event_templates selected.

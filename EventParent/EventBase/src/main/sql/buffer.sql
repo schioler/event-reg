@@ -1,5 +1,23 @@
-select * 
-from event 
-where
-   event_date between
-   to_timestamp('01012022 00:00', 'DDMMYYYY HH24:MI') and to_timestamp('31122022 23:59', 'DDMMYYYY HH24:MI');
+create or replace view VW_LOGIN as (
+SELECT   
+      UP.ID AS UP_ID,
+      UP.FIRST_NAME AS FNAME,
+      UP.LAST_NAME AS LNAME,
+      LOGIN.ID AS L_ID,
+      LOGIN.PARENT_ID AS P_ID,
+      LOGIN.TOKEN AS TOKEN,
+      LOGIN.ROLE AS ROLE, 
+      to_char(LOGIN.START_TS ,'YYYYMMDD HH24:MI') as L_STA,
+      to_char(LOGIN.END_TS ,'YYYYMMDD HH24:MI') AS L_END,
+      PASSWORD.ID AS PW_ID,
+      left(PASSWORD.PWD,10) AS PW_PWD, 
+      to_char(PASSWORD.START_TS ,'YYYYMMDD HH24:MI') as PW_STA,
+      to_char(PASSWORD.END_TS ,'YYYYMMDD HH24:MI') AS PW_END
+   FROM
+      LOGIN INNER JOIN USER_PROFILE UP ON UP.ID = LOGIN.USER_PROFILE_ID   
+      LEFT JOIN PASSWORD ON LOGIN.ID = PASSWORD.LOGIN_ID
+   WHERE 
+      PASSWORD.END_TS IS NULL or  PASSWORD.END_TS > now()
+); 
+              
+

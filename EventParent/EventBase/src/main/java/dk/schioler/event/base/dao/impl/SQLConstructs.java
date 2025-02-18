@@ -46,6 +46,9 @@ public interface SQLConstructs {
 	public static final String LEFT_PARENTHIS = "(";
 	public static final String RIGHT_PARENTHIS = ")";
 	
+	public static final String CREATED_START_DATE = "CREATED_STARTDATE";
+   public static final String CREATED_END_DATE = "CREATED_ENDDATE";
+   
 	public static final String START_DATE = "STARTDATE";
 	public static final String END_DATE = "ENDDATE";
 	

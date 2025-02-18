@@ -1,15 +1,16 @@
-
 package dk.schioler.event.base.xml;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigDecimal;
 import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.apache.commons.lang3.BooleanUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -18,13 +19,15 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import dk.schioler.event.base.entity.AbstractEntity;
+import dk.schioler.event.base.entity.AbstractEntityName;
+import dk.schioler.event.base.entity.AbstractEntityParentChild;
 import dk.schioler.event.base.entity.EventTemplate;
 import dk.schioler.event.base.entity.EventType;
+import dk.schioler.event.base.entity.UNIT;
 import dk.schioler.event.base.entity.XMLRootElement;
 
 @Component
-public class EventTypeXMLHelper implements EventTypeXMLELements {
+public class EventTypeXMLHelper implements EventTypeXMLElements {
 
 	private Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -32,11 +35,11 @@ public class EventTypeXMLHelper implements EventTypeXMLELements {
 
 	}
 
-	public List<AbstractEntity> buildEventTypes(String srcFileName) {
+	public List<AbstractEntityParentChild> buildEventTypes(String srcFileName) {
 		return buildEventTypes(new File(srcFileName));
 	}
 
-	public List<AbstractEntity> buildEventTypes(File srcFile) {
+	public List<AbstractEntityParentChild> buildEventTypes(File srcFile) {
 		FileInputStream fis = null;
 		try {
 			fis = new FileInputStream(srcFile);
@@ -54,7 +57,7 @@ public class EventTypeXMLHelper implements EventTypeXMLELements {
 		}
 	}
 
-	public List<AbstractEntity> buildEventTypesFromXML(InputStream is) {
+	public List<AbstractEntityParentChild> buildEventTypesFromXML(InputStream is) {
 		logger.trace("buildEventTypesfromXML:" + is);
 		XMLRootElement rootNode = null;
 		try {
@@ -86,7 +89,7 @@ public class EventTypeXMLHelper implements EventTypeXMLELements {
 		return null;
 	}
 
-	private void traverseNodes(Node xmlCurNode, AbstractEntity curObject) {
+	private void traverseNodes(Node xmlCurNode, AbstractEntityName curObject) {
 		NodeList xmlChildNodes = xmlCurNode.getChildNodes();
 		for (int idx = 0; idx < xmlChildNodes.getLength(); idx++) {
 			Node xmlChildNode = xmlChildNodes.item(idx);
@@ -146,7 +149,7 @@ public class EventTypeXMLHelper implements EventTypeXMLELements {
 			}
 			EventType et = new EventType();
 			et.setName(name);
-			et.setShortName(shortName);
+			et.setDescription(shortName);
 			et.setDescription(description);
 			
 			return et;
@@ -164,6 +167,7 @@ public class EventTypeXMLHelper implements EventTypeXMLELements {
 			String description = null;
 			String unit = null;
 			String dose = null;
+			String isFavorite = null;
 			
 			// get attributes names and values
 			NamedNodeMap xmlNodeMap = xmlChildNode.getAttributes();
@@ -185,14 +189,18 @@ public class EventTypeXMLHelper implements EventTypeXMLELements {
 				} else if (ATTR_DESCRIPTION.equals(xmlNode.getNodeName())) {
 					description = xmlNode.getNodeValue();
 					logger.trace("found: attr:description=" + description);
+				} else if (ATTR_IS_FAVORITE.equals(xmlNode.getNodeName())) {
+					isFavorite = xmlNode.getNodeValue();
+					logger.trace("found: attr:is-favorite=" + description);
 				}
 			}
 			EventTemplate et = new EventTemplate();
 			et.setName(name);
-			et.setShortName(shortName);
+			et.setDescription(shortName);
 			et.setDescription(description);
-			et.setDose(dose);
-			et.setUnit(unit);
+			et.setDose(new BigDecimal(dose));
+			et.setUnit(UNIT.getUnit(unit));
+			et.setFavorite(BooleanUtils.toBoolean(isFavorite));			
 			
 			return et;
 		} else {

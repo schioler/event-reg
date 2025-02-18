@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
@@ -7,25 +6,50 @@
 <%@ page session="true"%>
 <html>
 <head>
-<title>EventType</title>
-<link rel="stylesheet" href="styles/cols.css">
-<link rel="stylesheet" href="styles/event.css">
+<title>EventType - Update</title>
+<!-- <link rel="stylesheet" href="public/styles/cols.css"> -->
+<link rel="stylesheet" href="public/styles/event.css">
 </head>
 <body>
 <fmt:bundle
    basename="dk.schioler.event.base.resources.EventListResources">
+
 	<div class="menu-div">
 		<%@ include file="include/menu.jsp"%>
 	</div>
-	<div class="content-div">
-   <p><fmt:message key="event-type.entity" /></p>
+
+	<!-- <div class="content-div"> -->
+   <p><fmt:message key="event-type.entity" />Update</p>
 		<br>
 		<form action="./event-type-update.do" method="post">
-			<input type="hidden" name="id" value="${sesEventType.id }">
-				<%@ include file="include/event-type.jsp"%>
+			<div class="container-2-col"> 
+			<div>
+		       Navn
+		 	</div>
+			<div>
+			<input type="hidden" name="event-type-id" value="${sesEventType.id }">
+			<input type="text" name="name" value="${sesEventType.name }">
+			</div>
+			
+         <div>ShortName</div>
+			<div>
+			<input type="text" name="short-name" value="${sesEventType.shortName }">
+			</div>
+
+         <div>Desc</div>
+         <div>
+         <input type="text" name="description" value="${sesEventType.description }">
+         </div>
+         
+     
+         <div>&nbsp;</div>
+         <div>
+			<input type="submit" > 
+         </div>
+			</div>
 		</form>
 		<br>
-	</div>
+	<!-- </div> -->
 
 </fmt:bundle>
 </body>

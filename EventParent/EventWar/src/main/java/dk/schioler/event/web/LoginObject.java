@@ -1,10 +1,12 @@
 package dk.schioler.event.web;
 
+
 import java.time.LocalDateTime;
 import java.util.Objects;
 
 import dk.schioler.event.web.controller.WebTokens;
-import dk.schioler.secure.entity.impl.LoginImpl;
+import dk.schioler.shared.security.entity.Login;
+
 
 public class LoginObject implements WebTokens {
 
@@ -14,9 +16,9 @@ public class LoginObject implements WebTokens {
 
 	private final boolean isAuthenticated;
 
-	private final LoginImpl login;
+	private final Login login;
 
-	public LoginObject(LocalDateTime loginTime, boolean isAuthenticated, LoginImpl login) {
+	public LoginObject(LocalDateTime loginTime, boolean isAuthenticated, Login login) {
 		super();
 		this.loginTime = loginTime;
 		this.isAuthenticated = isAuthenticated;
@@ -31,7 +33,7 @@ public class LoginObject implements WebTokens {
 		return isAuthenticated;
 	}
 
-	public LoginImpl getLogin() {
+	public Login getLogin() {
 		return login;
 	}
 

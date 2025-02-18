@@ -1,1 +1,0 @@
-package dk.schioler.event.base.configuration;

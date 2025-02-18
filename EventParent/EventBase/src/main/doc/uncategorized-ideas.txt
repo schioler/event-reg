@@ -1,0 +1,4 @@
+Ideas/fuuture features
+
+Search:
+1: Save searches, to enable re-use/optimizations (SearchCriteria stored in db?)

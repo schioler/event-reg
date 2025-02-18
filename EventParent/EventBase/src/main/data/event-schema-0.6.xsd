@@ -1,18 +1,15 @@
 <?xml version="1.0" ?>
 <xsd:schema targetNamespace="http://www.schioler.dk/xsd/event" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-   xmlns:event="http://www.schioler.dk/xsd/event"
+   xmlns:event="http://www.schioler.dk/xsd/event" elementFormDefault="qualified" attributeFormDefault="unqualified" version="0.6">
    
-   elementFormDefault="qualified" attributeFormDefault="unqualified" version="0.6"
-   
-   >
    <xsd:complexType name="event-template">
-      <xsd:attribute name="name" type="xsd:string"></xsd:attribute>
-      <xsd:attribute name="short-name" type="xsd:string"></xsd:attribute>
-      <xsd:attribute name="unit" type="xsd:string" use="required"></xsd:attribute>
-      <xsd:attribute name="dose" type="xsd:string" use="required"></xsd:attribute>
-      <xsd:attribute name="description" type="xsd:string"/>
+   	<xsd:attribute name="name" type="xsd:string"></xsd:attribute>
+   	<xsd:attribute name="short-name" type="xsd:string"></xsd:attribute>
+   	<xsd:attribute name="unit" type="xsd:string" use="required"></xsd:attribute>
+   	<xsd:attribute name="dose" type="xsd:string" use="required"></xsd:attribute>
+   	<xsd:attribute name="description" type="xsd:string" />
+  		<xsd:attribute name="is-favorite" type="xsd:boolean" default="false"></xsd:attribute>
    </xsd:complexType>
-   
    <xsd:complexType name="event-type">
       <xsd:sequence maxOccurs="unbounded" minOccurs="0">
          <xsd:element name="event-template" type="event:event-template"></xsd:element>

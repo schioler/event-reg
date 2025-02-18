@@ -1,45 +1,48 @@
 package dk.schioler.event.base.resources;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Properties;
-
 public class EventListResources extends AbstractEventListResources {
 
-	private Properties props = new Properties();
+//	private Properties props = new Properties();
 	
 	public EventListResources() {
-		super();
-		String file = "/event.properties";
-		logger.trace("loadMessages;" + file);
-		InputStream is = null;
-		try {
-			is = EventListResources.class.getResourceAsStream(file);
+		super(null);
 
-			Properties props = new Properties();
-			props.load(is);
-
-			this.props = props;
-			logger.debug("messages:" + this.props);
-		} catch (Exception e) {
-
-			throw new EventResourceException(e.getMessage(), e);
-		} finally {
-			if (is != null) {
-				try {
-					is.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-		}
+//		InputStream is = null;
+//		
+//		
+//		String file = "/event.properties";
+//		
+//		logger.trace("attempting: loadMessages;" + file);
+//		is = EventListResources.class.getResourceAsStream(file);
+//		if (is == null) {
+//			file = "/properties" + file;
+//			is = EventListResources.class.getResourceAsStream(file);
+//		}
+//			
+//		try {			
+//			Properties props = new Properties();
+//			props.load(is);
+//
+//			this.props = props;
+//			logger.debug("messages:" + this.props);
+//		} catch (Exception e) {
+//			throw new EventResourceException(e.getMessage(), e);
+//		} finally {
+//			if (is != null) {
+//				try {
+//					is.close();
+//				} catch (IOException e) {
+//					e.printStackTrace();
+//				}
+//			}
+//		}
 
 	}
 
-	@Override
-	protected Properties getProps() {
-		return this.props;
-	}
+//	@Override
+//	protected Properties getProps() {
+//		return this.props;
+//	}
 
 //	protected Object[][] getContents() {
 //		
