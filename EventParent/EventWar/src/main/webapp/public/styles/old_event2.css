@@ -1,0 +1,515 @@
+* {
+	box-sizing: border-box;
+	margin: 0;
+}
+
+body {
+   /*   font-family: "Lucida Sans", sans-serif; */
+   font-family: "Verdana", sans-serif;
+/*    color: maroon; */
+   /* color: rgba(255, 255, 255, 1.0); */
+   background-color:  lightgray; 
+   text-align: center;
+   align-content: center;
+   justify-content: center;
+}
+
+DIV {
+	border-color:green;
+   border-style:solid;
+   border-width: 1px;
+}
+
+/* outer columns  */
+.col-body {
+   display: grid;
+   grid-gap: 4px;
+   grid-template-columns:100%;
+   width: 100%;
+   /* margin: 12px; */
+   /* padding: 2em; */
+/*    background-color: lightgreen; */
+   text-align: center;  
+   align-content: center;
+   border-color:maroon;
+   bordser-style:solid;
+   border-width: 6px;
+   border-radius: 14px;
+   justify-content: center;
+}
+
+.div-body{
+   border-color:orange;
+   border-style:double;
+   border-width: 6px;
+   	
+}
+
+.col-content {
+   display: grid;
+   grid-template-columns: 100%;
+   text-align:center;
+   justify-content: center;
+   width: 80%;
+   align-content:center;
+   border-style:solid;
+   border-width: 5px;
+   border-color: teal;
+}
+
+.col-content > div{
+	width: 100%;
+	border-style: inset;
+	border-color: red;  
+	border-width: 7px;
+}
+ 
+.col-container {
+	display: grid;
+	grid-template-columns: 30% 40% 30%;
+	grid-gap: 4px;
+	/* margin: 12px;
+	padding: 2em; */
+/* 	background-color: lightgray; */
+   border-color:blue;
+   border-style:solid;
+   border-width: 3px;
+}
+
+.col-container > div{
+	background-color: fuchsia;
+}
+/* *********************************** */
+.two-col-grid-container {
+   display: grid;
+   grid-template-areas: 
+     'head head' 
+     'col1 col2 '      
+     'foot foot ';
+   padding: 1em;
+   grid-gap: 3px;
+   /* border-color: red;
+   border-width: 2px;
+   border-style: solid; */
+   background-color: aqua;
+   border-radius: 10px; 
+}
+
+.col1 {
+	grid-area: col1;
+   text-align: right;
+   border-color: olive;
+   border-width: 2px;
+   border-style: solid; 
+}
+
+.col2 {
+	grid-area: col2;
+   text-align: left;
+   border-color: red;
+   border-width: 2px;
+   border-style: solid; 
+}
+
+.footer {
+	grid-area: foot;
+	text-align: right;  
+}
+.header {
+   grid-area: head;
+   text-align: center;
+   font-size: 2em;
+}
+
+/* ************************************ */
+.grid-container {
+   display: grid;
+   grid-template-areas: 
+     'header header' 
+     'col1 col2 '
+     'col1 col2 ' 
+     'footer footer ';
+   padding: 2em;
+   grid-gap: 3px;
+   /* border-color: red;
+   border-width: 2px;
+   border-style: solid; */
+   background-color: lightblue;
+   border-radius: 10px; 
+}
+
+/* a Row container */
+.row-container {
+   display: grid;
+   grid-template-columns: 100%;
+   grid-template-rows: auto;
+
+/*    background-color: silver;
+   border-style: dotted;
+   border-width: 0px;
+   border-color: maroon;
+ */}
+
+/* MENU ----------- */
+.menu {
+   /* background-color: #EEFFEE; */
+   border-style: solid;
+   border-width: 1px;
+   border-color: maroon;
+   width: 100%;
+/*    border-radius: 7px; */
+   text-align: center;
+   /* height: 20%; */   
+/*    padding-top: 4px;
+   padding-bottom: 3px;    
+  */     
+}
+
+/* All items to grid-container */
+.item1 {
+	grid-area: header;
+	text-align: center;
+/* 	border-color: red;
+   border-width: 2px;
+   border-style: solid; */
+}
+
+.item2 {
+	grid-area: col1;
+	text-align: right;
+	/* border-color: red;
+   border-width: 2px;
+   border-style: solid; */
+	
+}
+
+.item3 {
+	grid-area: col2;
+	text-align: left;
+	/* border-color: red;
+   border-width: 2px;
+   border-style: solid; */
+}
+
+.item4 {
+	grid-area: col3;
+}
+
+.item5 {
+	grid-area: footer;
+	text-align: right;
+	/* border-color: red;
+   border-width: 2px;
+   border-style: solid; */
+}
+
+.grid-container>div {
+	padding: 4px;
+	font-size: 20px;
+	vertical-align: baseline;
+}
+
+/*------ **/
+.container-2-col-head, .container-2-col, 
+   .container-3-col-head, .container-3-col, 
+   .container-4-col-head, .container-4-col,
+   .container-5-col-head, .container-5-col, 
+   .container-6-col-head, .container-6-col, 
+   .container-7-col-head, .container-7-col {
+   /* gap: 10px; */
+   text-align: left; 
+     /* padding-left: 14px;
+   padding-right: 16px; */
+   font-size: 1em;
+   /* margin-top: 5px; 
+   margin-bottom: 1px; */
+/*    border-radius: 5px; */
+   
+}
+
+.container-2-col-head, .container-2-col {
+   display: grid;
+   grid-template-columns: 40% 50%;
+   /* justify-content: inherit;
+   align-content: inherit; */
+   border-style: solid;
+   border-width: 3px;
+   border-color: teal;
+   
+}
+
+
+
+.container-3-col-head, .container-3-col {
+   display: grid;
+   /* gap: 10px; */
+   /* border-color:red;
+      border-style: solid;
+      border-width:2px; */
+   grid-template-columns: 10vw 15vw 25vw;
+   /* justify-content: inherit;
+   align-content: inherit;    */
+}
+
+.container-4-col-head, .container-4-col {
+   display: grid;
+   /*    gap: 1px; */
+   grid-template-columns: 15% 20% 15% 50%;
+   padding: 3px;
+   /* justify-content: inherit;
+   align-content: inherit; */
+    /* border-color:maroon;
+      border-style: solid;
+      border-width:2px;   */
+}
+
+.container-4-col-head {
+	font-weight: bold;
+	border-style: solid;
+	border-color: maroon;
+	border-width: 1px;
+	background-color: lightblue;
+}
+.container-4-col {
+	border-left-style: solid;
+	border-left-color: maroon;
+	border-left-width: 1 px;
+	border-bottom-style: solid;
+   border-bottom-color: maroon;
+   border-bottom-width: 1 px;
+   border-right-style: solid;
+   border-right-color: maroon;
+   border-right-width: 1 px;
+	
+
+	}
+
+/* .container-4-col > div{
+   border-color:red;
+      border-style: solid;
+      border-width:2px;  
+}
+ .container-4-col-head > div{
+   border-color:red;
+      border-style: solid;
+      border-width:2px;  
+} */
+ 
+
+
+.container-5-col-head, .container-5-col {
+   display: grid;
+   grid-template-columns: 10vw 18vw 8vw 10vw 25vw; 
+/*    grid-template-columns: 0.5fr 2fr 0.5fr 0.5fr 3fr; */
+   gap: 10px; 
+
+   padding-left: 3px;
+   padding-right: 8px; 
+   /* border-style: solid;
+   border-width: 1px;
+   border-color: maroon; */ 
+   /* justify-content: inherit;
+   align-content: inherit; */
+}
+
+/* .container-5-col {
+   grid-template-columns: 5vw 15vw 7vw 5vw 50vw;
+   gap: 10px;
+   
+  
+   justify-content: inherit;
+   align-content: inherit;
+}
+ */
+/* .container-5-col-head {
+   grid-template-columns: 5vw 15vw 7vw 5vw 50vw;
+   gap: 10px;
+   border-style: solid;
+   border-width: 1px;
+   border-color: maroon; 
+  
+   justify-content: inherit;
+   align-content: inherit;
+}
+ */
+.container-5-col > div {
+	background-color: transparent;	   
+}
+
+.container-6-col-head, .container-6-col {
+   display: grid;
+   grid-template-columns: 10vw 20vw 8vw 10vw 10vw 10vw; 
+   gap: 10px; 
+
+/*    padding-left: 3px;
+   padding-right: 8px; 
+ */   border-style: solid;
+   border-width: 1px;
+   border-color: maroon; 
+
+}
+
+.container-7-col-head, .container-7-col {
+   display: grid;
+   /* gap: 10px; */
+   grid-template-columns: 10vw 15vw 15vw 5vw 5vw 20vw 30vw;
+   /* justify-content: inherit;
+   align-content: inherit; */
+}
+
+/* .container-2-col-head, .container-3-col-head, .container-4-col-head,
+   .container-5-col-head, .container-6-col-head, .container-7-col-head {
+   background-color: lightblue;
+   font-weight: bold;
+} */
+
+/* .container-2-col, .container-3-col, .container-4-col, .container-5-col,
+   .container-6-col, .container-7-col {
+   background-color: white;
+}
+
+.container-2-col-first, .container-6-col-first, .container-8-col-first {
+   background-color: white;
+} */
+/* EO Container styles */
+/* START text styles */
+
+
+/* .text-input-head, .text-input, .text-input-btn {
+   border-radius: 4px;
+   width: 90%;
+   margin: 3px;
+   padding-top: 10px;
+   padding-right: 5px;
+   padding-bottom: 5px;
+   padding-left: 10px;
+   border-color: green;
+   border-style: inset;
+   border-width: 2px;
+}
+
+.text-input-head {
+   border-radius: 4px;
+   width: 100%;
+   margin: 0px;
+   padding-top: 10px;
+   padding-right: 5px;
+   padding-bottom: 5px;
+   padding-left: 10px;
+   border-color: green;
+   border-style: inset;
+   background-color: lightblue;
+   background-color: rgba(150, 200, 200, 0.6);
+   border-width: 2px;
+   color: maroon;
+   font-weight: bold;
+   font-size: 1em;
+
+    text-align: center;
+   height: 40px;;
+}
+
+.text-input {
+   border-radius: 4px;
+   width: 100%;
+   margin: 0px;
+   padding-top: 10px;
+   padding-right: 5px;
+   padding-bottom: 5px;
+   padding-left: 10px;
+   border-color: green;
+   border-style: inset;
+   background-color: rgba(150, 200, 200, 0.2);
+   border-width: 2px;
+   color: maroon;
+   font-weight: normal;
+   font-size: 1em;
+}
+ */
+/* .text-input-btn {
+   border-radius: 4px;
+   width: 20%;
+   margin: 2px;
+   padding-top: 10px;
+   padding-right: 5px;
+   padding-bottom: 5px;
+   padding-left: 10px;
+   border-color: maroon;
+   border-style: inset;
+   background-color: rgba(150, 200, 200, 0.2);
+   border-width: 2px;
+   color: maroon;
+}
+ */
+
+/* .tmpl-text {
+   font-size: 1em;
+   background-color: rgba(255, 255, 255, 1);
+}
+
+.btn-text, .btn-text-head {
+   font-size: 0.8em;
+   color: maroon;
+   border-style:outset;
+   border-width: 3px;
+   border-color:black;
+
+      font-weight: bold;
+   width: 50px;
+   border-radius: 4px;
+   padding-top: 6px;
+   padding-right: 3px;
+   padding-bottom: 6px;
+   padding-left: 3px; 
+}
+.tmpl-text-btn {
+      background-color: rgba(150, 200, 200, 0.6);
+   }
+   
+ .header-text-btn {
+    background-color: rgba(250, 250, 250, 0.6);
+   }
+ */
+/* .span-status {
+   font-size: 0.8em;
+   color: maroon;
+   background-color: rgba(250, 250, 250, 0.6);
+} */
+
+/* EO text Styles*/
+
+
+/* @media only screen and (max-width: 600px) {
+	  body {
+    background-color: lightblue;
+  }
+	
+  .sq1 {grid-area: 1 / span 6;}
+  .sq2 {grid-area: 2 / span 6;}
+  .sq3 {grid-area: 3 / span 6;}
+  .sq4 {grid-area: 4 / span 6;}
+  .sq5 {grid-area: 5 / span 6;}
+}*/
+
+/* .login {
+   display: grid;
+   gap: 1px;
+   font-size: 1em;
+   padding: 1px;
+   border-width: 1px;
+   border-style: solid;
+   border-color: maroon;
+   width: 30%;
+   grid-template-columns: 40% 40% 20%;
+} */
+
+input[type=submit]{
+   width: 40%;  
+   font-weight: bold;
+}
+input[type=text]{
+   width: 96%; 
+}
+input[type=password]{
+   width: 100%; 
+}

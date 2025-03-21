@@ -1,34 +1,56 @@
 package dk.schioler.event.web.controller;
 
+
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import dk.schioler.event.base.dao.EventDAO;
 import dk.schioler.event.base.dao.EventTemplateDAO;
 import dk.schioler.event.base.dao.EventTypeDAO;
+import dk.schioler.event.base.entity.AbstractEntityName;
 import dk.schioler.event.base.entity.Event;
 import dk.schioler.event.base.entity.EventTemplate;
 import dk.schioler.event.base.entity.EventType;
 import dk.schioler.event.base.entity.UNIT;
-import dk.schioler.event.web.BaseWebCommon;
+import dk.schioler.event.web.common.EventInsufficientInputDataException;
+import dk.schioler.event.web.common.WebCommonAPI;
+import dk.schioler.event.web.controller.api.BaseControllerAPI;
 import dk.schioler.event.web.controller.exception.EventWebControllerException;
-import dk.schioler.event.web.controller.exception.EventWebInValidParameterValuesException;
 import dk.schioler.event.web.controller.exception.EventWebInsufficientParameterValuesException;
+import dk.schioler.event.web.entity.WebLogin;
 import dk.schioler.shared.security.dao.LoginDAO;
 import dk.schioler.shared.security.dao.PasswordDAO;
 import dk.schioler.shared.security.dao.UserProfileDAO;
 import dk.schioler.shared.security.encrypt.Encrypter;
 import jakarta.servlet.http.HttpSession;
 
-public class AbstractController extends BaseWebCommon {
+public class AbstractController implements BaseControllerAPI {
+
+   protected Logger logger = LoggerFactory.getLogger(getClass());
+
+   public List<UNIT> getSelectableUnits() {
+      UNIT[] values = UNIT.values();
+      List<UNIT> asList = Arrays.asList(values);
+
+      return asList;
+   }
+
+
+   // ************************************************************
+   @Autowired
+   protected WebCommonAPI webCommonAPI;
 
    @Autowired
    protected EventDAO eventDAO;
@@ -47,203 +69,321 @@ public class AbstractController extends BaseWebCommon {
 
    @Autowired
    protected Encrypter encrypter;
-   
+
    @Autowired
-   protected UserProfileDAO userProfileDAO ;
+   protected UserProfileDAO userProfileDAO;
 
-   public static final String LOGIN_JSP = "redirect:public/login.jsp";
-
-   public static final String SES_STATUS_MSG_LIST = "sesStatusMessageList";
-
-   protected void setStatuMsg(HttpSession session, List<String> msgList) {
-      session.setAttribute(SES_STATUS_MSG_LIST, msgList);
+   // Login stuff
+   protected WebLogin getAuthenticatedLogin(HttpSession session) {
+      return this.webCommonAPI.getAuthenticatedLogin(session);
    }
 
-   protected void addToStatus(HttpSession session, String msg) {
-      List<String> list = (List<String>) session.getAttribute(SES_STATUS_MSG_LIST);
-      if (list == null) {
-         list = new ArrayList<String>();
-      }
-      list.add(msg);
-      session.setAttribute(SES_STATUS_MSG_LIST, list);
+   public boolean isLoginAuthenticated(HttpSession session) {
+      return webCommonAPI.isLoginAuthenticated(session);
    }
 
-   protected void resetStatus(HttpSession session) {
-      List<String> list = (List<String>) session.getAttribute(SES_STATUS_MSG_LIST);
-      if (list == null) {
-         list = new ArrayList<String>();
-      } else {
-         list.clear();
-      }
-      session.setAttribute(SES_STATUS_MSG_LIST, list);
+   public void setAuthenticatedLogin(HttpSession session, WebLogin weblogin) {
+      webCommonAPI.setAuthenticatedLogin(session, weblogin);
    }
 
-   public static final String PAR_EVENT_ID = "event-id";
-   public static final String PAR_EVENT_TEMPLATE_ID = "event-template-id";
-   public static final String PAR_EVENT_TYPE_ID = "event-type-id";
-   public static final String PAR_LOGIN_ID = "login-id";
-   public static final String PAR_NAME = "name";
-   public static final String PAR_SHORT_NAME = "short-name";
-   public static final String PAR_DOSE = "dose";
-   public static final String PAR_UNIT = "unit";
-   public static final String PAR_IS_FAVORITE = "is-favorite";
-   public static final String PAR_DESCRIPTION = "description";
-   public static final String PAR_DATE = "date";
-   public static final String PAR_TIME = "time";
+   public boolean isPublicURL(String requestURI) {
+      return webCommonAPI.isPublicURL(requestURI);
+   }
 
-   protected EventTemplate createEventTemplateInstance(Map<String, String> params, Integer loginId) {
+   public void addObjectToSession(HttpSession session, String key, Object object) {
+      webCommonAPI.addObjectToSession(session, key, object);
+   }
 
-      String idStr = params.get(PAR_EVENT_TEMPLATE_ID);
-      String eventTypeIdStr = params.get(PAR_EVENT_TYPE_ID);
+   public List<Object> getListFromSession(HttpSession session, String key) {
+      return webCommonAPI.getListFromSession(session, key);
+   }
+
+   public void addToStatus(HttpSession session, String msg) {
+      webCommonAPI.addToStatus(session, msg);
+   }
+
+   public void resetStatus(HttpSession session) {
+      webCommonAPI.resetStatus(session);
+   }
+
+   // *******************************************************
+
+
+   protected AbstractEntityName addEntityNameValues(AbstractEntityName entity, Map<String, String> params) throws EventInsufficientInputDataException {
       String name = params.get(PAR_NAME);
       String shortName = params.get(PAR_SHORT_NAME);
       String description = params.get(PAR_DESCRIPTION);
-      String unit = params.get(PAR_UNIT);
-      String dose = params.get(PAR_DOSE);
-      String isFavorite = params.get(PAR_IS_FAVORITE);
 
-      Integer eventTemplateId = null;
-      if (idStr != null) {
-         eventTemplateId = Integer.valueOf(idStr);
-      }
-      Integer eTypeId = null;
-      if (eventTypeIdStr != null) {
-         eTypeId = Integer.valueOf(eventTypeIdStr);
-      } else {
-         throw new EventWebInsufficientParameterValuesException("required " + PAR_EVENT_TYPE_ID + " was not provided, when building an EventTemplate instance");
-      }
+      entity.setName(name);
+      entity.setShortName(shortName);
+      entity.setDescription(description);
+      return entity;
 
-      EventTemplate et = new EventTemplate();
-      et.setId(eventTemplateId);
-      et.setParentId(eTypeId);
-      et.setLoginId(loginId);
-      et.setName(name);
-      et.setDescription(shortName);
-      et.setDose(new BigDecimal(dose));
-      et.setUnit(UNIT.getUnit(unit));
-      et.setDescription(description);
-      et.setFavorite(BooleanUtils.toBoolean(isFavorite));
-      return et;
    }
 
-   protected EventType createEventTypeInstance(Map<String, String> params, Integer loginId) throws EventWebControllerException {
-      Integer id = null;
-      String idStr = params.get(PAR_EVENT_TYPE_ID);
-      if (!StringUtils.isEmpty(idStr)) {
+
+   protected Integer extractRequiredIntegerFromParams(String key, Map<String, String> params) {
+      String webId = params.get(key);
+
+      Integer i = null;
+      if (StringUtils.isNotBlank(webId)) {
          try {
-            id = Integer.parseInt(idStr);
-         } catch (NumberFormatException e) {
-            throw new EventWebInValidParameterValuesException(e.getMessage(), e);
-         } catch (Exception e) {
-            throw new EventWebControllerException(e.getMessage(), e);
+            i = Integer.valueOf(webId);
+         } catch (NumberFormatException nfe) {
+            String msg = "Unable to parse id from String to Integer: id=" + webId;
+            logger.error(msg);
+            throw new EventWebInsufficientParameterValuesException(msg + "\n" + nfe.getMessage(), nfe);
          }
       } else {
-         logger.info("found no id in req parameters - skipping id");
+         throw new EventWebInsufficientParameterValuesException("found no value for ");
       }
-      String name = params.get(PAR_NAME);
-      if (StringUtils.isEmpty(name)) {
-         throw new EventWebInsufficientParameterValuesException("createEventInstance: name parameter missing");
-      }
-      String shortName = params.get(PAR_SHORT_NAME);
-      if (StringUtils.isEmpty(shortName)) {
-         throw new EventWebInsufficientParameterValuesException("createEventInstance: shortName parameter missing");
-      }
+      return i;
+   }
 
-      // optional
-      String description = params.get(PAR_DESCRIPTION);
-
-      EventType eventType = new EventType();// null, tmplId, note, eventCustomDateTime);
-      eventType.setId(id);
+//   **************************************************************'''
+//   EVENT_TYPE
+   protected EventType establishEventTypeCreateInstance(Map<String, String> params, Integer loginId) throws EventInsufficientInputDataException {
+      EventType eventType = new EventType();
       eventType.setLoginId(loginId);
-      eventType.setName(name);
-      eventType.setDescription(shortName);
-      eventType.setDescription(description);
-
+      eventType = (EventType) addEntityNameValues(eventType, params);
       return eventType;
    }
 
-   protected Event createEventInstance(Map<String, String> params, Integer loginId) throws EventWebControllerException {
+   protected EventType establishEventTypeUpdateInstance(Map<String, String> params, Integer loginId) throws EventInsufficientInputDataException {
+      EventType eventType = establishEventTypeCreateInstance(params, loginId);
+      
+      Integer i = extractRequiredIntegerFromParams(PAR_EVENT_TYPE_ID, params);
+      eventType.setId(i);
+      
+      return eventType;
+   }
 
-      Integer id = null;
-      String idStr = params.get(PAR_EVENT_ID);
-      if (!StringUtils.isEmpty(idStr)) {
-         try {
-            id = Integer.parseInt(idStr);
-         } catch (NumberFormatException e) {
-            throw new EventWebInValidParameterValuesException(e.getMessage(), e);
-         } catch (Exception e) {
-            throw new EventWebControllerException(e.getMessage(), e);
-         }
-      } else {
-         logger.info("found no id in req parameters - skipping id");
-      }
-
-      String templIdStr = params.get(PAR_EVENT_TEMPLATE_ID);
-
-      if (StringUtils.isEmpty(templIdStr)) {
-         throw new EventWebInsufficientParameterValuesException("createEventInstance: template-id parameter missing");
-      }
-
-      Integer tmplId = null;
-      try {
-         tmplId = Integer.parseInt(templIdStr);
-      } catch (NumberFormatException e) {
-         throw new EventWebInValidParameterValuesException(e.getMessage(), e);
-      } catch (Exception e) {
-         throw new EventWebControllerException(e.getMessage(), e);
-      }
-
-      String name = params.get(PAR_NAME);
-      if (StringUtils.isEmpty(name)) {
-         throw new EventWebInsufficientParameterValuesException("createEventInstance: name parameter missing");
-      }
-      String shortName = params.get(PAR_SHORT_NAME);
-      if (StringUtils.isEmpty(shortName)) {
-         throw new EventWebInsufficientParameterValuesException("createEventInstance: short-name parameter missing");
-      }
-
-      // not mandatory, so no verification...
-      String note = params.get(PAR_DESCRIPTION);
-
-      String dose = params.get(PAR_DOSE);
-      if (StringUtils.isEmpty(dose)) {
-         throw new EventWebInsufficientParameterValuesException("createEventInstance: dose parameter missing");
-      }
+   protected EventType establishEventTypeDeleteInstance(Map<String, String> params, Integer loginId) {
+      EventType et = new EventType();
+      et.setLoginId(loginId);
+      Integer i = extractRequiredIntegerFromParams(PAR_EVENT_TYPE_ID, params);
+      et.setId(i);
+      return et;
+   }
+   // ******************************'
+   //   EventtTemplate
+   // ******************************'
+   protected EventTemplate establishEventTemplateSpecificDataInstance(Map<String, String> params, EventTemplate eventTemplate) throws EventInsufficientInputDataException {
+      // oarent ref
+      Integer eTypeId = extractRequiredIntegerFromParams(PAR_EVENT_TYPE_ID, params);
+      
+      // Some date
       String unit = params.get(PAR_UNIT);
-      if (StringUtils.isEmpty(unit)) {
-         throw new EventWebInsufficientParameterValuesException("createEventInstance: unit parameter missing");
+      String doseStr = params.get(PAR_DOSE);
+      String isFavorite = params.get(PAR_IS_FAVORITE);
+      String sortOrderStr = params.get(PAR_SORT_ORDER);
+
+      boolean isFav = BooleanUtils.toBoolean(isFavorite);
+
+      Integer sortO = null;
+      if (StringUtils.isNotBlank(sortOrderStr)) {
+         sortO = Integer.valueOf(sortOrderStr);
+      } else {
+         sortO = 1;
       }
 
-      String dateStr = params.get(PAR_DATE);
-      String timeStr = params.get(PAR_TIME);
+      BigDecimal dose;
+      try {
+         dose = new BigDecimal(doseStr);
+      } catch (NumberFormatException nfe) {
+         logger.error(doseStr + " did not parse properly.....");
+         throw new EventWebControllerException(doseStr + " did not parse properly.....");
+      }
 
-      LocalDateTime eventCustomDateTime = null;
+      UNIT u = UNIT.getUnitFromString(unit);
+      if (u == null) {
+         throw new EventWebControllerException(unit + " is not a defined unit");
+      }
+
+      
+      eventTemplate.setParentId(eTypeId);
+      eventTemplate.setDose(dose);
+      eventTemplate.setUnit(u);
+      eventTemplate.setFavorite(isFav);
+      eventTemplate.setSortOrder(sortO);
+      return eventTemplate;
+   }
+
+   protected EventTemplate establishEventTemplateCreateInstance(Map<String, String> params, Integer loginId) throws EventInsufficientInputDataException {
+      EventTemplate eventTemplate = new EventTemplate();
+      eventTemplate.setLoginId(loginId);
+      eventTemplate = (EventTemplate) addEntityNameValues(eventTemplate, params);
+      eventTemplate = establishEventTemplateSpecificDataInstance(params, eventTemplate);
+      return eventTemplate;
+   }
+
+   protected EventTemplate establishEventTemplateUpdateInstance(Map<String, String> params, Integer loginId) throws EventInsufficientInputDataException {
+      EventTemplate eventTemplate = establishEventTemplateCreateInstance(params, loginId);
+      
+      Integer i = extractRequiredIntegerFromParams(PAR_EVENT_TEMPLATE_ID, params);
+      eventTemplate.setId(i);
+      
+      return eventTemplate;
+   }
+
+   protected EventTemplate establishEventTemplateDeleteInstance(Map<String, String> params, Integer loginId) {
+      EventTemplate et = new EventTemplate();      
+      et.setLoginId(loginId);
+      
+      Integer i = extractRequiredIntegerFromParams(PAR_EVENT_TEMPLATE_ID, params);
+      et.setId(i);
+      return et;
+   }
+
+   // ******************************'
+   //    EVENT
+   // ******************************'
+   protected Event fillEventWithEventTemplateData(EventTemplate template) {
+      Event e = new Event();
+      
+      e.setLoginId(template.getLoginId());
+      e.setName(template.getName());
+      e.setShortName(template.getShortName());
+      e.setDescription(template.getDescription());
+      
+      e.setParentId(template.getId());
+      e.setDose(template.getDose());
+      e.setUnit(template.getUnit());
+
+      
+      return e;
+   }
+   
+   protected Event addEventSpecificData(Map<String, String> params, Event event, Integer login) throws EventInsufficientInputDataException {
+      
+      Integer parentId = extractRequiredIntegerFromParams(PAR_EVENT_TEMPLATE_ID, params);
+      
+      String dose = params.get(PAR_DOSE);
+      String unit = params.get(PAR_UNIT);
+      
+      String date = params.get(PAR_DATE);
+      String time = params.get(PAR_TIME);
+      // must be in ISO_LOCAL_TIME format: ex 10:29:55
+      LocalTime lt = LocalTime.parse(time);
+      // must be in ISO_LOCAL_DATE format, ex 2007-12-03
+      LocalDate ld = LocalDate.parse(date);
+      LocalDateTime eventTS = LocalDateTime.of(ld, lt);
+
+      String note = params.get(PAR_NOTE);
+      
+      event.setParentId(parentId);
+      event.setDose(new BigDecimal(dose));
+      event.setUnit(UNIT.getUnitFromString(unit));
+      event.setEventTS(eventTS);
+      event.setNote(note);
+
+      return event;
+   }
+
+   
+   protected Event establishEventCreateInstance(Map<String, String> params, Integer loginId) throws EventInsufficientInputDataException {
+      Event event = new Event();
+      event.setLoginId(loginId);
+      event = (Event) addEntityNameValues(event, params);
+      
+      return event;
+   }
+
+   protected Event establishEventUpdateInstance(Map<String, String> params, Integer loginId) throws EventInsufficientInputDataException {
+      Event event = establishEventCreateInstance(params, loginId);
+      
+      Integer i = extractRequiredIntegerFromParams(PAR_EVENT_ID, params);
+      event.setId(i);
+      
+      return event;
+   }
+
+   protected Event establishEventDeleteInstance(Map<String, String> params, Integer loginId) {
+      Event et = new Event();      
+      et.setLoginId(loginId);
+      
+      Integer i = extractRequiredIntegerFromParams(PAR_EVENT_ID, params);
+      et.setId(i);
+      return et;
+   }
+   
+   
+   
+//   protected Event createEventInstance(Map<String, String> params, Integer loginId) throws EventInsufficientInputDataException {
+//      Event event = new Event();
+//      event.setLoginId(loginId);
+//
+////      event = (Event) getEntityIdFromParams(event, params);
+//      event = (Event) addEntityNameValues(event, params);
+//
+//      String templIdStr = params.get(PAR_EVENT_TEMPLATE_ID);
+//      if (StringUtils.isEmpty(templIdStr)) {
+//         throw new EventWebInsufficientParameterValuesException("createEventInstance: " + PAR_EVENT_TEMPLATE_ID + " parameter missing or not valid");
+//      }
+//
+//      Integer templateId = null;
+//      try {
+//         templateId = Integer.parseInt(templIdStr);
+//      } catch (NumberFormatException e) {
+//         throw new EventWebInValidParameterValuesException(e.getMessage(), e);
+//      } catch (Exception e) {
+//         throw new EventWebControllerException(e.getMessage(), e);
+//      }
+//
+//      String dose = params.get(PAR_DOSE);
+//      if (StringUtils.isEmpty(dose)) {
+//         throw new EventWebInsufficientParameterValuesException("createEventInstance: " + PAR_DOSE + " parameter missing.");
+//      }
+//      BigDecimal doseBD = null;
+//      try {
+//         doseBD = new BigDecimal(dose);
+//      } catch (NumberFormatException nfl) {
+//         throw new EventWebControllerException("Unable to parse " + PAR_DOSE + " value. Got: " + nfl.getMessage(), nfl);
+//      }
+//
+//      String unit = params.get(PAR_UNIT);
+//      if (StringUtils.isEmpty(unit)) {
+//         throw new EventWebInsufficientParameterValuesException("createEventInstance: " + PAR_UNIT + " parameter missing");
+//      }
+//      UNIT unitInType = UNIT.getUnitFromString(unit);
+//      if (unitInType == null) {
+//         throw new EventWebInsufficientParameterValuesException("createEventInstance: " + PAR_UNIT + " parameter with unparseable value: " + unit);
+//      }
+//
+//      String note = params.get(PAR_NOTE);
+//
+//      String dateStr = params.get(PAR_DATE);
+//      String timeStr = params.get(PAR_TIME);
+//
+//      LocalDateTime eventCustomDateTime = establishLocalDateTime(dateStr, timeStr, LocalDateTime.now());
+//
+//      event.setParentId(templateId);
+//      event.setEventTS(eventCustomDateTime);
+//      event.setNote(note);
+//      event.setDose(doseBD);
+//      event.setUnit(unitInType);
+//      return event;
+//   }
+
+   protected LocalDateTime establishLocalDateTime(String dateStr, String timeStr, LocalDateTime fallback) {
+
+      LocalDateTime customDateTime = null;
 
       if (StringUtils.isNotBlank(dateStr) && StringUtils.isNotBlank(timeStr)) {
          try {
             // Date yyyy-mm-dd
             // Time hh:mi
             String tdStr = dateStr + "T" + timeStr + ":00";
-//				logger.debug("da - ti str" + tdStr);
-            eventCustomDateTime = LocalDateTime.parse(tdStr, DateTimeFormatter.ISO_DATE_TIME);
+//           logger.debug("da - ti str" + tdStr);
+            customDateTime = LocalDateTime.parse(tdStr, DateTimeFormatter.ISO_DATE_TIME);
          } catch (Exception e) {
             throw new EventWebControllerException(e.getMessage(), e);
          }
       } else {
-         eventCustomDateTime = LocalDateTime.now();
+         customDateTime = fallback;
       }
+      return customDateTime;
 
-      Event event = new Event();// null, tmplId, note, eventCustomDateTime);
-      event.setId(id);
-      event.setParentId(tmplId);
-      event.setLoginId(loginId);
-      event.setEventTS(eventCustomDateTime);
-      event.setName(name);
-      event.setDescription(shortName);
-      event.setNote(note);
-      event.setDose(new BigDecimal(dose));
-      event.setUnit(UNIT.getUnit(unit));
-      return event;
    }
 
 }

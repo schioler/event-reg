@@ -2,7 +2,6 @@ package dk.schioler.event.base.dao.table.impl;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -32,7 +31,8 @@ public class EventTableImpl extends AbstractSQLTableParentChild<Event> implement
       selectColumns.add(FLD_DOSE);
       selectColumns.add(FLD_UNIT);
       selectColumns.add(FLD_EVENT_TS);
-
+      
+      orderByColumns.add(0,FLD_EVENT_TS);
    }
 
    @Override
@@ -76,13 +76,13 @@ public class EventTableImpl extends AbstractSQLTableParentChild<Event> implement
       return new EventRowMapper();
    }
 
-   @Override
-   public List<String> getOrderBy() {
-      List<String> orderBy = new ArrayList<String>();
-      orderBy.add(FLD_NAME);
-
-      return orderBy;
-   }
+//   @Override
+//   public List<String> getOrderBy() {
+////      List<String> orderBy = new ArrayList<String>();
+////      orderBy.add(FLD_NAME);
+//
+//      return orderBy;
+//   }
 
    @Override
    public List<StringBuffer> addLevelSpecificCriteriaFrom(AbstractIdCriteria idCrit) {

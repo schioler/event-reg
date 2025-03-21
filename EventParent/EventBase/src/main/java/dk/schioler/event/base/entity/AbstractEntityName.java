@@ -72,13 +72,11 @@ public abstract class AbstractEntityName extends AbstractEntityId {
    @Override
    public String toString() {
       StringBuilder builder = new StringBuilder();
-      builder.append(super.toString()+  " [name=");
-      builder.append(name);
-      builder.append(", shortName=");
-      builder.append(shortName);
-      builder.append(", description=");
-      builder.append(description);
-      builder.append("]");
+      builder.append(super.toString());
+      builder.append("\n, name=").append(name);
+      builder.append(", shortName=").append(shortName);
+      builder.append(", description=").append(description);
+//      builder.append("]");
       return builder.toString();
    }
 

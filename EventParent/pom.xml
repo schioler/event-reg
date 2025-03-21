@@ -37,7 +37,7 @@
          <dependency>
             <groupId>dk.schioler.event</groupId>
             <artifactId>EventBase</artifactId>
-            <version>0.5</version>
+            <version>0.5.1</version>
          </dependency>
 
          <dependency>

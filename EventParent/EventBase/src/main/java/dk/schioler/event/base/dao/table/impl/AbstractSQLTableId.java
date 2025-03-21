@@ -32,7 +32,7 @@ public abstract class AbstractSQLTableId<T extends AbstractEntityId> implements 
       selectColumns.add(FLD_LOGIN_ID);
       selectColumns.add(FLD_CREATED);
 
-      orderByColumns.add(FLD_ID);
+//      orderByColumns.add(FLD_ID);
    }
 
    public List<String> getSelectColumns() {
@@ -210,11 +210,14 @@ public abstract class AbstractSQLTableId<T extends AbstractEntityId> implements 
       }
 
       List<String> orderBy2 = getOrderBy();
-      String orderBy = orderBy2.get(0);
-      if (StringUtils.isNoneEmpty(orderBy)) {
-         sql.append(SPACE).append(ORDER_BY).append(SPACE).append(orderBy).append(SPACE);
+      if((orderBy2 != null) &&( orderBy2.size()>0)) {
+         String orderBy = orderBy2.get(0);
+         if (StringUtils.isNoneEmpty(orderBy)) {
+            sql.append(SPACE).append(ORDER_BY).append(SPACE).append(orderBy).append(SPACE);
+         }         
       }
 
+      
       return sql;
    }
 

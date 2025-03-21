@@ -13,11 +13,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import dk.schioler.event.base.dao.criteria.EventTypeCriteria;
 import dk.schioler.event.base.entity.EventType;
-import dk.schioler.event.web.WebLogin;
+import dk.schioler.event.web.controller.api.EventTypeControllerAPI;
 import dk.schioler.event.web.controller.exception.EventWebControllerException;
 import dk.schioler.event.web.controller.exception.EventWebInsufficientParameterValuesException;
+import dk.schioler.event.web.entity.WebLogin;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+
 
 /**
  * EventType has these main views - EventTypeList - EventType
@@ -30,18 +32,20 @@ import jakarta.servlet.http.HttpSession;
  * 
  */
 @Controller
-public class EventTypeController extends AbstractController {
-
-
+public class EventTypeController extends AbstractController implements EventTypeControllerAPI {
+   
 	@RequestMapping(value = EVENT_TYPE_LIST_SHOW, method = RequestMethod.GET)
 	public String showEventTypeListGet(@RequestParam Map<String, String> params, Model model,
 			HttpServletRequest request) {
 		logger.debug(EVENT_TYPE_LIST_SHOW + ": params=" + params);
 		
 		HttpSession session = request.getSession();
+		
 		WebLogin wl = this.getAuthenticatedLogin(session);
 		if (wl != null) {
-			session.removeAttribute(SES_STATUS_MSG_LIST);
+			this.resetStatus(session);
+			
+			
 			EventTypeCriteria crit = new EventTypeCriteria();
 			crit.addLoginId(wl.getOwner().getId());
 
@@ -67,7 +71,7 @@ public class EventTypeController extends AbstractController {
 		if (wl != null && wl.isAuthenticated()) {
 			// we want to create new
 			session.removeAttribute(SES_EVENT_TYPE);
-
+			
 			return EVENT_TYPE_CREATE_JSP;
 		} else {
 			return PUBLIC_LOGIN_JSP;
@@ -85,7 +89,7 @@ public class EventTypeController extends AbstractController {
 		if (wl != null) {
 			Integer loginId = wl.getOwner().getId();
 
-			EventType eventTypeInstance = this.createEventTypeInstance(params, loginId);
+			EventType eventTypeInstance = this.establishEventTypeCreateInstance(params, loginId);
 
 			eventTypeInstance = eventTypeDAO.insert(eventTypeInstance);
 
@@ -104,7 +108,6 @@ public class EventTypeController extends AbstractController {
 
 	}
 
-//	"redirect:event-type-update.jsp"
 	@RequestMapping(value = EVENT_TYPE_UPDATE_SHOW, method = RequestMethod.POST)
 	public String eventTypeUpdateShow(@RequestParam Map<String, String> params, Model model,
 			HttpServletRequest request) {
@@ -124,7 +127,8 @@ public class EventTypeController extends AbstractController {
 			etC.setLoginId(Collections.singletonList(wl.getOwner().getId()));
 			etC.addId(id);
 			List<EventType> eventTypes = eventTypeDAO.retrieve(etC, 0);
-
+			logger.debug("retrieved eventType(s):" + eventTypes);
+			
 			if (eventTypes != null && eventTypes.size() == 1) {
 				EventType eventType = eventTypes.get(0);
 				session.setAttribute(SES_EVENT_TYPE, eventType);
@@ -149,7 +153,7 @@ public class EventTypeController extends AbstractController {
 		if (wl != null) {
 			Integer loginId = wl.getOwner().getId();
 
-			EventType eventTypeInstance = this.createEventTypeInstance(params, loginId);
+			EventType eventTypeInstance = this.establishEventTypeUpdateInstance(params, loginId);
 			int update = eventTypeDAO.update(eventTypeInstance);
 			logger.debug("updated " + update + " row(s)");
 
@@ -167,7 +171,7 @@ public class EventTypeController extends AbstractController {
 
 	}
 
-	public static final String EVENT_TYPE_DELETE_JSP = "redirect:event-type-delete.jsp";
+
 
 	@RequestMapping(value = EVENT_TYPE_DELETE_SHOW, method = RequestMethod.POST)
 	public String eventTypeDeleteShow(@RequestParam Map<String, String> params, Model model,
@@ -202,19 +206,22 @@ public class EventTypeController extends AbstractController {
 		if (wl != null) {
 			Integer loginId = wl.getOwner().getId();
 
-			String id = params.get("id");
-
-			eventTypeDAO.delete(Integer.valueOf(id), loginId);
-			
-			EventTypeCriteria c = new EventTypeCriteria();
-			c.setLoginId(Collections.singletonList(loginId));
-			
-			List<EventType> typeList = eventTypeDAO.retrieve(c, 0);
-
-			session.setAttribute(SES_EVENT_TYPES, typeList);
-			session.removeAttribute(SES_EVENT_TYPE);
-
-			return EVENT_TYPE_LIST_JSP;
+			String id = params.get(PAR_EVENT_TYPE_ID);
+			if (StringUtils.isNotEmpty(id)) {			   
+			   eventTypeDAO.delete(Integer.valueOf(id), loginId);
+			   
+			   EventTypeCriteria c = new EventTypeCriteria();
+			   c.setLoginId(Collections.singletonList(loginId));
+			   
+			   List<EventType> typeList = eventTypeDAO.retrieve(c, 0);
+			   
+			   session.setAttribute(SES_EVENT_TYPES, typeList);
+			   session.removeAttribute(SES_EVENT_TYPE);
+			   
+			   return EVENT_TYPE_LIST_JSP;
+			} else {
+			   return EVENT_TYPE_LIST_SHOW;
+			}
 		} else {
 			return PUBLIC_LOGIN_JSP;
 		}

@@ -11,7 +11,7 @@ public class UNITTest {
 
    @Test
    public void testGetUnit() {
-      UNIT unit = UNIT.getUnit("KG");
+      UNIT unit = UNIT.getUnitFromString("KG");
       assertEquals(UNIT.KILOGRAMME, unit);
       
       unit = UNIT.MILLIGRAM;

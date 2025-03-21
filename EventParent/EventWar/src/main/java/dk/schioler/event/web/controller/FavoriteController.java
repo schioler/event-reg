@@ -1,12 +1,13 @@
 package dk.schioler.event.web.controller;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+//import org.springframework.format.datetime.standard.DateTimeFormatterFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,21 +17,18 @@ import org.springframework.web.bind.annotation.RequestParam;
 import dk.schioler.event.base.dao.criteria.EventTemplateCriteria;
 import dk.schioler.event.base.entity.Event;
 import dk.schioler.event.base.entity.EventTemplate;
-import dk.schioler.event.base.entity.EventType;
-import dk.schioler.event.base.entity.UNIT;
-import dk.schioler.event.web.WebLogin;
+import dk.schioler.event.web.controller.api.FavoriteControllerAPI;
+import dk.schioler.event.web.entity.WebEvent;
+import dk.schioler.event.web.entity.WebLogin;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 
 @Controller
-public class FavoriteController extends AbstractController {
+public class FavoriteController extends AbstractController implements FavoriteControllerAPI {
 
    public FavoriteController() {
       super();
-
    }
-
-   public static final String FAVORITE_SAVE = "favorite-save.do";
 
    @RequestMapping(value = FAVORITES_SHOW, method = RequestMethod.GET)
    public String favoritesShowGet(Locale locale, Model model, HttpServletRequest request) {
@@ -49,22 +47,24 @@ public class FavoriteController extends AbstractController {
       HttpSession session = request.getSession();
       WebLogin wl = this.getAuthenticatedLogin(session);
       if (wl != null) {
-         Integer loginId = wl.getOwner().getId();
+         Integer ownerId = wl.getOwner().getId();
 
          EventTemplateCriteria etCrit = new EventTemplateCriteria();
          etCrit.setFavourite(true);
-         etCrit.addLoginId(loginId);
+         etCrit.addLoginId(ownerId);
          List<EventTemplate> eventTemplates = eventTemplateDAO.retrieve(etCrit, 0);
 
-         logger.debug("eventTemplates=" + eventTemplates);
-         List<EventTemplate> eventTypes = new ArrayList<EventTemplate>();
+         logger.debug("******************************");
+         logger.debug("eventTemplate.isFavorite=true:");
+         List<WebEvent> preparedEvents = new ArrayList<WebEvent>();
          for (EventTemplate eventTemplate : eventTemplates) {
-            EventType eventType = eventTypeDAO.get(eventTemplate.getParentId(), loginId);
-            eventTemplate.setParent(eventType);
-            eventTypes.add(eventTemplate);
+            logger.debug("et=" + eventTemplate);
+            Event e = fillEventWithEventTemplateData(eventTemplate);
+            WebEvent we = new WebEvent(e);
+               preparedEvents.add(we);
          }
 
-         session.setAttribute(SES_FAVORITES, eventTypes);
+         session.setAttribute(SES_FAVORITES, preparedEvents);
 
          return FAVORITES_JSP;
       } else {
@@ -94,10 +94,10 @@ public class FavoriteController extends AbstractController {
 //		}
 //
 //	}
-   
+
    @RequestMapping(value = FAVORITE_SAVE, method = RequestMethod.POST)
-   public String favoriteStore(@RequestParam Map<String, String> params, Locale locale, Model model, HttpServletRequest request) {
-      logger.debug(FAVORITE_SAVE + ", GET,  Requested, locale = " + locale + ", params="+ params   );
+   public String favoriteSave(@RequestParam Map<String, String> params, Locale locale, Model model, HttpServletRequest request) {
+      logger.debug(FAVORITE_SAVE + ", GET,  Requested, locale = " + locale + ", params=" + params);
       HttpSession session = request.getSession();
 
       WebLogin wl = this.getAuthenticatedLogin(session);
@@ -105,25 +105,30 @@ public class FavoriteController extends AbstractController {
          Integer ownerId = wl.getOwner().getId();
 
          String templateId = params.get("event-template-id");
-         String shortName = params.get("short-name");
-         String unit = params.get("unit");
-         String dose = params.get("dose");
-         String name = params.get("name");
+         String loginId = params.get("login-id");
 
-         Event event = new Event();
-         event.setName(name);
-         event.setDescription(shortName);
-         event.setParentId(Integer.valueOf(templateId));
-         event.setLoginId(ownerId);
-         event.setEventTS(LocalDateTime.now());
-         event.setDose(new BigDecimal(dose));
-         event.setUnit(UNIT.getUnit(unit));
-         Event insert = eventDAO.insert(event);
-         
-         List<String> list = new ArrayList<String>();
-         list.add("added event=" + insert.getName()+"dose="+insert.getDose()+", unit="+insert.getUnit());
-         setStatuMsg(session, list);
-         
+         @SuppressWarnings("unchecked")
+         List<WebEvent> webEvents = (List<WebEvent>) session.getAttribute(SES_FAVORITES);
+
+         Event e = null;
+         for (WebEvent webEvent : webEvents) {
+            if (webEvent.getParentId().equals(Integer.valueOf(templateId))) {
+               if (webEvent.getLoginId().equals(Integer.valueOf(loginId))) {
+                  e = webEvent.getEvent();
+                  e.setEventTS(LocalDateTime.now());
+                  break;
+               }
+            }
+         }
+  
+         if (e != null) {
+            Event insert = eventDAO.insert(e);
+            String msg = "created event=" + insert.getName() + "dose=" + insert.getDose() + ", unit=" + insert.getUnit();
+            addToStatus(session, msg);
+         } else {
+            addToStatus(session, "Could not create event, since no valid Event object were found ");
+         }
+
          return FAVORITES_SHOW;
       } else {
          return PUBLIC_LOGIN_JSP;

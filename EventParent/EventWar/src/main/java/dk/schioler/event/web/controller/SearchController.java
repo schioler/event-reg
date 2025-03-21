@@ -16,8 +16,6 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jfree.chart.ChartUtils;
 import org.jfree.chart.JFreeChart;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -25,23 +23,21 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import dk.schioler.event.base.dao.EventDAO;
 import dk.schioler.event.base.dao.EventSearchDAO;
-import dk.schioler.event.base.dao.EventTemplateDAO;
-import dk.schioler.event.base.dao.EventTypeDAO;
 import dk.schioler.event.base.dao.criteria.EventCriteria;
+import dk.schioler.event.base.dao.criteria.EventTemplateCriteria;
 import dk.schioler.event.base.dao.criteria.EventTypeCriteria;
 import dk.schioler.event.base.entity.Event;
 import dk.schioler.event.base.entity.EventTemplate;
 import dk.schioler.event.base.entity.EventType;
-import dk.schioler.event.web.WebLogin;
+import dk.schioler.event.web.controller.api.SearchControllerAPI;
 import dk.schioler.event.web.entity.EventSearchCriteria;
+import dk.schioler.event.web.entity.WebLogin;
 import dk.schioler.shared.timeline.TimelineException;
 import dk.schioler.shared.timeline.api.entity.TIMESLOT_LENGTH;
 import dk.schioler.shared.timeline.api.entity.Timeline;
 import dk.schioler.shared.timeline.api.entity.TimelineData;
 import dk.schioler.shared.timeline.api.entity.TimelineSlot;
-import dk.schioler.shared.timeline.chart.ChartBuilder;
 import dk.schioler.shared.timeline.imp.entity.TimelineDataImpl;
 import dk.schioler.shared.timeline.imp.entity.TimelineImpl;
 import dk.schioler.shared.timeline.imp.entity.TimelineUtil;
@@ -49,13 +45,13 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 
 @Controller
-public class SearchController extends AbstractController {
+public class SearchController extends AbstractController implements SearchControllerAPI{
 
-   public final static String SES_SEARCH_EVENT_TEMPLATES = "sesSearchEventTemplates";
-   public final static String SES_SEARCH_CRITERIA_TMPL_LIST = "sesSearchCriteriaTmplList";
-   public final static String SES_SEARCH_RESULT = "sesSearchResult";
-   public final static String SES_SEARCH_RESULT_START_DATE = "sesSearchResultStartDate";
-   public final static String SES_SEARCH_RESULT_END_DATE = "sesSearchResultEndDate";
+//   public final static String SES_SEARCH_EVENT_TEMPLATES = "sesSearchEventTemplates";
+//   public final static String SES_SEARCH_CRITERIA_TMPL_LIST = "sesSearchCriteriaTmplList";
+//   public final static String SES_SEARCH_RESULT = "sesSearchResult";
+//   public final static String SES_SEARCH_RESULT_START_DATE = "sesSearchResultStartDate";
+//   public final static String SES_SEARCH_RESULT_END_DATE = "sesSearchResultEndDate";
 
 //   Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -94,12 +90,39 @@ public class SearchController extends AbstractController {
 
    public static final String SEARCH = "/search.do";
 
+   
    public static final String SEARCH_JSP = "redirect:/search.jsp";
 
    public static final String SEARCH_TEMPLATES_JSP = "redirect:/search-templates.jsp";
 
    public static final String SEARCH_RESULT_JSP = "redirect:/search-result.jsp";
 
+   public static final String SES_SEARCH_TEST_RESULT = "sesSearchTestesult";
+   public static final String SEARCH_TEST_SHOW = "/search-test-show.do";
+   public static final String SEARCH_TEST_JSP = "redirect:/search-test.jsp";
+
+   
+   @RequestMapping(value = SEARCH_TEST_SHOW, method = RequestMethod.GET)
+   public String searchTestShow(@RequestParam Map<String, String> reqParams, Model model, HttpServletRequest request) {
+      logger.debug(SEARCH_TEST_SHOW + "GET, Requested ");
+      HttpSession session = request.getSession();
+      WebLogin wl = getAuthenticatedLogin(session);
+      if (wl != null) {
+         
+         
+         EventTemplateCriteria etc = new EventTemplateCriteria();
+         etc.addLoginId(wl.getOwner().getId());
+         List<EventTemplate> etRes = eventTemplateDAO.retrieve(etc, 0);
+         
+         
+         session.setAttribute(SES_SEARCH_TEST_RESULT, etRes);
+         return SEARCH_TEST_JSP;
+      } else {
+         return PUBLIC_LOGIN_JSP;
+      }
+   }
+
+   
    @RequestMapping(value = SEARCH_NEW_SHOW, method = RequestMethod.GET)
    public String searchNewShow(@RequestParam Map<String, String> reqParams, Model model, HttpServletRequest request) {
       logger.debug(SEARCH_NEW_SHOW + "GET, Requested ");
@@ -301,6 +324,7 @@ public class SearchController extends AbstractController {
 //					validLogin.getLogin().getId());
 
          eCrit.setCreatedStartTime(tl.getStartDateTime());
+                  
          eCrit.setCreatedEndTime(tl.getEndDateTime());
          eCrit.addLoginId(validLogin.getOwner().getId());
          eCrit.getEventTemplateIds().addAll(templateIds);

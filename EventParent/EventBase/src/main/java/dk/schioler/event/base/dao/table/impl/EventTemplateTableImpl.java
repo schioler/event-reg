@@ -29,7 +29,7 @@ public class EventTemplateTableImpl extends AbstractSQLTableParentChild<EventTem
       selectColumns.add(FLD_IS_FAVOURITE);
       selectColumns.add(FLD_SORT_ORDER);
 
-      orderByColumns.add(FLD_NAME);
+      orderByColumns.add(FLD_SORT_ORDER);
    }
 
    @Override
@@ -97,7 +97,6 @@ public class EventTemplateTableImpl extends AbstractSQLTableParentChild<EventTem
             }
          }
 
-       
          Boolean favourite = templCrit.getFavourite();
          if (favourite != null) {
             StringBuffer sql = createBooleanCriteria(FLD_IS_FAVOURITE);
@@ -131,8 +130,10 @@ public class EventTemplateTableImpl extends AbstractSQLTableParentChild<EventTem
          }
 
          List<Integer> eventTypeIds = templCrit.getEventTypeIds();
-         Map<String, Object> integerMappings = createIntegerMappings(FLD_EVENT_TYPE_ID, eventTypeIds);
-         map.putAll(integerMappings);
+         if (eventTypeIds.size() > 0) {
+            Map<String, Object> integerMappings = createIntegerMappings(FLD_EVENT_TYPE_ID, eventTypeIds);
+            map.putAll(integerMappings);
+         }
 
          Boolean favourite = templCrit.getFavourite();
          if (favourite != null) {

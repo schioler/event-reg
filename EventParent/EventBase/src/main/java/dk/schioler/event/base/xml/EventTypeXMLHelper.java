@@ -199,7 +199,7 @@ public class EventTypeXMLHelper implements EventTypeXMLElements {
 			et.setDescription(shortName);
 			et.setDescription(description);
 			et.setDose(new BigDecimal(dose));
-			et.setUnit(UNIT.getUnit(unit));
+			et.setUnit(UNIT.getUnitFromString(unit));
 			et.setFavorite(BooleanUtils.toBoolean(isFavorite));			
 			
 			return et;

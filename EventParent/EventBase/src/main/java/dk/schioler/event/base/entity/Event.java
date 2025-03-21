@@ -7,20 +7,18 @@ import java.util.Objects;
 
 public class Event extends AbstractEntityParentChild {
 
-	private String note;
+   private String note;
 
-	private LocalDateTime eventTS;
+   private LocalDateTime eventTS;
 
-	private BigDecimal dose;
+   private BigDecimal dose;
 
-	private UNIT unit;
+   private UNIT unit;
 
-
-
-	public Event() {
+   public Event() {
       super();
    }
-	
+
    public Event(String note, LocalDateTime eventTS, BigDecimal dose, UNIT unit) {
       super();
       this.note = note;
@@ -29,53 +27,78 @@ public class Event extends AbstractEntityParentChild {
       this.unit = unit;
    }
 
-
-
+   @Override
+   public List<AbstractEntityParentChild> getChildren() {
+      throw new EventEntityException("Events has no children");
+   }
 
    @Override
-	public List<AbstractEntityParentChild> getChildren() {
-		throw new EventEntityException("Events has no children");
-	}
+   public void removeChild(AbstractEntityParentChild child) {
+      throw new EventEntityException("Event has no children");
+   }
 
-	@Override
-	public void removeChild(AbstractEntityParentChild child) {
-		throw new EventEntityException("Events has no children");
-	}
+   @Override
+   public void addChild(AbstractEntityParentChild child) {
+      throw new EventEntityException("Event has no children");
 
-	@Override
-	public void addChild(AbstractEntityParentChild child) {
-		throw new EventEntityException("Events has no children");
+   }
 
-	}
+   @Override
+   public void setParent(AbstractEntityParentChild parent) {
+      if (parent instanceof EventTemplate) {
+         super.setParent(parent);
+      } else if (parent == null) {
+         super.setParent(null);
+      } else {
+         throw new EventEntityException("setParent: recieved an in-compatible parent object: " + parent);
+      }
+   }
 
-	public String getNote() {
-		return note;
-	}
+   
+   public String getNote() {
+      return note;
+   }
 
-	public void setNote(String note) {
-		this.note = note;
-	}
+   public void setNote(String note) {
+      this.note = note;
+   }
 
-	public LocalDateTime getEventTS() {
-		return eventTS;
-	}
+   public LocalDateTime getEventTS() {
+      return eventTS;
+   }
 
-	public void setEventTS(LocalDateTime eventTS) {
-		this.eventTS = eventTS;
-	}
+   public void setEventTS(LocalDateTime eventTS) {
+      this.eventTS = eventTS;
+   }
 
-	public BigDecimal getDose() {
-		return dose;
-	}
+   public String getEventTSDate() {
+      if (this.eventTS != null){
+         return getDateFormatter().format(getEventTS());
+      } else {
+         return "eventTS has not been set";         
+      }
+   }
 
-	public void setDose(BigDecimal dose) {
-		this.dose = dose;
-	}
+   public String getEventTSTime() {
+      if (this.eventTS != null){
+         return  getTimeFormatter().format(getEventTS());         
+      } else {
+         return "eventTS has not been set";         
+      }
+
+   }
 
 
+   
+   public BigDecimal getDose() {
+      return dose;
+   }
 
+   public void setDose(BigDecimal dose) {
+      this.dose = dose;
+   }
 
-	public UNIT getUnit() {
+   public UNIT getUnit() {
       return unit;
    }
 
@@ -84,30 +107,28 @@ public class Event extends AbstractEntityParentChild {
    }
 
    /**
-	 * Event has no children...
-	 */
-	@Override
-	public String getChildString() {
-	   throw new EventEntityException("Event can have no children...");
+    * Event has no children...
+    */
+   @Override
+   public String getChildString() {
+      throw new EventEntityException("Event can have no children...");
 //		return "Event has no children...";
-	}
+   }
 
-	@Override
-	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		builder.append(super.toString());
-		builder.append("Event [ ");
-		builder.append(" note=").append(note);
-		builder.append(", eventTS=").append(eventTS);
-		builder.append(", dose=").append(dose);
+   @Override
+   public String toString() {
+      StringBuilder builder = new StringBuilder();
+      builder.append(super.toString());
+//      builder.append("Event [ ");
+      builder.append("\n note=").append(note);
+      builder.append(", eventTS=").append(eventTS);
+      builder.append(", dose=").append(dose);
 
-		builder.append(", unit=").append(unit);
-		builder.append("]");
-		return builder.toString();
-	}
+      builder.append(", unit=").append(unit);
+//      builder.append("]");
+      return builder.toString();
+   }
 
-	 
-	
    @Override
    public int hashCode() {
       final int prime = 31;
@@ -132,6 +153,5 @@ public class Event extends AbstractEntityParentChild {
    public AbstractEntityParentChild instantiateParent() {
       return new EventTemplate();
    }
-
 
 }

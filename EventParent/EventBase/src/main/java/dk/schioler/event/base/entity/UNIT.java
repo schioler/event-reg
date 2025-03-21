@@ -14,7 +14,7 @@ public enum UNIT {
 
    };
    
-   public static UNIT getUnit(String u) {
+   public static UNIT getUnitFromString(String u) {
       if (StringUtils.isNotBlank(u)) {
          if (KILOGRAMME.toString().equalsIgnoreCase(u) || 
                KILOGRAMME.shrt.equalsIgnoreCase(u)

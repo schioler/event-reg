@@ -107,7 +107,7 @@ public class EventSearchDAOImpl implements EventSearchDAO {
 			event.setEventTS(rs.getTimestamp(3).toLocalDateTime());
 			event.setName(rs.getString(4));
 			event.setDose(rs.getBigDecimal(5));
-			event.setUnit(UNIT.getUnit(rs.getString(6)));
+			event.setUnit(UNIT.getUnitFromString(rs.getString(6)));
 			event.setNote(rs.getString(7));
 			logger.debug("row=" + event);
 			return event;

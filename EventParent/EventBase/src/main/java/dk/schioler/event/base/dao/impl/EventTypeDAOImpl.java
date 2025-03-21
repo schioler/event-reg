@@ -18,10 +18,7 @@ public class EventTypeDAOImpl extends AbstractNameDAOImpl<EventType> implements 
 	@Override
 	protected boolean isValidInsertObject(EventType type) throws EventDAOException {
 	   boolean isValid = super.isValidInsertObject(type);
-	   
-		
-		
-		
+	   		
 		return isValid;
 	}
 

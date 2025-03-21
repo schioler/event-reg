@@ -1,51 +1,22 @@
-
 <!DOCTYPE html>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-	pageEncoding="UTF-8"%>
+   pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ taglib prefix="fmt" uri = "http://java.sun.com/jsp/jstl/fmt"  %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ page session="true"%>
 <html>
+<fmt:bundle basename="dk.schioler.event.base.resources.EventListResources">
 <head>
-<title>EventType - create</title>
-<!-- <link rel="stylesheet" href="public/styles/cols.css"> -->
-<link rel="stylesheet" href="public/styles/event.css">
+     <title>EventType</title>
+   <%@ include file="include/common-head.jsp"%>
 </head>
 <body>
-<fmt:bundle
-   basename="dk.schioler.event.base.resources.EventListResources">
-	<div class="menu-div">
-		<%@ include file="include/menu.jsp"%>
-	</div>
-      <form action="./event-type-create.do" method="post">
-         <div class="container-2-col"> 
-         <div>
-             Navn
-         </div>
-         <div>
-         <input type="hidden" name="event-type-id" value="${sesEventType.id }">
-         <input type="text" name="name" value="${sesEventType.name }">
-         </div>
-         
-         <div>ShortName</div>
-         <div>
-         <input type="text" name="short-name" value="${sesEventType.shortName }">
-         </div>
-
-         <div>Desc</div>
-         <div>
-         <input type="text" name="description" value="${sesEventType.description }">
-         </div>
-         
-     
-         <div>&nbsp;</div>
-         <div>
-         <input type="submit" > 
-         </div>
-         </div>
-      </form>
-      <br>
-
-</fmt:bundle>
+   <jsp:include page="include/event-type-single.jsp">
+      <jsp:param  name="action" value="create"/>
+   </jsp:include>
 </body>
+   </fmt:bundle>
 </html>
+
+
+

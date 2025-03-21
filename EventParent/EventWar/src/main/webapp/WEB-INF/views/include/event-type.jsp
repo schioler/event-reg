@@ -1,30 +1,142 @@
-<!-- <fmt:bundle basename="dk.schioler.event.base.resources.EventListResources"> -->
-	<table>
-		<tr>
-			<input type="hidden" name="id" value="${sesEventType.id }">
-			<td><label for="name"><fmt:message key="event-type.name" /></label></td>
-			<td><input type="text" name="name" value="${sesEventType.name }">
-			</td>
-		</tr>
-		<tr>
-			<td><label for="shortName"><fmt:message
-						key="event-type.shortname" /></label></td>
-			<td><input type="text" name="shortName"
-				value="${sesEventType.shortName}"></td>
-		</tr>
-		<tr>
-			<td><label for="description"><fmt:message
-						key="event-type.description" /></label></td>
-			<td><input type="text" name="description"
-				value="${sesEventType.description }"></td>
-		</tr>
-		<tr>
-			<td><fmt:message key="btn.ok" /></td>
-			<td><input type="submit" value="Sure" /></td>
-	  </tr>
-</table>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<fmt:bundle basename="dk.schioler.event.base.resources.EventListResources">
+<div class="center-area-col-100">
+   <div>
+       <fmt:message key="event-type.entity"/>
+       <c:out value="${param.editable}"></c:out>
+                  <fmt:message key="event-type.entity" />:
+   </div>
+</div>
 
-<!-- </fmt:bundle> -->
+<div class="body-col-33-34-33">
+   <div>&nbsp;</div>
+   <div>
+         <Div class="center-col-50-50">
+               <%-- <input type="hidden" name="event-type-id" value="${sesEventTemplate.parentId }"/>
+                 <input type="hidden" name="event-tmpl-id" value="${sesEventTemplate.id }"/> --%>
+         
+          <c:choose>
+            <c:when test="${ param.editable eq 'yes'}">
+                             
+            <DIV class="center-col-50-50-left">
+               <div >
+                  <div ><label ><fmt:message key="event-type.name" />:</label></div>
+               </div>
+            </DIV>
+            <DIV class="center-col-50-50-right">
+                 <div  >
+                          <input type="text" name="name" autofocus="autofocus"  value="${sesEventTmpl.name }"/>                     
+                 </div>
+            </DIV>
+                        
+             <DIV class="center-col-50-50-left">               
+               <div ><label for="shortname"><fmt:message key="event-type.shortname" />:</label></div>
+            </DIV>
+            <DIV class="center-col-50-50-right">
+                 <div > 
+                  <input type="text" name="short-name" value="${sesEventTemplate.shortName }">
+                  </div>                
+             </DIV>
+            
+            <div class="center-col-50-50-left">
+               <label for="description"><fmt:message key="event-type.description" />:</label>
+            </div>
+            <div class="center-col-50-50-right">
+                  <input type="text" id="description" name="description" value="${sesEventTemplate.description }">
+             </div>
+   
+               
+                
+            </c:when>
+            <c:otherwise>
+                            
+            </c:otherwise>
+          </c:choose>
+                         
+            
+            
+            <DIV class="center-col-50-50-left">
+                 <div >
+                  &nbsp;     
+                 </div>
+            </DIV>            
+             <DIV class="center-col-50-50-right">
+                 <div >
+                     <input type="submit"  value='<fmt:message key="accept"/>'  />
+                     <input type="button" onclick="history.back()" value='<fmt:message key="cancel"/>' />
+                 
+                 </div>        
+                  </DIV>
+            </DIV>
+   </div>
+   <div>&nbsp;</div>
+</div>
+</fmt:bundle>
 
 
 
+            <%-- 
+
+
+
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<div class="center-area-col-100">
+   <div>
+      EVENT TYPE 
+   </div>
+</div>
+
+<div class="body-col-33-34-33">
+   <div>&nbsp;</div>
+   <div>
+			<Div class="center-col-50-50">
+			   
+			   <DIV class="center-col-50-50-left">
+			     	<input type="hidden" name="event-type-id"	value="${sesEventType.id }">
+			     	 <input type="hidden" name="event-type-id"   value="${sesEventType.loginId}">
+					<div ><label for="name"><fmt:message key="event-type.name" />:</label></div>
+			   </DIV>
+			   <DIV class="center-col-50-50-right">
+				     <div  >
+			        <input type="text" name="name" value="${sesEventType.name }">
+				     </div>
+			   </DIV>
+			   
+			    <DIV class="center-col-50-50-left">
+                 <div ><label for="shortname"><fmt:message key="event-type.shortname" />:</label></div>
+            </DIV>
+            <DIV class="center-col-50-50-right">
+                 <div >
+                 <input type="text" name="short-name" value="${sesEventType.shortName }"/>
+                 </div>       
+            </DIV>
+            
+             <DIV class="center-col-50-50-left">
+                 <div ><label for="description"><fmt:message key="event-type.description" />:</label></div>
+            </DIV>
+            <DIV class="center-col-50-50-right">
+                 <div  >
+                 <input type="text" name="description" value="${sesEventType.description }">
+                 </div>        
+            </DIV>
+            
+            <DIV class="center-col-50-50-left">
+                 <div >
+                 
+                 </div>
+            </DIV>
+            <DIV class="center-col-50-50-right">
+                 <div >
+                     <input type="submit"  value='<fmt:message key="accept"/>'  />
+                     <input type="button" onclick="history.back()" value='<fmt:message key="cancel"/>' />
+                 
+                 </div>        
+            </DIV>
+			</Div>   	
+   </div>
+   <div>&nbsp;</div>
+</div>
+
+
+ --%>

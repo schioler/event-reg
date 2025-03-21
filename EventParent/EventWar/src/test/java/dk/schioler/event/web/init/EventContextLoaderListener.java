@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.WebApplicationContext;
 
-import dk.schioler.event.web.controller.WebTokens;
+import dk.schioler.event.web.controller.api.WebTokens;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletContextEvent;
 
@@ -50,25 +50,25 @@ public class EventContextLoaderListener extends ContextLoaderListener implements
 ////		return super.createWebApplicationContext(sc);
 //	}
 
-	@Override
-	public void closeWebApplicationContext(ServletContext servletContext) {
-
-		@SuppressWarnings("unchecked")
-		List<String> chartfilesToBeDeleted = (List<String>) servletContext.getAttribute(CTX_CHARTS_TO_BE_DELETED);
-
-		if (chartfilesToBeDeleted != null) {
-			for (String chartFile : chartfilesToBeDeleted) {
-				File f = new File(chartFile);
-				try {
-					boolean del = f.delete();
-					logger.info("deleted " + chartFile + ", res=" + del);
-				} catch (Exception e) {
-					logger.error(e.getMessage(), e);
-				}
-			}
-		}
-
-		super.closeWebApplicationContext(servletContext);
-	}
+//	@Override
+//	public void closeWebApplicationContext(ServletContext servletContext) {
+//
+//		@SuppressWarnings("unchecked")
+//		List<String> chartfilesToBeDeleted = (List<String>) servletContext.getAttribute(CTX_CHARTS_TO_BE_DELETED);
+//
+//		if (chartfilesToBeDeleted != null) {
+//			for (String chartFile : chartfilesToBeDeleted) {
+//				File f = new File(chartFile);
+//				try {
+//					boolean del = f.delete();
+//					logger.info("deleted " + chartFile + ", res=" + del);
+//				} catch (Exception e) {
+//					logger.error(e.getMessage(), e);
+//				}
+//			}
+//		}
+//
+//		super.closeWebApplicationContext(servletContext);
+//	}
 
 }

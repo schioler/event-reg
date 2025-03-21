@@ -25,7 +25,7 @@ public class EventTemplateRowMapper extends EventTemplateTableImpl implements Ro
       eventTemplate.setParentId(rs.getInt(FLD_EVENT_TYPE_ID));
 
       eventTemplate.setDose(rs.getBigDecimal(FLD_DOSE));
-      eventTemplate.setUnit(UNIT.getUnit(rs.getString(FLD_UNIT)));
+      eventTemplate.setUnit(UNIT.getUnitFromString(rs.getString(FLD_UNIT)));
       eventTemplate.setFavorite(rs.getBoolean(FLD_IS_FAVOURITE));
       eventTemplate.setSortOrder(rs.getInt(FLD_SORT_ORDER));
             

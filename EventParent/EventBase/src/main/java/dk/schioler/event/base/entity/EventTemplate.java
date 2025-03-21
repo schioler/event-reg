@@ -34,6 +34,8 @@ public class EventTemplate extends AbstractEntityParentChild {
    public void setParent(AbstractEntityParentChild parent) {
       if (parent instanceof EventType) {
          super.setParent(parent);
+      } else if (parent == null) {
+         super.setParent(null);
       } else {
          throw new EventEntityException("EventTemplate can only have EventType as parent");
       }
@@ -43,10 +45,23 @@ public class EventTemplate extends AbstractEntityParentChild {
    public void addChild(AbstractEntityParentChild child) {
       if (child instanceof Event) {
          super.addChild(child);
+      } else if (child == null) {
+         super.addChild(null);
       } else {
          throw new EventEntityException("EventTemplate can only have Event as child");
       }
+   }
 
+   
+   @Override
+   public void removeChild(AbstractEntityParentChild child) {
+      if (child instanceof Event) {
+         super.removeChild(child);         
+      } else if (child == null){
+        super.removeChild(null);
+      } else {
+         throw new EventEntityException("removeChild: received in-compatible child object");
+      }
    }
 
    public Integer getSortOrder() {
@@ -65,7 +80,6 @@ public class EventTemplate extends AbstractEntityParentChild {
       this.isFavorite = isFavorite;
    }
 
-   
    public UNIT getUnit() {
       return unit;
    }
@@ -86,12 +100,12 @@ public class EventTemplate extends AbstractEntityParentChild {
    public String toString() {
       StringBuilder builder = new StringBuilder();
       builder.append(super.toString());
-      builder.append("[ ");
-      builder.append(", unit=").append(unit);
+//      builder.append("[ ");
+      builder.append("\n, unit=").append(unit);
       builder.append(", dose=").append(dose);
       builder.append(", sortOrder=").append(sortOrder);
       builder.append(", isFavorite=").append(isFavorite);
-      builder.append("]");
+//      builder.append("]");
       return builder.toString();
    }
 

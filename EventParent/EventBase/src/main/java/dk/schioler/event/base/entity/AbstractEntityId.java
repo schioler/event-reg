@@ -1,6 +1,7 @@
 package dk.schioler.event.base.entity;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
 import org.slf4j.Logger;
@@ -8,9 +9,16 @@ import org.slf4j.LoggerFactory;
 
 public abstract class AbstractEntityId {
 
+   // YEAR-MONTH-DAY, ex 2018-12-29
+   protected final DateTimeFormatter df = DateTimeFormatter.ISO_LOCAL_DATE;
+   
+   protected final DateTimeFormatter tf = DateTimeFormatter.ofPattern("HH:mm:ss");
+   
+   public static final Integer DEFAULT_ID = Integer.valueOf(-1);
+   
    protected Logger logger = LoggerFactory.getLogger(getClass());
 
-   private Integer id;
+   private Integer id = DEFAULT_ID;
 
    private Integer loginId;
    
@@ -25,16 +33,35 @@ public abstract class AbstractEntityId {
 
    public AbstractEntityId() {
       super();
+      created = LocalDateTime.now();
    }
 
    public LocalDateTime getCreated() {
       return created;
-   }
+   } 
 
    public void setCreated(LocalDateTime created) {
       this.created = created;
    }
 
+   public String getCreatedTime() {
+      return this.getTimeFormatter().format(created);
+   }
+   
+   public String getCreatedDate() {
+      return this.getDateFormatter().format(created);
+   }
+   
+   public DateTimeFormatter getTimeFormatter() {
+      return this.tf;
+   }
+   
+   public DateTimeFormatter getDateFormatter() {
+      return this.df;
+   }
+   
+   
+   
    public Integer getId() {
       return id;
    }
@@ -66,18 +93,17 @@ public abstract class AbstractEntityId {
       if (getClass() != obj.getClass())
          return false;
       AbstractEntityId other = (AbstractEntityId) obj;
-      return Objects.equals(created, other.created) && Objects.equals(id, other.id) && Objects.equals(loginId, other.loginId);
+      return Objects.equals(id, other.id) && Objects.equals(loginId, other.loginId);
    }
 
    @Override
    public String toString() {
       StringBuilder builder = new StringBuilder();
-      builder.append("AbstractIdEntity [id=");
-      builder.append(id);
-      builder.append(", loginId=");
-      builder.append(loginId);
+      builder.append(this.getClass().getTypeName());
+      builder.append(":id=" + id);
+      builder.append(", loginId=" + loginId);
       builder.append(", created=").append(created);
-      builder.append("]");
+      
       return builder.toString();
    }
 

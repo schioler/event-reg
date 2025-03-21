@@ -9,10 +9,12 @@ import org.springframework.stereotype.Component;
 
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 
 @Component
 public class LoggingFilter implements Filter {
@@ -27,7 +29,7 @@ public class LoggingFilter implements Filter {
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
 			throws IOException, ServletException {
 		HttpServletRequest req = (HttpServletRequest) request;
-//		HttpSession session = req.getSession();
+		HttpSession session = req.getSession();
 		String random = RandomStringUtils.random(6);
 		logger.debug("doFilter: start ***************************************************" + random);
 
@@ -39,13 +41,16 @@ public class LoggingFilter implements Filter {
 		String contextPath = req.getContextPath();
 		String servletPath = req.getServletPath();
 		String pathInfo = req.getPathInfo();
+//		ServletContext servletContext = req.getServletContext();
+		
 
 		logger.debug("reqURI=" + requestURI);
 		logger.debug("reqURL=" + reqURL);
 		logger.debug("ContextPath=" + contextPath);
 		logger.debug("ServletPath=" + servletPath);
 		logger.debug("PathInfo=" + pathInfo);
-
+//		logger.debug("servletContext="+ servletContext);
+		
 		chain.doFilter(request, response);
 //		logger.debug("doFilter:exit");
 		logger.debug("doFilter: end ***************************************************" + random);

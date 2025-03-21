@@ -1,6 +1,5 @@
 package dk.schioler.event.web.controller;
 
-import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,24 +12,24 @@ import org.springframework.web.bind.annotation.RequestParam;
 import dk.schioler.event.base.dao.StateAspectDAO;
 import dk.schioler.event.base.dao.StateRatingDAO;
 import dk.schioler.event.base.dao.StateRegistrationDAO;
-import dk.schioler.event.base.entity.EventType;
-import dk.schioler.event.web.WebLogin;
-import dk.schioler.event.web.entity.EventSearchCriteria;
+import dk.schioler.event.web.controller.api.BaseControllerAPI;
+import dk.schioler.event.web.controller.api.StatusControllerAPI;
+import dk.schioler.event.web.entity.WebLogin;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 
 @Controller
-public class StatusController extends AbstractController {
+public class StatusController extends AbstractController implements StatusControllerAPI {
 
    @Autowired
    StateAspectDAO stateAspectDAO;
-   
+
    @Autowired
    StateRatingDAO stateRatingDAO;
-   
-   @Autowired 
+
+   @Autowired
    StateRegistrationDAO stateRegistrationDAO;
-   
+
 //   public final static String SES_SEARCH_RESULT_START_DATE = "sesSearchResultStartDate";
 //   public final static String SES_SEARCH_CRITERIA = "sesSearchResultEndDate";
    public final static String STATE_ASPECT_LIST_SHOW = "state-aspect-list-show.do";
@@ -63,7 +62,7 @@ public class StatusController extends AbstractController {
       HttpSession session = request.getSession();
       WebLogin wl = getAuthenticatedLogin(session);
       if (wl != null) {
-         
+
 //         stateAspectDAO.retrieve(null, 0)
 //         session.setAttribute(SES_SEARCH_CRITERIA, searchCriteria);
          return SEARCH_JSP;

@@ -26,7 +26,7 @@ public class EventRowMapper extends EventTableImpl implements RowMapper<Event>  
       event.setParentId(rs.getInt(FLD_EVENT_TEMPLATE_ID));
 
       event.setDose(rs.getBigDecimal(FLD_DOSE));
-      event.setUnit(UNIT.getUnit(rs.getString(FLD_UNIT)));
+      event.setUnit(UNIT.getUnitFromString(rs.getString(FLD_UNIT)));
       event.setNote(rs.getString(FLD_NOTE));
       event.setEventTS(rs.getTimestamp(FLD_EVENT_TS).toLocalDateTime());
 

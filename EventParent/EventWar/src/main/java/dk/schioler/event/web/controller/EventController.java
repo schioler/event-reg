@@ -1,38 +1,36 @@
-
 package dk.schioler.event.web.controller;
 
+import java.time.LocalDateTime;
+import java.time.Period;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import dk.schioler.event.base.dao.EventDAO;
-import dk.schioler.event.base.dao.EventTemplateDAO;
-import dk.schioler.event.base.dao.EventTypeDAO;
+import dk.schioler.event.base.dao.criteria.EventCriteria;
 import dk.schioler.event.base.entity.Event;
-import dk.schioler.event.web.WebLogin;
+import dk.schioler.event.base.entity.UNIT;
+import dk.schioler.event.web.controller.api.EventControllerAPI;
+import dk.schioler.event.web.entity.WebLogin;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 
 @Controller
-public class EventController extends AbstractController {
-	public static final String EVENT_SHOW = "/event-show.do";
-
-	public static final String EVENT_JSP = "redirect:event.jsp";
-
-//	public static final String ETYP_REQ_EVENT_TYPE_SHOW = "/event-show.do";
-
-//	public static final String ETYP_RESP_EVENT_TYPE_SHOW = "redirect:event.jsp";
-
-	public static final String EVENT_SAVE = "/event-save.do";
+public class EventController extends AbstractController implements EventControllerAPI {
+//	public static final String EVENT_SHOW = "/event-show.do";
+//
+//	public static final String EVENT_JSP = "redirect:event.jsp";
+//
+////	public static final String ETYP_REQ_EVENT_TYPE_SHOW = "/event-show.do";
+//
+////	public static final String ETYP_RESP_EVENT_TYPE_SHOW = "redirect:event.jsp";
+//
+//	public static final String EVENT_SAVE = "/event-save.do";
 
 //	@RequestMapping(value = EVENT_SHOW, method = RequestMethod.GET)
 //	public String eventGet(Locale locale, Model model, HttpServletRequest request) {
@@ -90,33 +88,70 @@ public class EventController extends AbstractController {
 //		}
 //	}
 
-	@RequestMapping(value = EVENT_SAVE, method = RequestMethod.POST)
-	public String eventSave(@RequestParam Map<String, String> params, Model model, HttpServletRequest request) {
-		logger.debug(EVENT_SAVE + ": RequestParams params = " + params);
-		HttpSession session = request.getSession();
-		WebLogin wl = getAuthenticatedLogin(session);
-		if (wl != null) {
+   @RequestMapping(value = EVENT_SAVE, method = RequestMethod.POST)
+   public String eventSave(@RequestParam Map<String, String> params, Model model, HttpServletRequest request) {
+      logger.debug(EVENT_SAVE + ": RequestParams params = " + params);
+      HttpSession session = request.getSession();
+      WebLogin wl = webCommonAPI.getAuthenticatedLogin(session);
+      if (wl != null) {
+         Event event = establishEventCreateInstance(params, wl.getOwner().getId());
 
-			Event event = createEventInstance(params,wl.getOwner().getId());
-			
-			Event inserted = eventDAO.insert(event);
-			List<Event> eventsInserted = new ArrayList<Event>();
-			eventsInserted.add(inserted);
-			
-			List<String> msgs = new ArrayList<String>();
-			msgs.add("saved Event: " + inserted.getName()+", @"+inserted.getEventTS());
-			this.setStatuMsg(session, msgs);
-			
-			
-			return FAVORITES_JSP;
-			
-		} else {
-			return PUBLIC_LOGIN_JSP;
+         Event inserted = eventDAO.insert(event);
+         List<Event> eventsInserted = new ArrayList<Event>();
+         eventsInserted.add(inserted);
 
-		}
+         webCommonAPI.resetStatus(session);
 
+//			List<String> msgs = new ArrayList<String>();
+         String msg = "Event, saved: " + inserted.getName() + ", @" + inserted.getEventTS();
 
-	}
+         webCommonAPI.addToStatus(session, msg);
+
+         return FAVORITES_JSP;
+
+      } else {
+         return PUBLIC_LOGIN_JSP;
+
+      }
+   }
+
+//   
+   @RequestMapping(value = EVENT_LIST_SHOW, method = RequestMethod.GET)
+   public String eventListShow(@RequestParam Map<String, String> params, Model model, HttpServletRequest request) {
+      logger.debug(EVENT_LIST_SHOW + ": RequestParams params = " + params);
+      HttpSession session = request.getSession();
+      WebLogin wl = webCommonAPI.getAuthenticatedLogin(session);
+      if (wl != null) {
+
+         EventCriteria ec = new EventCriteria();
+         ec.addLoginId(wl.getOwner().getId());
+
+         LocalDateTime now = LocalDateTime.now();
+         Period p = Period.of(2, 0, 0);
+         LocalDateTime periodStart = now.minus(p);
+         ec.setEventTSEndDate(now);
+         ec.setEventTSStartDate(periodStart);
+
+         
+         logger.debug("getEvents, criteria=" + ec);
+         List<Event> events = eventDAO.retrieve(ec, 0);
+         
+         session.setAttribute(SES_EVENTS, events);
+//         webCommonAPI.resetStatus(session);
+
+//       List<String> msgs = new ArrayList<String>();
+//         String msg = "Event, saved: " + inserted.getName() + ", @" + inserted.getEventTS();
+
+//         webCommonAPI.addToStatus(session, msg);
+
+         return EVENT_LIST_JSP;
+
+      } else {
+         return PUBLIC_LOGIN_JSP;
+
+      }
+
+   }
 
 //	public static Event createEventInstance(Map<String, String> params, List<String> errors) {
 //		String templIdStr = params.get("templateId");

@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import dk.schioler.event.web.WebLogin;
+import dk.schioler.event.web.entity.WebLogin;
 import dk.schioler.shared.security.entity.Login;
 import dk.schioler.shared.security.entity.Password;
 import dk.schioler.shared.security.entity.ROLE;
@@ -30,11 +30,6 @@ public class UserAuthenticateController extends AbstractController {
 
    }
 
-   public static final String LOGIN_JSP = "redirect:login.jsp";
-
-   public static final String PUBLIC_USER_AUTHENTICATE = "public/user-authenticate.do";
-
-   public static final String FAVORITES_SHOW = "redirect:../favorites-show.do";
 
    @RequestMapping(value = PUBLIC_USER_AUTHENTICATE, method = RequestMethod.POST)
    public String userAuthenticate(@RequestParam Map<String, String> params, Model model, HttpServletRequest request) {
@@ -47,15 +42,15 @@ public class UserAuthenticateController extends AbstractController {
       WebLogin authenticatedLogin = getAuthenticatedLogin(session);
       if (authenticatedLogin == null) {
 
-         String token = (String) params.get(LOGIN);
-         String password = (String) params.get(PASSWORD);
-
+         String token = (String) params.get(PAR_LOGIN);
+         String password = (String) params.get(PAR_PASSWORD);
          if (StringUtils.isBlank(token) || StringUtils.isBlank(password)) {
             logger.info("token or password provided was empty");
          } else if (StringUtils.isNotBlank(token) && StringUtils.isNotBlank(password)) {
-            
+
             logger.debug("neither token nor password was empty");
             // login.token and password has been provided... willl look up
+
             LoginSearchCriteria lsc = new LoginSearchCriteria();
             lsc.setToken(token);
             DateTimeCriteria dtc = new DateTimeCriteria();
@@ -83,24 +78,35 @@ public class UserAuthenticateController extends AbstractController {
 
                      // posted pwd
                      String encrypted = encrypter.encrypt(password);
-                     logger.debug("pwd.encrypted=" + encrypted);
-                     
+//                     logger.debug("pwd.encrypted=" + encrypted);
+
                      if (encrypted.equals(lookedUpPwd.getPwd())) {
                         logger.debug("posted password matches looked up password");
                         // we have a match
                         WebLogin wl = new WebLogin(login, LocalDateTime.now(), true);
-                        logger.info("looking up owner login on id = " + login.getId());
 
-                        List<Login> loginTreeTopDown = loginDAO.getLoginTreeTopDown(login.getId());
-                        for (Login login2 : loginTreeTopDown) {
-                           logger.debug("OWNER lookup: found login:" + login2.toString());
-                           if (ROLE.OWNER.equals(login2.getRole())) {
-                              wl.setOwner(login2);
+                        if (login.getRole().equals(ROLE.OWNER)) {
+                           wl.setOwner(login);
+                        } else {
+                           logger.info("looking up owner login on id = " + login.getId());
+                           Login owner = null;
+                           List<Login> loginTreeTopDown = loginDAO.getLoginTreeTopDown(login.getId());
+                           for (Login login2 : loginTreeTopDown) {
+                              logger.debug("OWNER lookup: found login:" + login2.toString());
+                              if (ROLE.OWNER.equals(login2.getRole())) {
+                                 owner = login2;
+                                 break;
+                              }
                            }
+                           
+                           wl.setOwner(owner);
+                           logger.debug("WebLogin=" + wl);
+                           
+                           setAuthenticatedLogin(session, wl);
+
+                           retVal = REDIRECT + TWO_DOTS + SLASH +   FAVORITES_SHOW;
+                           
                         }
-                        logger.debug("WebLogin=" + wl);
-                        setAuthenticatedLogin(session, wl);
-                        retVal = FAVORITES_SHOW;
                      } else {
                         logger.error("did not receive exactly one password - that is not correct");
 //                        return LOGIN_JSP;
@@ -125,7 +131,7 @@ public class UserAuthenticateController extends AbstractController {
             retVal = LOGIN_JSP;
          }
       } else {
-         retVal = FAVORITES_SHOW;
+         retVal = REDIRECT + TWO_DOTS + SLASH + FAVORITES_SHOW;
       }
       logger.debug("returns:" + retVal);
 

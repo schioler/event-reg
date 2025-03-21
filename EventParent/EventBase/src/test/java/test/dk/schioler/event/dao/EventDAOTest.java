@@ -1,5 +1,9 @@
 package test.dk.schioler.event.dao;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -17,6 +21,7 @@ import dk.schioler.configuration.EventBaseConfiguration;
 import dk.schioler.event.base.dao.EventDAO;
 import dk.schioler.event.base.dao.EventTemplateDAO;
 import dk.schioler.event.base.dao.EventTypeDAO;
+import dk.schioler.event.base.dao.criteria.EventTemplateCriteria;
 import dk.schioler.event.base.entity.Event;
 import dk.schioler.event.base.entity.EventTemplate;
 import dk.schioler.event.base.entity.EventType;
@@ -34,10 +39,6 @@ public class EventDAOTest {
    }
 
    Logger logger = LoggerFactory.getLogger(getClass());
-
-//   @Autowired
-//   TestUserSetupUtil userSetupUtil;
-//   
 
    @Autowired
    LoginDAO loginDAO;
@@ -75,10 +76,6 @@ public class EventDAOTest {
 
          eventType = eTypeDAO.insert(eventType);
 
-         eventType.setDescription("Edited eType desription");
-         eTypeDAO.update(eventType);
-
-         
          eventTmpl = new EventTemplate();
          eventTmpl.setCreated(LocalDateTime.now());
          eventTmpl.setLoginId(owner.getId());
@@ -90,10 +87,27 @@ public class EventDAOTest {
          eventTmpl.setParentId(eventType.getId());
          
          eventTmpl = eTmplDAO.insert(eventTmpl);
-         
-         eventTmpl.setUnit(UNIT.KILOGRAMME);
-         eTmplDAO.update(eventTmpl);
 
+         logger.debug("will lookup by means of criteria CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC");
+         EventTemplateCriteria etCrit = new EventTemplateCriteria();
+//         etCrit.setFavourite(true);
+         etCrit.addLoginId(owner.getId());
+         etCrit.addId(eventTmpl.getId());
+         List<EventTemplate> eventTemplates = eTmplDAO.retrieve(etCrit, 0);
+         logger.debug("did lookup by means of criteria CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC");
+         assertTrue(eventTemplates != null);
+         assertEquals(1, eventTemplates.size());
+         
+         EventTemplate eTmplRes = null;
+         BigDecimal etmplDose = null;
+         for (EventTemplate eventTemplate : eventTemplates) {
+            eTmplRes = eventTemplate;
+            etmplDose = eventTemplate.getDose();
+         }
+         logger.debug("found:" + eTmplRes);
+         assertNotNull(etmplDose);
+         assertEquals(new BigDecimal("0.25"), etmplDose); 
+         
          event = new Event();
          event.setCreated(LocalDateTime.now());
          event.setLoginId(owner.getId());
@@ -109,8 +123,7 @@ public class EventDAOTest {
          
          event = eventDAO.insert(event);
          
-         event.setName("12");
-         eventDAO.update(event);
+         
       } catch (Exception e) {
          logger.error(e.getMessage(), e); 
       } finally {
