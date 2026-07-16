@@ -10,7 +10,6 @@ import dk.schioler.shared.security.dao.LoginDAO;
 import dk.schioler.shared.security.dao.PasswordDAO;
 import dk.schioler.shared.security.dao.UserProfileDAO;
 import dk.schioler.shared.security.entity.Login;
-import dk.schioler.shared.security.entity.LoginVisitor;
 import dk.schioler.shared.security.entity.ROLE;
 import dk.schioler.shared.security.entity.RoleUtil;
 import dk.schioler.shared.security.entity.UserProfile;
@@ -33,14 +32,14 @@ public class TestUserSetupUtil {
 
    private String randomString = RandomStringUtils.random(5, "ABCDEFGHIJKLM");
 
-   LoginVisitor insertVisitor = new LoginVisitor() {
-
-      @Override
-      public boolean visit(Login parent) {
-
-         return false;
-      }
-   };
+//   LoginVisitor insertVisitor = new LoginVisitor() {
+//
+//      @Override
+//      public boolean visit(Login parent) {
+//
+//         return false;
+//      }
+//   };
 
    public Login createLoginTree(int count) {
       Login rootLogin = loginDAO.getRootLogin();

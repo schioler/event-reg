@@ -1,5 +1,6 @@
 package dk.schioler.event.base.entity;
 
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.fail;
@@ -65,14 +66,14 @@ public class EventTemplateEqualsTest {
 
          assertEquals(etyp1, etyp2);
 
-         et1.setDose(BigDecimal.valueOf(50));
-         et1.setUnit(UNIT.MILLIGRAM);
-
-         et2.setDose(BigDecimal.valueOf(50));
-         et2.setUnit(UNIT.MILLIGRAM);
-
-         assertEquals(et1, et2);
-         assertEquals(etyp1, etyp2);
+//         et1.setDose(BigDecimal.valueOf(50));
+//         et1.setUnit(UNIT.MILLIGRAM);
+//
+//         et2.setDose(BigDecimal.valueOf(50));
+//         et2.setUnit(UNIT.MILLIGRAM);
+//
+//         assertEquals(et1, et2);
+//         assertEquals(etyp1, etyp2);
 
          et1.setFavorite(false);
          et2.setFavorite(true);

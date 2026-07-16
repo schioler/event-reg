@@ -4,7 +4,7 @@
          <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{20} -%kvp- %msg%n</pattern>
       </encoder>
    </appender>
-   <appender name="FILE" class="ch.qos.logback.core.FileAppender">
+   <appender name="T-FILE" class="ch.qos.logback.core.FileAppender">
       <file>logFile.log</file>
       <append>true</append>
       <!-- set immediateFlush to false for much higher logging throughput -->

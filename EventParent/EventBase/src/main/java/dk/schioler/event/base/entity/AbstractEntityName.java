@@ -2,14 +2,17 @@ package dk.schioler.event.base.entity;
 
 import java.util.Objects;
 
-//@Component
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.stereotype.Component;
+
+@Component
 public abstract class AbstractEntityName extends AbstractEntityId {
 
    private String name;
    
    private String shortName;
 
-   private String description;
+   private String description = "not set";
 
    
    public AbstractEntityName() {
@@ -30,7 +33,9 @@ public abstract class AbstractEntityName extends AbstractEntityId {
    }
 
    public void setDescription(String shortName) {
-      this.description = shortName;
+      if(StringUtils.isNotBlank(shortName) ) {
+         this.description = shortName;         
+      }
    }
 
    

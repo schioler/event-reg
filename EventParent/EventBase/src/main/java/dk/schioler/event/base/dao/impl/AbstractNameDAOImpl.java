@@ -1,12 +1,9 @@
 package dk.schioler.event.base.dao.impl;
 
-import java.util.List;
-
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import dk.schioler.event.base.dao.BaseNameDAO;
-import dk.schioler.event.base.dao.criteria.AbstractNameCriteria;
 import dk.schioler.event.base.dao.table.BaseSQLTableId;
 import dk.schioler.event.base.entity.AbstractEntityName;
 import dk.schioler.event.base.exception.AbstractNameDAOException;
@@ -38,11 +35,11 @@ public abstract class AbstractNameDAOImpl<T extends AbstractEntityName> extends 
       return retVal;
    }
 
-   @Override
-   public List<T> retrieve(AbstractNameCriteria criteria, int maxRows) {
-      
-      return super.retrieve(criteria, maxRows);
-   };
+//   @Override
+//   public List<T> retrieve(AbstractNameCriteria criteria, int maxRows) {
+//      
+//      return super.retrieve(criteria, maxRows);
+//   };
    
  
 }

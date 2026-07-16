@@ -3,13 +3,14 @@ package dk.schioler.event.base.dao.table.impl;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.stereotype.Service;
+
 import dk.schioler.event.base.dao.criteria.AbstractIdCriteria;
-import dk.schioler.event.base.dao.criteria.AbstractNameCriteria;
 import dk.schioler.event.base.dao.table.BaseSQLTableParentChild;
 import dk.schioler.event.base.entity.AbstractEntityParentChild;
-
+@Service
 public abstract class AbstractSQLTableParentChild<T extends AbstractEntityParentChild> extends AbstractSQLTableName<T> 
-   implements BaseSQLTableParentChild<T> {
+   implements BaseSQLTableParentChild<T> {   
    
    
    public Map<String, Object> getInsertMappings(T type){

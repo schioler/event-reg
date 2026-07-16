@@ -12,14 +12,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import dk.schioler.event.base.dao.StateAspectDAO;
 import dk.schioler.event.base.dao.StateRatingDAO;
 import dk.schioler.event.base.dao.StateRegistrationDAO;
-import dk.schioler.event.web.controller.api.BaseControllerAPI;
-import dk.schioler.event.web.controller.api.StatusControllerAPI;
-import dk.schioler.event.web.entity.WebLogin;
+import dk.schioler.event.web.common.WebCommonAPI;
+import dk.schioler.event.web.common.WebLogin;
+import dk.schioler.event.web.entity.WebEntitySymbolsShared;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 
 @Controller
-public class StatusController extends AbstractController implements StatusControllerAPI {
+public class StatusController extends AbstractController implements WebEntitySymbolsShared {
 
    @Autowired
    StateAspectDAO stateAspectDAO;
@@ -60,14 +60,14 @@ public class StatusController extends AbstractController implements StatusContro
    public String searchNewShow(@RequestParam Map<String, String> reqParams, Model model, HttpServletRequest request) {
       logger.debug(STATE_ASPECT_LIST_SHOW + "GET, Requested ");
       HttpSession session = request.getSession();
-      WebLogin wl = getAuthenticatedLogin(session);
+      WebLogin wl = WebCommonAPI.getAuthenticatedLogin(session);
       if (wl != null) {
 
 //         stateAspectDAO.retrieve(null, 0)
 //         session.setAttribute(SES_SEARCH_CRITERIA, searchCriteria);
          return SEARCH_JSP;
       } else {
-         return PUBLIC_LOGIN_JSP;
+         return REDIRECT + SLASH;
       }
    }
 

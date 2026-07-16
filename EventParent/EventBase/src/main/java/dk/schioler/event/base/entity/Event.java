@@ -1,17 +1,18 @@
 package dk.schioler.event.base.entity;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 
 public class Event extends AbstractEntityParentChild {
 
+   private Integer eventTemplateId;
+   
    private String note;
 
    private LocalDateTime eventTS;
 
-   private BigDecimal dose;
+   private String dose;
 
    private UNIT unit;
 
@@ -19,12 +20,22 @@ public class Event extends AbstractEntityParentChild {
       super();
    }
 
-   public Event(String note, LocalDateTime eventTS, BigDecimal dose, UNIT unit) {
+   public Event(String note, LocalDateTime eventTS, String dose, UNIT unit) {
       super();
       this.note = note;
       this.eventTS = eventTS;
       this.dose = dose;
       this.unit = unit;
+   }
+
+   
+   
+   public Integer getEventTemplateId() {
+      return eventTemplateId;
+   }
+
+   public void setEventTemplateId(Integer eventTemplateId) {
+      this.eventTemplateId = eventTemplateId;
    }
 
    @Override
@@ -45,7 +56,7 @@ public class Event extends AbstractEntityParentChild {
 
    @Override
    public void setParent(AbstractEntityParentChild parent) {
-      if (parent instanceof EventTemplate) {
+      if (parent instanceof EventType) {
          super.setParent(parent);
       } else if (parent == null) {
          super.setParent(null);
@@ -90,11 +101,11 @@ public class Event extends AbstractEntityParentChild {
 
 
    
-   public BigDecimal getDose() {
+   public String getDose() {
       return dose;
    }
 
-   public void setDose(BigDecimal dose) {
+   public void setDose(String dose) {
       this.dose = dose;
    }
 
@@ -120,20 +131,23 @@ public class Event extends AbstractEntityParentChild {
       StringBuilder builder = new StringBuilder();
       builder.append(super.toString());
 //      builder.append("Event [ ");
+      builder.append("\n eventTemplateId=").append(eventTemplateId);
       builder.append("\n note=").append(note);
       builder.append(", eventTS=").append(eventTS);
       builder.append(", dose=").append(dose);
-
+      
       builder.append(", unit=").append(unit);
 //      builder.append("]");
       return builder.toString();
    }
 
+
+
    @Override
    public int hashCode() {
       final int prime = 31;
       int result = super.hashCode();
-      result = prime * result + Objects.hash(dose, eventTS, note, unit);
+      result = prime * result + Objects.hash(dose, eventTS, eventTemplateId, note, unit);
       return result;
    }
 
@@ -146,12 +160,13 @@ public class Event extends AbstractEntityParentChild {
       if (getClass() != obj.getClass())
          return false;
       Event other = (Event) obj;
-      return Objects.equals(dose, other.dose) && Objects.equals(eventTS, other.eventTS) && Objects.equals(note, other.note) && unit == other.unit;
+      return Objects.equals(dose, other.dose) && Objects.equals(eventTS, other.eventTS) && Objects.equals(eventTemplateId, other.eventTemplateId)
+            && Objects.equals(note, other.note) && unit == other.unit;
    }
 
    @Override
    public AbstractEntityParentChild instantiateParent() {
-      return new EventTemplate();
+      return new EventType();
    }
 
 }

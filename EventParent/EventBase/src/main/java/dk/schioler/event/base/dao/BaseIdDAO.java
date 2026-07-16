@@ -3,6 +3,8 @@ package dk.schioler.event.base.dao;
 
 import java.util.List;
 
+import javax.sql.DataSource;
+
 import org.springframework.stereotype.Service;
 
 import dk.schioler.event.base.dao.criteria.AbstractIdCriteria;
@@ -17,5 +19,6 @@ public interface BaseIdDAO<T extends AbstractEntityId> {
 	public T get(Integer id, Integer loginId);
 	public List<T> retrieve(AbstractIdCriteria criteria, int maxRows);
 
-	
+	public void setDataSource(DataSource ds);
+	public DataSource getDataSource();
 }

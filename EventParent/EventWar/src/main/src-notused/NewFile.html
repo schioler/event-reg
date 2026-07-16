@@ -1,0 +1,42 @@
+ <div class="row m-2">
+   <div class="col-sm-3"></div>
+    <label  class="col-sm-3 border text-end"  for="req-shortname"><fmt:message key="event-template.shortname" />:</label>
+    <input class="col-sm-6 text-start" type="text"  disabled="disabled" name="req-short-name" id="req-short-name" value="${sesEventTemplate.shortName }">
+</DIV>   
+
+<div class="row m-2">
+  <div class="col-sm-3"></div>
+  <label  class="col-sm-3 border text-end"  for="req-dose"><fmt:message key="event-template.dose" />:</label>
+  <input class="col-sm-6 text-start" type="text" disabled="disabled" name="dose" id="req-dose" value="${sesEventTemplate.dose}">
+</div>
+<div class="row m-2">
+     <div class="col-sm-3"></div>
+  <label  class="col-sm-3 border text-end"  for="req-unit"><fmt:message key="event-template.unit" />:</label>
+  <input class="col-sm-6 text-start" type="text" id="req-unit" disabled="disabled" name="req-description" value="${sesEventTemplate.description }">
+</div>
+
+<div class="row m-2">
+     <div class="col-sm-3"></div>
+  <label  class="col-sm-3 border text-end"  for="req-description"><fmt:message key="event-template.description" />:</label>
+  <input class="col-sm-6 text-start" type="text" id="req-description" disabled="disabled" name="req-description" value="${sesEventTemplate.description }">
+</div>
+
+<div class="row m-2">
+  <div class="col-sm-3"></div>
+  <label  class="col-sm-3 border text-end"  for="req-favorite"><fmt:message key="event-template.is-favorite" />:</label>
+   <input class="col-sm-6 text-start" type="text" id="req-favorite" disabled="disabled" name="req-favorite" value="${sesEventTemplate.favorite }">
+</div>
+
+<div class="row m-2">
+  <div class="col-sm-3"></div>
+  <label  class="col-sm-3 border text-end"  for="req-sort-order"><fmt:message key="event-template.sortorder" />:</label>
+  <input class="col-sm-6 text-start" disabled="disabled" type="text" id="req-sort-order" name="req-sort-order" value="${sesEventTemplate.sortOrder}">
+</div>
+
+
+<DIV class="row m-2">
+  <div class="col-sm-4"></div>
+    <input type="submit" class="btn btn-success rounded-3  col-sm-2 border "  value='<fmt:message key="accept"/>' /> 
+    <input type="button" class="btn bg-secondary rounded-3 col-sm-2 border" onclick="history.back()" value='<fmt:message key="cancel"/>' />
+      <div class="col-sm-4"></div>
+</DIV>

@@ -5,11 +5,12 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.stereotype.Service;
 
 import dk.schioler.event.base.dao.criteria.AbstractIdCriteria;
 import dk.schioler.event.base.dao.impl.SQLConstructs;
 import dk.schioler.event.base.entity.AbstractEntityId;
-
+@Service
 public interface BaseSQLTableId<T extends AbstractEntityId> extends SQLConstructs {
 
    public static final String FLD_ID = "ID";

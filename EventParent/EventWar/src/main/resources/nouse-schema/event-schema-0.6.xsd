@@ -1,0 +1,62 @@
+<?xml version="1.0" ?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.schioler.dk/event"
+			xmlns="http://www.schioler.dk/event" elementFormDefault="unqualified" attributeFormDefault="unqualified">
+					
+			<xsd:simpleType name="unitType"> 
+						<xsd:restriction base="xsd:string">
+									<xsd:enumeration value="sug"></xsd:enumeration>
+									<xsd:enumeration value="stk"></xsd:enumeration>			
+									<xsd:enumeration value="kg"/>
+									<xsd:enumeration value="g"/>
+									<xsd:enumeration value="mg"/>
+									<xsd:enumeration value="mcg"/>
+									<xsd:enumeration value="liter"/>
+									<xsd:enumeration value="dl"/>
+									<xsd:enumeration value="cl"/>
+									<xsd:enumeration value="ml"/>
+									<xsd:enumeration value="år"/>
+									<xsd:enumeration value="måneder"/>
+									<xsd:enumeration value="dage"/>
+									<xsd:enumeration value="timer"/>
+									<xsd:enumeration value="minutter"/>
+									<xsd:enumeration value="sekunder"/>
+									<xsd:enumeration value="registration"/>
+                           <xsd:enumeration value="reg"/>
+									<!-- <xsd:maxLength value="8"/> -->
+						</xsd:restriction>
+			</xsd:simpleType> 
+			<xsd:complexType name="event-type">
+					 	<xsd:sequence >
+									<xsd:element name="event-template" type="event-template" maxOccurs="unbounded" minOccurs="0"/>
+						</xsd:sequence> 
+						<xsd:attribute name="short-name" type="xsd:string" use="required"></xsd:attribute>
+						<xsd:attribute name="name" type="xsd:string" use="required"></xsd:attribute>
+						<xsd:attribute name="description" type="xsd:string" use="optional"></xsd:attribute>
+			</xsd:complexType>
+			<xsd:complexType name="event-template">
+						<!-- <xsd:sequence>
+									<xsd:element name="event" type="event" maxOccurs="unbounded" minOccurs="0"/>
+						</xsd:sequence> -->
+						<xsd:attribute name="name" type="xsd:string"></xsd:attribute>
+						<xsd:attribute name="short-name" type="xsd:string"></xsd:attribute>
+						<xsd:attribute name="unit" type="unitType" use="required"></xsd:attribute>
+						<xsd:attribute name="dose" type="xsd:string" use="required"></xsd:attribute>
+						<xsd:attribute name="description" type="xsd:string"/>
+			</xsd:complexType>
+		<!-- 	<xsd:complexType name="event">
+						<xsd:attribute name="name" type="xsd:string"></xsd:attribute>
+						<xsd:attribute name="short-name" type="xsd:string"></xsd:attribute>
+						<xsd:attribute name="unit" type="xsd:string" use="required"></xsd:attribute>
+						<xsd:attribute name="dose" type="xsd:string" use="required"></xsd:attribute>
+						<xsd:attribute name="description" type="xsd:string"/>
+			</xsd:complexType> -->
+			
+			<xsd:complexType name="root-t">
+            <xsd:sequence>
+               <xsd:element type="event-type" name="event-type" maxOccurs="unbounded" minOccurs="1"/>
+            </xsd:sequence>
+         </xsd:complexType>
+			<xsd:element name="root" type="root-t" />
+						
+			
+</xsd:schema>

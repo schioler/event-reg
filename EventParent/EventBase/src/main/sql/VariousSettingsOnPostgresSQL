@@ -1,0 +1,43 @@
+OS/Windows:
+User:
+event/Event1
+
+Database settings:
+
+pgAdmin:postgres/AA43psxc
+
+
+  
+Login/roles:
+event_dev (AA43psxc): 
+   CREATE ROLE event_dev WITH
+   LOGIN
+   SUPERUSER
+   CREATEDB
+   CREATEROLE
+   INHERIT
+   NOREPLICATION
+   BYPASSRLS
+   CONNECTION LIMIT -1
+   PASSWORD 'xxxxxx';
+   
+Tablespaces:
+   CREATE TABLESPACE event_dev
+  OWNER event_dev
+  LOCATION 'C:/pg18/tblspaces/event';
+
+ALTER TABLESPACE event_dev
+  OWNER TO event_dev;
+   
+Database:
+CREATE DATABASE event_dev
+    WITH
+    OWNER = event_dev
+    TEMPLATE = template1
+    ENCODING = 'UTF8'
+    STRATEGY = 'wal_log'
+    LOCALE_PROVIDER = 'libc'
+    TABLESPACE = event_dev
+    CONNECTION LIMIT = -1
+    OID = 17000
+    IS_TEMPLATE = False;

@@ -1,0 +1,16 @@
+Organizeable events
+
+Event -> organizeable.
+Events could be dynamically organizeable.
+   Organisation could added/removed when you want to.
+   Organisation offers organisation on name/parentName, id/parentId, 
+   A BaseEvent´should have a pluggable object attached, holding the organisation attributes
+   
+
+interface Organizeable
+   getBaseEvent()
+   setBaseEvent(BaseEvent be)´
+   
+   getOrganisationType() // nameParentName, idParentId, ....
+   
+   accept(OrganizeableVisitor o)

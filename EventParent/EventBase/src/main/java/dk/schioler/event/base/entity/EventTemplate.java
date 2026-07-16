@@ -1,13 +1,12 @@
 package dk.schioler.event.base.entity;
 
-import java.math.BigDecimal;
 import java.util.Objects;
 
 public class EventTemplate extends AbstractEntityParentChild {
 
    private UNIT unit;
 
-   private BigDecimal dose;
+   private String dose;
 
    private Integer sortOrder;
 
@@ -17,7 +16,7 @@ public class EventTemplate extends AbstractEntityParentChild {
 
    }
 
-   public EventTemplate(UNIT unit, BigDecimal dose, Integer sortOrder, boolean isFavorite) {
+   public EventTemplate(UNIT unit, String dose, Integer sortOrder, boolean isFavorite) {
       super();
       this.unit = unit;
       this.dose = dose;
@@ -88,11 +87,11 @@ public class EventTemplate extends AbstractEntityParentChild {
       this.unit = unit;
    }
 
-   public BigDecimal getDose() {
+   public String getDose() {
       return dose;
    }
 
-   public void setDose(BigDecimal dose) {
+   public void setDose(String dose) {
       this.dose = dose;
    }
 

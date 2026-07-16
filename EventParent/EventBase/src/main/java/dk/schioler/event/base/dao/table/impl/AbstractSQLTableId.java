@@ -9,12 +9,14 @@ import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 
 import dk.schioler.event.base.dao.EventDAOException;
 import dk.schioler.event.base.dao.criteria.AbstractIdCriteria;
 import dk.schioler.event.base.dao.table.BaseSQLTableId;
 import dk.schioler.event.base.entity.AbstractEntityId;
 
+@Service
 public abstract class AbstractSQLTableId<T extends AbstractEntityId> implements BaseSQLTableId<T> {
 
    protected Logger logger = LoggerFactory.getLogger(getClass());
@@ -279,11 +281,13 @@ public abstract class AbstractSQLTableId<T extends AbstractEntityId> implements 
          LocalDateTime endTime = criteria.getCreatedEndTime();
          LocalDateTime startTime = criteria.getCreatedStart();
          if (endTime != null && startTime != null) {
-            StringBuffer createdCrit = createLocalDateTimeCriteria(CREATED_START_DATE, CREATED_END_DATE, FLD_CREATED);
-            if (createdCrit != null) {
-               critList.add(createdCrit);
+//            if (!AbstractIdCriteria.DEFAULT_DATE_TIME.equals(endTime) && !AbstractIdCriteria.DEFAULT_DATE_TIME.equals(startTime)) {
+               StringBuffer createdCrit = createLocalDateTimeCriteria(CREATED_START_DATE, CREATED_END_DATE, FLD_CREATED);
+               if (createdCrit != null) {
+                  critList.add(createdCrit);
+               }               
             }
-         }
+//         }
 
          logger.debug("buildRetrieveSQLFromCriteriaInstance: critList=");
          for (StringBuffer crit : critList) {

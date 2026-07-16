@@ -17,7 +17,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
-import dk.schioler.configuration.EventBaseConfiguration;
+import dk.schioler.event.base.EventBaseConfiguration;
 import dk.schioler.event.base.dao.EventDAO;
 import dk.schioler.event.base.dao.EventTemplateDAO;
 import dk.schioler.event.base.dao.EventTypeDAO;
@@ -82,7 +82,7 @@ public class EventDAOTest {
          eventTmpl.setName("Sinemet 25/100");
          eventTmpl.setDescription("A very common pill based treatment of mr P");
          eventTmpl.setShortName("SIN-25/100");
-         eventTmpl.setDose(new BigDecimal("0.25"));
+         eventTmpl.setDose("0.25");
          eventTmpl.setUnit(UNIT.MILLIGRAM);
          eventTmpl.setParentId(eventType.getId());
          
@@ -99,7 +99,7 @@ public class EventDAOTest {
          assertEquals(1, eventTemplates.size());
          
          EventTemplate eTmplRes = null;
-         BigDecimal etmplDose = null;
+         String etmplDose = null;
          for (EventTemplate eventTemplate : eventTemplates) {
             eTmplRes = eventTemplate;
             etmplDose = eventTemplate.getDose();

@@ -1,0 +1,9 @@
+@charset "UTF-8";
+
+.heading-col {
+  border: solid blue 3px;
+}
+
+.heading-row {
+  border: solid green 3px;
+}

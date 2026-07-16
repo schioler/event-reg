@@ -4,12 +4,13 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.stereotype.Service;
 
 import dk.schioler.event.base.dao.criteria.AbstractIdCriteria;
 import dk.schioler.event.base.dao.criteria.AbstractNameCriteria;
 import dk.schioler.event.base.dao.table.BaseSQLTableName;
 import dk.schioler.event.base.entity.AbstractEntityName;
-
+@Service
 public abstract class AbstractSQLTableName<T extends AbstractEntityName> extends AbstractSQLTableId<T> implements BaseSQLTableName<T> {
 
    public AbstractSQLTableName() {
@@ -27,16 +28,14 @@ public abstract class AbstractSQLTableName<T extends AbstractEntityName> extends
    @Override
    public Map<String, Object> getInsertMappings(T type) {
       Map<String, Object> map = super.getInsertMappings(type);
-      if (type.getDescription() != null) {
-         map.put(FLD_DESCRIPTION, type.getDescription());
-      }
 
-      if (type.getName() != null) {
-         map.put(FLD_NAME, type.getName());
-      }
-      if (type.getShortName() != null) {
-         map.put(FLD_SHORT_NAME, type.getShortName());
-      }
+      map.put(FLD_DESCRIPTION, type.getDescription());
+
+//      if (type.getName() != null) {
+      map.put(FLD_NAME, type.getName());
+//      }
+//      if (type.getShortName() != null) {
+      map.put(FLD_SHORT_NAME, type.getShortName());
 
       return map;
 
@@ -46,15 +45,15 @@ public abstract class AbstractSQLTableName<T extends AbstractEntityName> extends
    public Map<String, Object> getUpdateMappings(T type) {
       Map<String, Object> map = super.getUpdateMappings(type);
 
-      if (type.getName() != null) {
-         map.put(FLD_NAME, type.getName());
-      }
-      if (type.getShortName() != null) {
-         map.put(FLD_SHORT_NAME, type.getShortName());
-      }
-      if (type.getDescription() != null) {
-         map.put(FLD_DESCRIPTION, type.getDescription());
-      }
+//      if (type.getName() != null) {
+      map.put(FLD_NAME, type.getName());
+//      }
+//      if (type.getShortName() != null) {
+      map.put(FLD_SHORT_NAME, type.getShortName());
+//      }
+//      if (type.getDescription() != null) {
+      map.put(FLD_DESCRIPTION, type.getDescription());
+//      }
       return map;
    }
 
@@ -103,6 +102,7 @@ public abstract class AbstractSQLTableName<T extends AbstractEntityName> extends
          critList.add(shortCrit);
       }
 
+      
       logger.debug("addLevelSpecificCriteriaFrom: critList=" + critList);
       return critList;
    }

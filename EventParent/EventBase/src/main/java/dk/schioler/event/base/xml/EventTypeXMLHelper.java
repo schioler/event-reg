@@ -29,188 +29,196 @@ import dk.schioler.event.base.entity.XMLRootElement;
 @Component
 public class EventTypeXMLHelper implements EventTypeXMLElements {
 
-	private Logger logger = LoggerFactory.getLogger(getClass());
+   private Logger logger = LoggerFactory.getLogger(getClass());
 
-	public EventTypeXMLHelper() {
+   public EventTypeXMLHelper() {
 
-	}
+   } 
 
-	public List<AbstractEntityParentChild> buildEventTypes(String srcFileName) {
-		return buildEventTypes(new File(srcFileName));
-	}
+   public List<AbstractEntityParentChild> buildEventTypes(String srcFileName) {
+      return buildEventTypes(new File(srcFileName));
+   }
 
-	public List<AbstractEntityParentChild> buildEventTypes(File srcFile) {
-		FileInputStream fis = null;
-		try {
-			fis = new FileInputStream(srcFile);
-			return buildEventTypesFromXML(fis);
-		} catch (Exception e) {
-			throw new EventXMLException(e.getMessage(), e);
-		} finally {
-			if (fis != null) {
-				try {
-					fis.close();
-				} catch (IOException e) {
-					throw new EventXMLException(e.getMessage(), e);
-				}
-			}
-		}
-	}
+   public List<AbstractEntityParentChild> buildEventTypes(File srcFile) {
+      FileInputStream fis = null;
+      try {
+         fis = new FileInputStream(srcFile);
+         return buildEventTypesFromXML(fis);
+      } catch (Exception e) {
+         throw new EventXMLException(e.getMessage(), e);
+      } finally {
+         if (fis != null) {
+            try {
+               fis.close();
+            } catch (IOException e) {
+               throw new EventXMLException(e.getMessage(), e);
+            }
+         }
+      }
+   }
 
-	public List<AbstractEntityParentChild> buildEventTypesFromXML(InputStream is) {
-		logger.trace("buildEventTypesfromXML:" + is);
-		XMLRootElement rootNode = null;
-		try {
+   public List<AbstractEntityParentChild> buildEventTypesFromXML(InputStream is) {
+      logger.trace("buildEventTypesfromXML:" + is);
+      XMLRootElement rootNode = null;
+      try {
 
-			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-			DocumentBuilder db = dbf.newDocumentBuilder();
-			Document doc = db.parse(is);
+         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+         DocumentBuilder db = dbf.newDocumentBuilder();
+         Document doc = db.parse(is);
 
 //			logger.debug("dc=" + doc);
-			String rootName = doc.getDocumentElement().getNodeName();
-			logger.debug("Root Element :" + rootName);
+         String rootName = doc.getDocumentElement().getNodeName();
+         logger.debug("Root Element :" + rootName);
 //			logger.debug("------");
 
-			if (ELEMENT_ROOT.equals(rootName)) {
+         if (ELEMENT_ROOT.equals(rootName)) {
 
-				rootNode = new XMLRootElement();
+            rootNode = new XMLRootElement();
 
-				if (doc.hasChildNodes()) {
-					traverseNodes(doc.getDocumentElement(), rootNode);
-				}
-			}
-			
-			// all the EventTypes that has been discovered
-			return rootNode.getChildren();
-		} catch (Exception e) {
-			logger.error("parse caught ", e);
-		}
-		logger.debug("return null");
-		return null;
-	}
+            if (doc.hasChildNodes()) {
+               traverseNodes(doc.getDocumentElement(), rootNode);
+            }
+         }
 
-	private void traverseNodes(Node xmlCurNode, AbstractEntityName curObject) {
-		NodeList xmlChildNodes = xmlCurNode.getChildNodes();
-		for (int idx = 0; idx < xmlChildNodes.getLength(); idx++) {
-			Node xmlChildNode = xmlChildNodes.item(idx);
+         // all the EventTypes that has been discovered
+         return rootNode.getChildren();
+      } catch (Exception e) {
+         logger.error("parse caught ", e);
+      }
+      logger.debug("return null");
+      return null;
+   }
 
-			if (Node.ELEMENT_NODE == xmlChildNode.getNodeType()) {
+   private void traverseNodes(Node xmlCurNode, AbstractEntityName curObject) {
+      NodeList xmlChildNodes = xmlCurNode.getChildNodes();
+      for (int idx = 0; idx < xmlChildNodes.getLength(); idx++) {
+         Node xmlChildNode = xmlChildNodes.item(idx);
 
-				String xmlNodeName = xmlChildNode.getNodeName();
-//				logger.trace("looking at node=" + xmlNodeName);
+         if (Node.ELEMENT_NODE == xmlChildNode.getNodeType()) {
 
-				if (ELEMENT_EVENT_TYPE.equalsIgnoreCase(xmlNodeName)) {
-					logger.trace("found: event-type");
-					EventType eType = buildEventTypeInstance(xmlChildNode);
-					XMLRootElement rootE = (XMLRootElement) curObject;
-					rootE.addChild(eType);
-					traverseNodes(xmlChildNode, eType);
-				} else if (ELEMENT_EVENT_TEMPLATE.equalsIgnoreCase(xmlNodeName)) {
-				   	logger.trace("found: event-template");
-					EventTemplate dTmppl  = buildEventTemplateInstance(xmlChildNode);
-					EventType e = (EventType) curObject;
+            String xmlNodeName = xmlChildNode.getNodeName();
+				logger.trace("looking at node=" + xmlNodeName);
 
-					e.addChild(dTmppl);
+            if (ELEMENT_EVENT_TYPE.equalsIgnoreCase(xmlNodeName)) {
+               logger.trace("found: event-type");
+               EventType eType = buildEventTypeInstance(xmlChildNode);
+               logger.debug("found " + eType.toString());
+               XMLRootElement rootE = (XMLRootElement) curObject;
+
+               rootE.addChild(eType);
+               traverseNodes(xmlChildNode, eType);
+            } else if (ELEMENT_EVENT_TEMPLATE.equalsIgnoreCase(xmlNodeName)) {
+               logger.trace("found: event-template");
+               EventTemplate dTmppl = buildEventTemplateInstance(xmlChildNode);
+               logger.debug("built" + dTmppl);
+               EventType e = (EventType) curObject;
+
+               e.addChild(dTmppl);
 //					curObject.addChild(childTreeNode);
 
 //					traverseNodes(xmlChildNode, childTreeNode);
-				//				
-				} else {
-					throw new EventXMLException("un-known element in received xml/accountPlan: " + xmlNodeName);
-				}
+               //
+            } else {
+               throw new EventXMLException("un-known element in received xml/accountPlan: " + xmlNodeName);
+            }
 
-			}
-		}
-	}
+         }
+      }
+   }
 
-	private EventType buildEventTypeInstance(Node xmlChildNode) {
+   private EventType buildEventTypeInstance(Node xmlChildNode) {
 
-		if (xmlChildNode.hasAttributes()) {
+      if (xmlChildNode.hasAttributes()) {
 
-			String name = null;
-			String shortName = null;
-			String description = null;
+         String name = null;
+         String shortName = null;
+         String description = "";
 
-			// get attributes names and values
-			NamedNodeMap xmlNodeMap = xmlChildNode.getAttributes();
-			for (int i = 0; i < xmlNodeMap.getLength(); i++) {
-				Node xmlNode = xmlNodeMap.item(i);
-				logger.trace("looking at attr: name=" + xmlNode.getNodeName());
-				if (ATTR_NAME.equals(xmlNode.getNodeName())) {
-					name = xmlNode.getNodeValue();
-					logger.trace("found: attr:name=" + name);
-				} else if (ATTR_SHORT_NAME.equals(xmlNode.getNodeName())) {
-					shortName = xmlNode.getNodeValue();
-					logger.trace("found: attr:short=" + shortName);
-				} else if (ATTR_DESCRIPTION.equals(xmlNode.getNodeName())) {
-					description = xmlNode.getNodeValue();
-					logger.trace("found: attr:description=" + description);
-				}
-			}
-			EventType et = new EventType();
-			et.setName(name);
-			et.setDescription(shortName);
-			et.setDescription(description);
-			
-			return et;
-		} else {
-			return null;
-		}
+         // get attributes names and values
+         NamedNodeMap xmlNodeMap = xmlChildNode.getAttributes();
+         for (int i = 0; i < xmlNodeMap.getLength(); i++) {
+            Node xmlNode = xmlNodeMap.item(i);
+            logger.trace("looking at attr: name=" + xmlNode.getNodeName());
+            if (ATTR_NAME.equals(xmlNode.getNodeName())) {
+               name = xmlNode.getNodeValue();
+               logger.trace("found: attr:name=" + name);
+            } else if (ATTR_SHORT_NAME.equals(xmlNode.getNodeName())) {
+               shortName = xmlNode.getNodeValue();
+               logger.trace("found: attr:short=" + shortName);
+            } else if (ATTR_DESCRIPTION.equals(xmlNode.getNodeName())) {
+               description = xmlNode.getNodeValue();
+               logger.trace("found: attr:description=" + description);
+            }
+         }
+         EventType et = new EventType();
+         et.setName(name);
+         et.setShortName(shortName);
+         et.setDescription(description);
 
-	}
+         return et;
+      } else {
+         return null;
+      }
 
-	private EventTemplate buildEventTemplateInstance(Node xmlChildNode) {
+   }
 
-		if (xmlChildNode.hasAttributes()) {
-			String name = null;
-			String shortName = null;
-			String description = null;
-			String unit = null;
-			String dose = null;
-			String isFavorite = null;
-			
-			// get attributes names and values
-			NamedNodeMap xmlNodeMap = xmlChildNode.getAttributes();
-			for (int i = 0; i < xmlNodeMap.getLength(); i++) {
-				Node xmlNode = xmlNodeMap.item(i);
-				logger.trace("looking at attr: name=" + xmlNode.getNodeName());
-				if (ATTR_NAME.equals(xmlNode.getNodeName())) {
-					name = xmlNode.getNodeValue();
-					logger.trace("found: attr:name=" + name);
-				} else if (ATTR_DOSE.equals(xmlNode.getNodeName())) {
-					dose = xmlNode.getNodeValue();
-					logger.trace("found: attr:dose=" + dose);
-				} else if (ATTR_UNIT.equals(xmlNode.getNodeName())) {
-					unit = xmlNode.getNodeValue();
-					logger.trace("found: attr:unit=" + unit);
-				} else if (ATTR_SHORT_NAME.equals(xmlNode.getNodeName())) {
-					shortName = xmlNode.getNodeValue();
-					logger.trace("found: attr:short=" + shortName);
-				} else if (ATTR_DESCRIPTION.equals(xmlNode.getNodeName())) {
-					description = xmlNode.getNodeValue();
-					logger.trace("found: attr:description=" + description);
-				} else if (ATTR_IS_FAVORITE.equals(xmlNode.getNodeName())) {
-					isFavorite = xmlNode.getNodeValue();
-					logger.trace("found: attr:is-favorite=" + description);
-				}
-			}
-			EventTemplate et = new EventTemplate();
-			et.setName(name);
-			et.setDescription(shortName);
-			et.setDescription(description);
-			et.setDose(new BigDecimal(dose));
-			et.setUnit(UNIT.getUnitFromString(unit));
-			et.setFavorite(BooleanUtils.toBoolean(isFavorite));			
-			
-			return et;
-		} else {
-			return null;
-		}
-	}
-	
-	
-	// *************************************************************************************
-	// *************************************************************************************
+   private EventTemplate buildEventTemplateInstance(Node xmlChildNode) {
+
+      if (xmlChildNode.hasAttributes()) {
+         String name = null;
+         String shortName = null;
+         String description = null;
+         String unit = null;
+         String dose = null;
+         String isFavorite = null;
+
+         // get attributes names and values
+         NamedNodeMap xmlNodeMap = xmlChildNode.getAttributes();
+         for (int i = 0; i < xmlNodeMap.getLength(); i++) {
+            Node xmlNode = xmlNodeMap.item(i);
+            logger.trace("looking at attr: name=" + xmlNode.getNodeName());
+            if (ATTR_NAME.equals(xmlNode.getNodeName())) {
+               name = xmlNode.getNodeValue();
+               logger.trace("found: attr:name=" + name);
+            } else if (ATTR_DOSE.equals(xmlNode.getNodeName())) {
+               dose = xmlNode.getNodeValue();
+               logger.trace("found: attr:dose=" + dose);
+            } else if (ATTR_UNIT.equals(xmlNode.getNodeName())) {
+               unit = xmlNode.getNodeValue();
+               logger.trace("found: attr:unit=" + unit);
+            } else if (ATTR_SHORT_NAME.equals(xmlNode.getNodeName())) {
+               shortName = xmlNode.getNodeValue();
+               logger.trace("found: attr:short=" + shortName);
+            } else if (ATTR_DESCRIPTION.equals(xmlNode.getNodeName())) {
+               description = xmlNode.getNodeValue();
+               logger.trace("found: attr:description=" + description);
+            } else if (ATTR_IS_FAVORITE.equals(xmlNode.getNodeName())) {
+               isFavorite = xmlNode.getNodeValue();
+               logger.trace("found: attr:is-favorite=" + description);
+            }
+         }
+         EventTemplate et = new EventTemplate();
+         et.setName(name);
+         et.setShortName(shortName);
+         et.setDescription(description);
+         et.setDose(dose);
+         UNIT unitFromString = UNIT.getUnitFromString(unit);
+         if (unitFromString != null) {
+
+            et.setUnit(unitFromString);
+         } else {
+            throw new EventXMLException("Unit did not parse correctly");
+         }
+         et.setFavorite(BooleanUtils.toBoolean(isFavorite));
+
+         return et;
+      } else {
+         return null;
+      }
+   }
+
+   // *************************************************************************************
+   // *************************************************************************************
 //	public Document createXMLDocumentFromAccountNodeTree(AccountTreeNode accountTreeRootNode) {
 //		try {
 //			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();

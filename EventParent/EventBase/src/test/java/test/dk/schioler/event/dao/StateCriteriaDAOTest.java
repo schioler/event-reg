@@ -16,7 +16,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
-import dk.schioler.configuration.EventBaseConfiguration;
+import dk.schioler.event.base.EventBaseConfiguration;
 import dk.schioler.event.base.dao.StateAspectDAO;
 import dk.schioler.event.base.dao.StateRatingDAO;
 import dk.schioler.event.base.dao.StateRegistrationDAO;

@@ -38,4 +38,9 @@ public class EventDAOImpl extends AbstractNameDAOImpl<Event> implements EventDAO
       return retVal;
    }
 
+// @Override
+// public List<T> retrieve(AbstractNameCriteria criteria, int maxRows) {
+//    
+//    return super.retrieve(criteria, maxRows);
+// };
 }

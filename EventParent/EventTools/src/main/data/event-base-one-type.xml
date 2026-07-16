@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<e:root xmlns:e="http://www.schioler.dk/event" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://www.schioler.dk/event ../schema/event-schema-0.6.xsd">
+   <event-type short-name="MEDICIN-PARK" name="Medicin-parkinson">
+      <event-template name="Sinemet 25/100" dose="25/100" unit="MILLIGRAM" short-name="SINE_25100"/>
+   </event-type>
+
+</e:root>

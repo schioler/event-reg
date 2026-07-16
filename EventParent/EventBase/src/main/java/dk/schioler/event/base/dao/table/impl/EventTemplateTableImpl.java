@@ -1,10 +1,10 @@
 package dk.schioler.event.base.dao.table.impl;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.stereotype.Service;
 
 import dk.schioler.event.base.dao.criteria.AbstractIdCriteria;
 import dk.schioler.event.base.dao.criteria.EventTemplateCriteria;
@@ -13,6 +13,7 @@ import dk.schioler.event.base.dao.table.EventTemplateTable;
 import dk.schioler.event.base.entity.EventTemplate;
 import dk.schioler.event.base.entity.UNIT;
 
+@Service
 public class EventTemplateTableImpl extends AbstractSQLTableParentChild<EventTemplate> implements EventTemplateTable {
 
    public EventTemplateTableImpl() {
@@ -46,6 +47,7 @@ public class EventTemplateTableImpl extends AbstractSQLTableParentChild<EventTem
    public Map<String, Object> getInsertMappings(EventTemplate type) {
       Map<String, Object> map = super.getInsertMappings(type);
 
+      map.put(FLD_DESCRIPTION, type.getDescription());
       map.put(FLD_EVENT_TYPE_ID, type.getParentId());
       map.put(FLD_DOSE, type.getDose());
       map.put(FLD_UNIT, type.getUnit().toString());
@@ -64,7 +66,7 @@ public class EventTemplateTableImpl extends AbstractSQLTableParentChild<EventTem
       map.put(FLD_UNIT, type.getUnit().toString());
       map.put(FLD_SORT_ORDER, type.getSortOrder());
       map.put(FLD_IS_FAVOURITE, type.isFavorite());
-
+      map.put(FLD_DESCRIPTION, type.getDescription());
       return map;
    }
 
@@ -74,12 +76,12 @@ public class EventTemplateTableImpl extends AbstractSQLTableParentChild<EventTem
       if (idCrit != null) {
          EventTemplateCriteria templCrit = (EventTemplateCriteria) idCrit;
 
-         BigDecimal doseMin = templCrit.getDoseMin();
-         BigDecimal doseMax = templCrit.getDoseMax();
-         if (doseMin != null && doseMax != null) {
-            StringBuffer sql = createDoseCriteria(FLD_DOSE_MIN, FLD_DOSE_MAX, FLD_DOSE);
-            retList.add(sql);
-         }
+//         BigDecimal doseMin = templCrit.getDoseMin();
+//         BigDecimal doseMax = templCrit.getDoseMax();
+//         if (doseMin != null && doseMax != null) {
+//            StringBuffer sql = createDoseCriteria(FLD_DOSE_MIN, FLD_DOSE_MAX, FLD_DOSE);
+//            retList.add(sql);
+//         }
 
          UNIT unit = templCrit.getUnit();
          if (unit != null) {
@@ -121,13 +123,13 @@ public class EventTemplateTableImpl extends AbstractSQLTableParentChild<EventTem
             map.put(FLD_UNIT, unit.toString().toUpperCase());
          }
 
-         BigDecimal doseMin = templCrit.getDoseMin();
-         BigDecimal doseMax = templCrit.getDoseMax();
-         if (doseMin != null && doseMax != null) {
-            map.put(FLD_DOSE_MIN, doseMin);
-            map.put(FLD_DOSE_MAX, doseMax);
-
-         }
+//         BigDecimal doseMin = templCrit.getDoseMin();
+//         BigDecimal doseMax = templCrit.getDoseMax();
+//         if (doseMin != null && doseMax != null) {
+//            map.put(FLD_DOSE_MIN, doseMin);
+//            map.put(FLD_DOSE_MAX, doseMax);
+//
+//         }
 
          List<Integer> eventTypeIds = templCrit.getEventTypeIds();
          if (eventTypeIds.size() > 0) {

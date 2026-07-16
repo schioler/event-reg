@@ -4,12 +4,13 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.stereotype.Service;
 
 import dk.schioler.event.base.dao.criteria.AbstractIdCriteria;
 import dk.schioler.event.base.dao.rowmapper.impl.EventTypeRowMapper;
 import dk.schioler.event.base.dao.table.EventTypeTable;
 import dk.schioler.event.base.entity.EventType;
-
+@Service
 public class EventTypeTableImpl extends AbstractSQLTableParentChild<EventType> implements EventTypeTable {
 
 	public EventTypeTableImpl() {

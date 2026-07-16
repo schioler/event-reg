@@ -1,12 +1,12 @@
 package dk.schioler.event.base.dao.table.impl;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.stereotype.Service;
 
 import dk.schioler.event.base.dao.criteria.AbstractIdCriteria;
 import dk.schioler.event.base.dao.criteria.EventCriteria;
@@ -15,24 +15,27 @@ import dk.schioler.event.base.dao.table.EventTable;
 import dk.schioler.event.base.entity.Event;
 import dk.schioler.event.base.entity.UNIT;
 
+@Service
 public class EventTableImpl extends AbstractSQLTableParentChild<Event> implements EventTable {
 
    public EventTableImpl() {
       super();
 
+//      insertColumns.add(FLD_EVENT_TYPE_ID);
       insertColumns.add(FLD_EVENT_TEMPLATE_ID);
       insertColumns.add(FLD_NOTE);
       insertColumns.add(FLD_DOSE);
       insertColumns.add(FLD_UNIT);
       insertColumns.add(FLD_EVENT_TS);
 
+//      selectColumns.add(FLD_EVENT_TYPE_ID);
       selectColumns.add(FLD_EVENT_TEMPLATE_ID);
       selectColumns.add(FLD_NOTE);
       selectColumns.add(FLD_DOSE);
       selectColumns.add(FLD_UNIT);
       selectColumns.add(FLD_EVENT_TS);
-      
-      orderByColumns.add(0,FLD_EVENT_TS);
+
+      orderByColumns.add(0, FLD_EVENT_TS);
    }
 
    @Override
@@ -43,15 +46,16 @@ public class EventTableImpl extends AbstractSQLTableParentChild<Event> implement
    @Override
    public Map<String, Object> getInsertMappings(Event event) {
       Map<String, Object> map = super.getInsertMappings(event);
-      map.put(FLD_EVENT_TEMPLATE_ID, event.getParentId());
+//      map.put(FLD_EVENT_TYPE_ID, event.getParentId());
 
+      map.put(FLD_EVENT_TEMPLATE_ID, event.getParentId());
       if (event.getEventTS() != null) {
          map.put(FLD_EVENT_TS, event.getEventTS());
       }
-
       map.put(FLD_NOTE, event.getNote());
       map.put(FLD_DOSE, event.getDose());
       map.put(FLD_UNIT, event.getUnit().toString());
+      map.put(FLD_DESCRIPTION, event.getDescription());
 
       return map;
    }
@@ -59,12 +63,13 @@ public class EventTableImpl extends AbstractSQLTableParentChild<Event> implement
    @Override
    public Map<String, Object> getUpdateMappings(Event event) {
       Map<String, Object> map = super.getUpdateMappings(event);
+//      map.put(FLD_EVENT_TYPE_ID, event.getParentId());
       map.put(FLD_EVENT_TEMPLATE_ID, event.getParentId());
 
       if (event.getEventTS() != null) {
          map.put(FLD_EVENT_TS, event.getEventTS());
       }
-
+      map.put(FLD_DESCRIPTION, event.getDescription());
       map.put(FLD_NOTE, event.getNote());
       map.put(FLD_DOSE, event.getDose());
       map.put(FLD_UNIT, event.getUnit().toString());
@@ -89,15 +94,15 @@ public class EventTableImpl extends AbstractSQLTableParentChild<Event> implement
       List<StringBuffer> eventCrit = super.addLevelSpecificCriteriaFrom(idCrit);
       if (idCrit != null) {
          EventCriteria ec = (EventCriteria) idCrit;
-
-         BigDecimal doseMax = ec.getDoseMax();
-         BigDecimal doseMin = ec.getDoseMin();
-         if (doseMax != null && doseMin != null) {
-            StringBuffer sb = createDoseCriteria(FLD_DOSE_MIN, FLD_DOSE_MAX, FLD_DOSE);
-            if (sb != null) {
-               eventCrit.add(sb);
-            }
-         }
+         logger.debug("received Criteria=" + ec);
+//         BigDecimal doseMax = ec.getDoseMax();
+//         BigDecimal doseMin = ec.getDoseMin();
+//         if (doseMax != null && doseMin != null) {
+//            StringBuffer sb = createDoseCriteria(FLD_DOSE_MIN, FLD_DOSE_MAX, FLD_DOSE);
+//            if (sb != null) {
+//               eventCrit.add(sb);
+//            }
+//         }
 
          UNIT unit = ec.getUnit();
          if (unit != null) {
@@ -108,28 +113,34 @@ public class EventTableImpl extends AbstractSQLTableParentChild<Event> implement
                eventCrit.add(sb);
             }
          }
-         
-         
-         
-         List<Integer> eventTemplateIds = ec.getEventTemplateIds();
-         if (eventTemplateIds.size() > 0) {
-            StringBuffer eventTemplateIdCriteria = createIntegerCriteria(eventTemplateIds, FLD_EVENT_TEMPLATE_ID);
+
+//         List<Integer> eventTypeIds = ec.getEventTypeIds();
+//         if (eventTypeIds.size() > 0) {
+//            logger.debug("will add eventTypeIds to search:" + eventTypeIds);
+//            StringBuffer eventTypeIdCriteria = createIntegerCriteria(eventTypeIds, FLD_EVENT_TYPE_ID);
+//            if (eventTypeIdCriteria != null) {
+//               eventCrit.add(eventTypeIdCriteria);
+//            }
+//         }
+
+         List<Integer> eventTmplIds = ec.getEventTemplateIds();
+         if (eventTmplIds.size() > 0) {
+            logger.debug("will add eventTmplIds to search:" + eventTmplIds);
+            StringBuffer eventTemplateIdCriteria = createIntegerCriteria(eventTmplIds, FLD_EVENT_TEMPLATE_ID);
             if (eventTemplateIdCriteria != null) {
                eventCrit.add(eventTemplateIdCriteria);
             }
          }
-
-
 
          LocalDateTime eventTSStartDate = ec.getEventTSStartDate();
          LocalDateTime eventTSEndDate = ec.getEventTSEndDate();
          if (eventTSStartDate != null && eventTSStartDate != null) {
             if (eventTSStartDate.isBefore(eventTSEndDate)) {
                StringBuffer criteria = createLocalDateTimeCriteria(FLD_EVENT_TS_START, FLD_EVENT_TS_END, FLD_EVENT_TS);
-               if(criteria != null) {
+               if (criteria != null) {
                   eventCrit.add(criteria);
                }
-               
+
             }
          }
 
@@ -145,33 +156,40 @@ public class EventTableImpl extends AbstractSQLTableParentChild<Event> implement
       if (criteria != null) {
          EventCriteria ec = (EventCriteria) criteria;
 
-         BigDecimal doseMin = ec.getDoseMin();
-         BigDecimal doseMax = ec.getDoseMax();
-         if (doseMin != null && doseMax != null) {
-            map.put(FLD_DOSE_MIN, doseMin);
-            map.put(FLD_DOSE_MAX, doseMax);
-         }
+//         BigDecimal doseMin = ec.getDoseMin();
+//         BigDecimal doseMax = ec.getDoseMax();
+//         if (doseMin != null && doseMax != null) {
+//            map.put(FLD_DOSE_MIN, doseMin);
+//            map.put(FLD_DOSE_MAX, doseMax);
+//         }
 
-         List<Integer> eventTemplateIds = ec.getEventTemplateIds();
-         if (eventTemplateIds != null && eventTemplateIds.size() > 0) {
-            Map<String, Object> integerMappings = createIntegerMappings(FLD_EVENT_TEMPLATE_ID, eventTemplateIds);
+         List<Integer> eventTmplIds = ec.getEventTemplateIds();
+         if (eventTmplIds != null && eventTmplIds.size() > 0) {
+            Map<String, Object> integerMappings = createIntegerMappings(FLD_EVENT_TEMPLATE_ID, eventTmplIds);
             map.putAll(integerMappings);
 
          }
+         
+//         List<Integer> eventTypeIds = ec.getEventTypeIds();
+//         if (eventTypeIds != null && eventTypeIds.size() > 0) {
+//            Map<String, Object> integerMappings = createIntegerMappings(FLD_EVENT_TYPE_ID, eventTypeIds);
+//            map.putAll(integerMappings);
+//
+//         }
 
          LocalDateTime eventTSStartDate = ec.getEventTSStartDate();
          LocalDateTime eventTSEndDate = ec.getEventTSEndDate();
          if (eventTSStartDate != null && eventTSEndDate != null) {
             map.put(FLD_EVENT_TS_START, eventTSStartDate);
             map.put(FLD_EVENT_TS_END, eventTSEndDate);
-          
+
          }
 
          UNIT unit = ec.getUnit();
          if (unit != null) {
             map.put(FLD_UNIT, UNIT.unitAsString(unit));
          }
-         
+
       }
 
       return map;

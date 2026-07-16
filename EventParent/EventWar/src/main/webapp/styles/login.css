@@ -1,0 +1,593 @@
+:root  {
+  --bg-main: rgb(190 190 200);
+  --bg-light: white;
+  --bg-dark: rgb(50 60 70);
+  --bg-alt: rgb(50 50 190 );
+  --bg-header: gray;
+  --color-main: maroon;
+  --color-light: rgb(210 190 190);
+  --color-dark: rgb(50 60 70);
+  --color-alt: rgb(50 60 70);
+  --color-header: white;
+  --a-visited: rgb(178 178 200);
+}
+
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Lucida Sans", sans-serif;
+  /* font-family: "Verdana", sans-serif; */
+  /*    color: maroon; */
+  /* color: rgba(255, 255, 255, 1.0); */
+  background-color: var(--bg-light);
+  color: var(--color-dark);
+  text-align: center;
+  align-content: center;
+  justify-content: center;
+  font-size: 1vw;
+}
+
+td {
+  /*   background-color: lime;   */
+  border: SOLID gray 1PX;
+}
+
+h1 {
+  font-weight: bold;
+  font-size: 1.5vw;
+  color: var(--color-main);
+}
+
+h2 {
+  font-weight: bold;
+  font-size: 1vw;
+  color: var(--color-main);
+}
+
+ul {
+  width: 100%;
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  color: var(--color-main);
+  border: solid black 0.5vw;
+  /* background-color: lightblue; */
+  /* color: rgba(0, 250, 0, 1.0); */
+  /*    border-radius: 7px; */
+  font-size: 1em;
+}
+
+li {
+  float: left;
+}
+
+li a {
+  display: block;
+  color: rgba(240, 255, 255, 0.5);
+  text-align: center;
+  padding: 4px 4px;
+  /*  text-decoration: line-through; */
+}
+
+li a:link {
+  color: var(--color-main);
+  /* color: rgba(0255, 0, 0, 1); */
+  background-color: var(--bg-main)
+}
+
+li a:visited {
+  color: var(--color-light);
+}
+
+li a:hover { /*         
+   color: #DDDDDD; */
+  color: rgba(119, 135, 153, 1.9);
+  
+  /* background-color: rgba(255, 255, 255, 0.8); */
+}
+
+
+input[type=submit] {
+  width: auto;
+  margin: 4px;
+  font-weight: bold;
+  color: var(--color-main);
+  /* border-radius: 7px; */
+  font-size: 1vw;
+}
+
+input[type=button] {
+  width: auto;
+  font-weight: bold;
+  border-radius: 7px;
+  padding: 2pX;
+  margin: 4px;
+  color: var(--color-main);
+  font-size: 1vw;
+}
+
+input[type=text] {
+  width: 100%;
+}
+
+input[type=password] {
+  width: 100%;
+}
+
+/* DETAILS */
+details {
+  display: block;
+  text-align: left;
+  background-color: var(--bg-light);
+  color: var(--color-main);
+  padding: 4px;
+  border: solid maroon 0px;
+  font-size: 1vw;
+}
+
+details>summary {
+  padding: 10px;
+  width: 100%;
+  /*   font-weight: bold; */
+  background-color: var(--bg-light);
+  /*   border: dotted red 2px; */
+  /* box-shadow: 7px 7px 7px #bbbbbb; */
+  cursor: pointer;
+  color: var(--color-main);
+  font-size: 1vw;
+}
+
+details>p {
+  background-color: var(--bg-light);
+  padding: 4px;
+  margin: 0;
+  /* box-shadow: 1px 1px 2px #bbbbbb; */
+}
+
+
+/* -----------------------------------------------------------------------------------------------------------------*/
+/* -----------------------------------------------------------------------------------------------------------------*/
+/* ------------------------*/
+/*  ONE COLUMN             */
+/*        100              */
+/* ------------------------*/
+.center-col-100{
+  display: grid;
+  grid-template-columns: 100%;
+  grid-template-rows: 100%;
+  border-radius: 0px;
+  /* background-color: lightgray; */
+  border: solid blue 2px;
+  text-align: center;
+  justify-content:center; 
+  
+}
+
+.col-1{
+  display: grid;
+  grid-template-columns:25% 50% 25%;
+  border-radius: 0px;
+  /* background-color: lightgray; */
+  /* border: solid blue 2px; */
+  text-align: center;
+  justify-content:center; 
+  align-content: center;   
+}
+
+
+
+
+.center-col-75 {
+/*   display: grid; */
+/*   grid-template-columns: 75%; */
+/*   grid-template-rows: 100%; */
+/*   border-radius: 0px; */
+  /* background-color: lightgray; */
+    width:75%;    
+  text-align: center;
+  justify-content:center; 
+  
+}
+
+/* ------------------------*/
+/* TWO COLUMNS    */
+/*    50-50       */
+/*                */
+/* ------------------------*/
+.center-col-50-50 {
+  display: grid;
+  grid-template-columns: 50% 50%;
+  border: solid orange 0px;
+  padding: 0px;
+  margin: 0px;
+  /* height: 1em; */
+  /* place-items: center; */
+  /* justify-content: center; aligns the items horizontally*/
+  align-items: baseline; /* aligns the items vertically */
+}
+
+.center-col-50-50-left, .center-col-50-50-right {
+  padding-bottom: 3px;
+  padding-top: 6px;
+  border: solid red 0px;
+  font-size: 1vw;
+}
+
+.center-col-50-50-left {
+  padding-left: 6px;
+  padding-right: 3px;
+  /*   margin-left: 6px; */
+  text-align: right;
+  /*    border: solid blue 2px;  */
+}
+
+.center-col-50-50-right {
+  padding-right: 6px;
+  padding-left: 3px;
+  /*   margin-right: 6px; */
+  text-align: left;
+
+  /* border: solid red  2px; */
+}
+
+.center-col-20-80 {
+  display: grid;
+  grid-template-columns: 20% 80%;
+  border: solid orange 1px;
+  padding: 0px;
+  margin: 0px;
+  /* height: 1em; */
+  /* place-items: center; */
+  /* justify-content: center; aligns the items horizontally*/
+  align-items: baseline; /* aligns the items vertically */
+}
+
+.center-col-30-70 {
+  display: grid;
+  grid-template-columns: 30% 70%;
+  border: solid teal 1px;
+  padding: 0px;
+  margin: 0px;
+  overflow:  visible;
+  /* height: 1em; */
+  /* place-items: center; */
+  /* justify-content: center; aligns the items horizontally*/
+  align-items: baseline; /* aligns the items vertically */
+}
+.col-2 {
+  display: grid;
+  grid-template-columns: 50% 50%;
+  width: 100%;
+  text-align:center;
+  justify-content:center;
+  align-content:center; 
+/*   border: solid yellow  2px; */
+}
+.col-2-left{
+  text-align: right;  
+}
+.col-2-right{
+  text-align: left;  
+}
+/* ------------------------*/
+/* 3 cols:                 */
+/*    33-34-33             */
+/*    5-90-5               */
+/*    25-50-25             */
+/* ------------------------*/
+.body-col-33-34-33, .body-col-5-90-5  {
+  display: grid;
+  grid-gap: 0px;
+  width: 100%;
+  text-align: center;
+  align-content: center;
+  border: solid maroon 0px;
+  justify-content: center;
+}
+
+.body-col-33-34-33 {
+  grid-template-columns: 33% 34% 33%;
+  /* grid-template-rows:100%;  */
+  border: solid maroon 0px;
+}
+
+.body-col-5-90-5 {
+  grid-template-columns: 5% 90% 5%;
+  /* grid-template-rows:100%;  */
+}
+
+
+.center-col-25-50-25 {
+  display: grid;
+  grid-template-columns: 25% 50% 25%;
+  font-weight: bold;
+  font-size: 1vw;
+  padding: 10px;
+  background-color: lightblue;
+  /* padding-bottom:1em; */
+  /*    border: solid yellow 7px; */
+}
+
+/* ------------------------*/
+/* EOF OUTER AREAS             */
+/* 3 cols:                 */
+/*    33-34-33             */
+/*    5-90-5               */
+/*    25-50-25             */
+/* ------------------------*/
+/* -----------------------------------------------------------------------------------------------------------------*/
+
+
+/*  */
+/* FOUR COLUMNS */
+/*  */
+.center-col-15-35-12-37-header, .center-col-15-35-12-37 {
+  display: grid;
+  grid-template-columns: 15% 35% 12% 37%;
+  text-align: left;
+  padding: 12px;
+}
+
+.center-col-15-35-12-37-header {
+  background-color: lightblue;
+  font-weight: bold;
+  border: solid maroon 1px;
+  border-radius: 0px
+}
+
+.center-col-15-35-12-37 {
+  font-weight: normal;
+  /* background-color: white; */
+  /* border-radius: 10px; */
+ }
+ 
+.col-4{
+  display: grid;
+  grid-template-columns: 15vw 15vw auto auto ;
+  border: solid red 1px;
+}
+/* ---------------------------------------------- */
+/*  6 COLUMNS*/
+/* ---------------------------------------------- */
+.center-col-6-header, .center-col-6 {
+  display: grid;
+  grid-template-columns: auto auto auto auto auto auto;
+  text-align: left;
+  padding: 6px;
+  /*   background-color: red; */
+}
+
+.center-col-6-header {
+  background-color: lightblue;
+  font-weight: bold;
+  border: solid maroon 1px;
+  border-radius: 0px;
+}
+
+.center-col-6 {
+  font-weight: normal;
+  background-color: white;
+  /* border-radius: 10px; */
+}
+
+
+.center-col-10-30-10-15-15-30-header, .center-col-10-30-10-15-15-30 {
+  display: grid;
+  grid-template-columns: 10% 30% 10% 15% 15% auto;
+  text-align: left;
+  padding: 6px;
+  /*   background-color: red; */
+  /*   font-size: 1vw; */
+}
+
+.center-col-10-30-10-15-15-30-header {
+  /* 	background-color: lightblue; */
+  font-weight: bold;
+  border: solid maroon 1px;
+  border-radius: 0px;
+}
+
+.center-col-10-30-10-15-15-30 {
+  font-weight: normal;
+  /* 	background-color: white;  */
+  /* border-radius: 10px; */
+}
+
+
+
+
+/* ---------------------------------------------- */
+/* 7 COLUMNS */
+/* ---------------------------------------------- */
+.center-col-7-header, .center-col-7 {
+  display: grid;
+  grid-template-columns: 12% 22% 10% 7% 10% 7% auto;
+  text-align: left;
+  padding: 12px;
+/*   background-color: red; */
+}
+
+.center-col-7-header {
+/*   background-color: lightblue; */
+  font-weight: bold;
+  border: solid var(--color-main) 1px;
+  border-radius: 0px;
+}
+
+.center-col-7 {
+  border: solid var(--color-alt) 0px;
+  font-weight: normal;
+/*   background-color: white; */
+  /* border-radius: 10px; */
+}
+
+/* -----------------------------------------------------------------------------------------------------------------*/
+
+.status{
+  font-size: 1vw;
+  background-color:var(--bg-main);
+  padding-bottom: 1vw;
+  margin: 0px;
+/*   color: rgb(100 150 200); */
+   color: var(--color-main);
+  border-bottom: solid var(--color-main) 1px;
+}
+
+/* -----------------------------------------------------------------------------------------------------------------*/
+/*  ******************************************' */
+.event-cols-header, .event-cols {
+  display: grid;
+  grid-template-columns: 10% 25% 10% 15% 10% 10% auto;
+  text-align: left;
+  /* padding-left:10px;
+	padding-right:10px */;
+
+  /* border: solid blue 2px; */
+}
+
+.event-cols-header {
+  background-color: lightblue;
+  /*    border: solid maroon 1px; */
+}
+
+.event-cols {
+  background-color: white;
+  /* border: solid maroon 1px;  */
+}
+
+.event-cols-header>div {
+  padding-right: 6px;
+  padding-left: 6px;
+}
+
+.event-cols>div {
+  padding-right: 6px;
+  padding-left: 6px;
+}
+/* -----------------------------------------------------------------------------------------------------------------*/
+/* -----------------------------------------------------------------------------------------------------------------*/
+
+/* FONT/TEXT SETTINGS */
+
+/* EO FONT/TEXT SETTINGS */
+
+
+/* PADDING/MARGIN SETTINGS */
+.btn-padding {
+  padding-top: 1vw  ;
+/*   padding-bottom:0.7vw; */
+  margin-top: 0.7vw;
+/*   margin-bottom: 0.7vw; */
+}
+
+.input-padding {
+  padding-top: 0.3vw  ;
+   padding-bottom:0.3vw;
+   padding-left: 0.3vw;
+   padding-right:0.3vw;
+   
+}
+
+.input-margin{
+  margin-top: 0.5vw;
+  margin-bottom: 0.5vw;
+  margin-left: 0.5vw;
+  margin-right: 0.5vw;
+}
+
+
+/* EO PADDING/MARGIN SETTINGS */
+
+
+/* COLORS */
+.header-colors{
+  background-color: var(--bg-header);
+  color: var(--color-header);     
+}
+
+.alt-color{
+  background-color: var(--bg-alt);
+  color: var(--color-alt);     
+}
+
+.sys-color{
+  background-color: var(--bg-main);
+  color: var(--color-main);
+       
+}
+
+.content-colors{
+  background-color: var(--bg-light);
+  color: var(--color-dark) ;
+  font-size: 1vw;
+}
+
+/* EO COLORS */
+/* -----------------------------------------------------------------------------------------------------------------*/
+ .menu {
+    border-radius: 4px;
+    text-align: center;
+  /*   justify-content: space-between; */
+  /*   align-content: space-between; */
+  /*   width: 100%; */
+    height: 2.5vw;
+    color: var(--color-main);  
+    background-color: var(--bg-main);
+  }
+
+ /* Dropdown Button */
+.dropbtn {
+  background-color: var(--bg-light);
+  color: var(--color-main); 
+  padding: 0vw  ;
+  font-size: 1vw;
+/*   border: solid  red 1px; */
+  min-width: 8vw;
+  max-width: 8vw;
+}
+
+/* The container <div> - needed to position the dropdown content */
+.dropdown {
+  position: relative;
+  display: inline-block;
+  min-width: 8vw;
+  max-width: 8vw;
+}
+
+/* Dropdown Content (Hidden by Default) */
+.dropdown-content {
+  display: none;
+  position: absolute;
+  width: 8vw;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 5;
+  font-size: 1vw;
+  background-color: var(--bg-main);
+  color: var(--color-main);    
+}
+
+/* Links inside the dropdown */
+.dropdown-content a {
+   color: var(--color-light);
+   background-color: var(--bg-dark);
+/*   padding: 12px 16px; */
+  text-decoration: none;
+  display: block;
+  z-index: 5;  
+  
+  
+}
+
+/* Change color of dropdown links on hover */
+.dropdown-content a:hover {background-color: var(--bg-alt);z-index: 5;}
+
+/* Show the dropdown menu on hover */
+.dropdown:hover .dropdown-content {display: block; z-index: 5;background-color: var(--bg-light); }
+
+/* Change the background color of the dropdown button when the dropdown content is shown */
+.dropdown:hover .dropbtn .dropdown-content {background-color: var(--bg-main);z-index: 5;}
+ 

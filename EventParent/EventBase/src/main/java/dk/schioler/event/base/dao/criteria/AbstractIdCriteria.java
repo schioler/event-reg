@@ -10,13 +10,17 @@ import org.springframework.stereotype.Component;
 @Component
 public abstract class AbstractIdCriteria {
 
+//   public static final LocalDateTime DEFAULT_DATE_TIME = LocalDateTime.of(1970, 1, 1, 1, 1);
+   
+//   public static final String DEFAULT_STRING = "DEFAULT";
+   
 	private List<Integer> ids = new ArrayList<Integer>();
 
 	private List<Integer> loginIds = new ArrayList<Integer>();
 	
-	private LocalDateTime createdStartTime;
+	private LocalDateTime createdStartTime = null;
 	
-	private LocalDateTime createdEndTime;
+	private LocalDateTime createdEndTime = null;
 
 	public AbstractIdCriteria() {
 	}
@@ -88,7 +92,7 @@ public abstract class AbstractIdCriteria {
    @Override
    public String toString() {
       StringBuilder builder = new StringBuilder();
-      builder.append("AbstractIdCriteria [ids=");
+      builder.append(", ids=");
       builder.append(ids);
       builder.append(", loginIds=");
       builder.append(loginIds);

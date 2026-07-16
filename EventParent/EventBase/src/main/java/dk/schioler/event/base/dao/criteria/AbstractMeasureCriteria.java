@@ -16,16 +16,12 @@ public abstract class AbstractMeasureCriteria extends AbstractNameCriteria {
    public BigDecimal getDoseMin() {
       return doseMin;
    }
-
-   public void setDoseMin(BigDecimal doseMin) {
-      this.doseMin = doseMin;
-   }
-
    public BigDecimal getDoseMax() {
       return doseMax;
    }
 
-   public void setDoseMax(BigDecimal doseMax) {
+   public void setDoseInterval(BigDecimal doseMin, BigDecimal doseMax) {
+      this.doseMin = doseMin;
       this.doseMax = doseMax;
    }
 
@@ -41,7 +37,7 @@ public abstract class AbstractMeasureCriteria extends AbstractNameCriteria {
    public int hashCode() {
       final int prime = 31;
       int result = super.hashCode();
-      result = prime * result + Objects.hash(doseMax, doseMin, unit);
+      result = prime * result + Objects.hash(unit);
       return result;
    }
 
@@ -54,14 +50,13 @@ public abstract class AbstractMeasureCriteria extends AbstractNameCriteria {
       if (getClass() != obj.getClass())
          return false;
       AbstractMeasureCriteria other = (AbstractMeasureCriteria) obj;
-      return Objects.equals(doseMax, other.doseMax) && Objects.equals(doseMin, other.doseMin) && unit == other.unit;
+      return unit == other.unit;
    }
-
    @Override
    public String toString() {
       StringBuilder builder = new StringBuilder();
       builder.append(super.toString());
-      builder.append("AbstractMeasureCriteria [unit=");
+      builder.append(", unit=");
       builder.append(unit);
       builder.append(", doseMin=");
       builder.append(doseMin);
@@ -70,6 +65,7 @@ public abstract class AbstractMeasureCriteria extends AbstractNameCriteria {
       builder.append("]");
       return builder.toString();
    }
+
 
    
 }

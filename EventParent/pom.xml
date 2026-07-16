@@ -1,71 +1,103 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xmlns="http://maven.apache.org/POM/4.0.0"
+   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                       https://maven.apache.org/xsd/maven-4.0.0.xsd">
+
    <modelVersion>4.0.0</modelVersion>
 
    <groupId>dk.schioler.event</groupId>
    <artifactId>EventParent</artifactId>
    <version>1.0</version>
    <packaging>pom</packaging>
-   <!--<name>EventParent</name>-->
+   <name>Parent of the Event registration System</name>
 
-   <modules>
-<!--      <module>UserAccess</module>-->
-      <module>EventBase</module>
-    <!--  <module>EventTimeline</module>-->
-      <module>EventWar</module>
-<!--      <module>EventExternalCommunication</module>-->
-   </modules>
    <properties>
       <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-      <spring.version>6.1.14</spring.version>
+      <spring.version>6.2.5</spring.version>
+
+      <!-- <spring.version>7.0.5</spring.version>-->
+      <maven.compiler.source>1.8</maven.compiler.source>
+      <maven.compiler.target>1.8</maven.compiler.target>
    </properties>
+   <modules>
+      <module>EventConfiguration</module>
+      <module>EventBase</module>
+      <module>EventTools</module>
+      <module>EventWar</module>
+      <!-- <module>EventExternalCommunication</module>-->
+      <!-- <module>EventWarTwo</module>-->
+      <module>EventBase2</module>
+   </modules>
 
    <dependencyManagement>
       <dependencies>
          <dependency>
-            <version>0.8.1</version>
+            <groupId>dk.schioler.shared</groupId>
+            <artifactId>Bits</artifactId>
+            <version>0.5</version>
+         </dependency>
+         <dependency>
             <groupId>dk.schioler.shared.security</groupId>
             <artifactId>Security</artifactId>
+            <version>0.2.7</version>
          </dependency>
          <dependency>
             <groupId>dk.schioler.shared.timeline</groupId>
             <artifactId>Timeline</artifactId>
-            <version>0.5.1</version>
+            <version>0.6.0</version>
          </dependency>
-         
-         
+         <dependency>
+            <groupId>dk.schioler.event</groupId>
+            <artifactId>EventConfiguration</artifactId>
+            <version>0.5</version>
+         </dependency>
+
          <dependency>
             <groupId>dk.schioler.event</groupId>
             <artifactId>EventBase</artifactId>
             <version>0.5.1</version>
          </dependency>
 
+
+         <!-- <dependency>-->
+         <!-- <groupId>org.postgresql</groupId>-->
+         <!-- <artifactId>postgresql</artifactId>-->
+         <!-- <version>42.7.3</version>-->
+         <!-- </dependency>-->
+
+         <!-- Source: https://mvnrepository.com/artifact/org.postgresql/postgresql -->
          <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
-            <version>42.7.3</version>
+            <version>42.7.11</version>
+            <scope>compile</scope>
          </dependency>
          <!-- Spring -->
+         <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-core</artifactId>
+            <version>${spring.version}</version>
+
+         </dependency>
          <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
             <version>${spring.version}</version>
          </dependency>
-
+         <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context-support</artifactId>
+            <version>${spring.version}</version>
+         </dependency>
          <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-webmvc</artifactId>
             <version>${spring.version}</version>
          </dependency>
-
          <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-web</artifactId>
-            <version>${spring.version}</version>
-         </dependency>
-         <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-context-support</artifactId>
             <version>${spring.version}</version>
          </dependency>
          <dependency>
@@ -78,36 +110,68 @@
             <artifactId>spring-jdbc</artifactId>
             <version>${spring.version}</version>
          </dependency>
+         <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-tx</artifactId>
+            <version>${spring.version}</version>
+         </dependency>
+         <!-- APACHE COMMONS-->
+         <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-rng-simple</artifactId>
+            <version>1.6</version>
+         </dependency>
+
+         <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>2.15.1</version>
+         </dependency>
+         <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-dbcp2</artifactId>
+            <version>2.12.0</version>
+            <exclusions>
+               <exclusion>
+                  <groupId>commons-logging</groupId>
+                  <artifactId>commons-logging</artifactId>
+               </exclusion>
+            </exclusions>
+         </dependency>
+         <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.15.0</version>
+         </dependency>
 
 
          <!-- *********************************** -->
-         <!-- https://mvnrepository.com/artifact/xalan/xalan -->
          <dependency>
             <groupId>xalan</groupId>
             <artifactId>xalan</artifactId>
             <version>2.7.3</version>
          </dependency>
-         <!-- https://mvnrepository.com/artifact/xalan/serializer -->
          <dependency>
             <groupId>xalan</groupId>
             <artifactId>serializer</artifactId>
             <version>2.7.3</version>
          </dependency>
 
+
          <!-- **********-->
          <dependency>
             <groupId>jakarta.servlet</groupId>
             <artifactId>jakarta.servlet-api</artifactId>
-            <version>6.0.0</version>
-
+            <version>6.1.0</version>
+            <scope>provided</scope>
          </dependency>
-
          <dependency>
             <groupId>jakarta.servlet.jsp</groupId>
             <artifactId>jakarta.servlet.jsp-api</artifactId>
-            <version>3.1.0</version>
-
+            <version>3.1.1</version>
+            <scope>provided</scope>
          </dependency>
+
 
          <dependency>
             <groupId>org.glassfish.web</groupId>
@@ -139,16 +203,11 @@
             <artifactId>taglibs-standard-impl</artifactId>
             <version>1.2.5</version>
          </dependency>
+         <!-- **********************************************'''-->
 
 
-         <!--<dependency>
-         <groupId>jakarta.servlet.jsp</groupId>
-         <artifactId>jakarta.servlet.jsp</artifactId>
-         <version>3.1.0</version>
-      </dependency>-->
          <!--<scope>provided</scope>-->
-         <!--
-			https://mvnrepository.com/artifact/org.glassfish.web/jakarta.servlet.jsp -->
+         <!-- https://mvnrepository.com/artifact/org.glassfish.web/jakarta.servlet.jsp -->
          <!--<dependency>
          <groupId>jakarta.el</groupId>
          <artifactId>jakarta.el-api</artifactId>
@@ -166,41 +225,13 @@
             <artifactId>org.jfree.pdf</artifactId>
             <version>2.0.1</version>
          </dependency>
-         <!-- https://mvnrepository.com/artifact/org.jfree/jcommon -->
+
          <dependency>
             <groupId>org.jfree</groupId>
             <artifactId>jcommon</artifactId>
             <version>1.0.24</version>
          </dependency>
 
-         <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-rng-simple</artifactId>
-            <version>1.6</version>
-         </dependency>
-
-         <dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
-            <version>2.15.1</version>
-         </dependency>
-         <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-dbcp2</artifactId>
-            <version>2.12.0</version>
-            <exclusions>
-               <exclusion>
-                  <groupId>commons-logging</groupId>
-                  <artifactId>commons-logging</artifactId>
-               </exclusion>
-            </exclusions>
-         </dependency>
-
-         <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-            <version>3.15.0</version>
-         </dependency>
 
          <dependency>
             <groupId>org.slf4j</groupId>
@@ -234,7 +265,19 @@
             <version>4.13.2</version>
             <scope>test</scope>
          </dependency>
-
+         <!-- <dependency>-->
+         <!-- <groupId>org.junit</groupId>-->
+         <!-- <artifactId>junit-bom</artifactId>-->
+         <!-- <version>5.13.4</version>-->
+         <!-- <type>pom</type>-->
+         <!-- <scope>import</scope>-->
+         <!-- </dependency>-->
+         <!-- <dependency>-->
+         <!-- <groupId>org.junit.jupiter</groupId>-->
+         <!-- <artifactId>junit-jupiter-api</artifactId>-->
+         <!-- <version>5.13.4</version>-->
+         <!-- <scope>test</scope>-->
+         <!-- </dependency>-->
          <dependency>
             <groupId>org.apache.httpcomponents.client5</groupId>
             <artifactId>httpclient5</artifactId>
@@ -245,18 +288,77 @@
             <artifactId>httpclient5-fluent</artifactId>
             <version>5.3.1</version>
          </dependency>
-
+         <!-- <dependency>-->
+         <!-- <groupId>org.apache.maven.plugins</groupId>-->
+         <!-- <artifactId>maven-surefire-plugin</artifactId>-->
+         <!-- <version>3.5.3</version>-->
+         <!-- </dependency>-->
       </dependencies>
    </dependencyManagement>
+   <!-- <dependencies>-->
+   <!-- <dependency>-->
+   <!-- <groupId>org.junit.jupiter</groupId>-->
+   <!-- <artifactId>junit-jupiter</artifactId>-->
+   <!-- <scope>test</scope>-->
+   <!-- </dependency>-->
+
+
+   <!-- </dependencies>-->
    <build>
-      <plugins>
-         <plugin>
-            <artifactId>maven-compiler-plugin</artifactId>
-            <version>3.13.0</version>
-            <configuration>
-               <release>19</release>
-            </configuration>
-         </plugin>
-      </plugins>
+      <pluginManagement>
+         <plugins>
+            <plugin>
+               <groupId>org.apache.maven.plugin</groupId>
+               <artifactId>maven-jar-plugin</artifactId>
+               <version>3.5.0</version>
+            </plugin>
+
+            <plugin>
+               <groupId>org.apache.maven.plugins</groupId>
+               <artifactId>maven-compiler-plugin</artifactId>
+               <version>3.14.0</version>
+               <configuration>
+                  <release>22</release>
+               </configuration>
+            </plugin>
+            <plugin>
+               <groupId>org.apache.maven.plugins</groupId>
+               <artifactId>maven-surefire-plugin</artifactId>
+               <version>3.5.3</version>
+               <dependencies>
+                  <dependency>
+                     <groupId>org.apache.maven.surefire</groupId>
+                     <artifactId>surefire-junit47</artifactId>
+                     <version>2.12.4</version>
+                  </dependency>
+               </dependencies>
+               <configuration>
+                  <skipTests>true</skipTests>
+               </configuration>
+            </plugin>
+            <plugin>
+               <groupId>org.apache.maven.plugins</groupId>
+               <artifactId>maven-war-plugin</artifactId>
+               <version>3.4.0</version>
+            </plugin>
+
+            <plugin>
+               <groupId>org.eclipse.jetty.ee10</groupId>
+               <artifactId>jetty-ee10-maven-plugin</artifactId>
+               <version>12.0.11</version>
+               <configuration>
+                  <!-- <scan>10</scan>-->
+                  <!-- <webApp>-->
+                  <!-- <contextPath>/event</contextPath>-->
+                  <!-- <copyWebDir>true</copyWebDir>-->
+                  <!-- </webApp>-->
+                  <!-- <systemProperties>-->
+                  <!-- <event.env>dev1</event.env>-->
+                  <!-- <java.io.tmpdir>target/tmp/</java.io.tmpdir>-->
+                  <!-- </systemProperties>-->
+               </configuration>
+            </plugin>
+         </plugins>
+      </pluginManagement>
    </build>
 </project>

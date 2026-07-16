@@ -1,2 +1,10 @@
 
 EventParent/EventBase/event-app.log
+EventParent/.metadata/.lock
+/EventParent/.metadata
+EventParent/EventBase/.classpath
+/EventParent/EventBase/src/main/java-buffer
+EventParent/EventBase/src/test/resources/event-base-prod.properties
+EventParent/EventExternalCommunication/.classpath
+EventParent/EventWar/.classpath
+/EventParent/EventWar/jsp

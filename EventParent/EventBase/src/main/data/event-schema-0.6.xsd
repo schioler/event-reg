@@ -1,14 +1,38 @@
 <?xml version="1.0" ?>
 <xsd:schema targetNamespace="http://www.schioler.dk/xsd/event" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-   xmlns:event="http://www.schioler.dk/xsd/event" elementFormDefault="qualified" attributeFormDefault="unqualified" version="0.6">
-   
+   xmlns:event="http://www.schioler.dk/xsd/event" elementFormDefault="qualified" attributeFormDefault="unqualified"
+   version="0.6">
+
+   <xsd:simpleType id="unit" name="unit">
+      <xsd:restriction base="xsd:string">
+         <xsd:enumeration value="kg"/>
+         <xsd:enumeration value="g"/>
+         <xsd:enumeration value="mg"/>
+         <xsd:enumeration value="mcg"/>
+         <xsd:enumeration value="lb"/>
+         <xsd:enumeration value="oz"/>
+         <xsd:enumeration value="l"/>
+         <xsd:enumeration value="dl"/>
+         <xsd:enumeration value="cl"/>
+         <xsd:enumeration value="ml"/>
+         <xsd:enumeration value="years"/>
+         <xsd:enumeration value="months"/>
+         <xsd:enumeration value="days"/>
+         <xsd:enumeration value="hours"/>
+         <xsd:enumeration value="minutes"/>
+         <xsd:enumeration value="seconds"/>
+         <xsd:enumeration value="drag"/>
+         <xsd:enumeration value="registration"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+
    <xsd:complexType name="event-template">
-   	<xsd:attribute name="name" type="xsd:string"></xsd:attribute>
-   	<xsd:attribute name="short-name" type="xsd:string"></xsd:attribute>
-   	<xsd:attribute name="unit" type="xsd:string" use="required"></xsd:attribute>
-   	<xsd:attribute name="dose" type="xsd:string" use="required"></xsd:attribute>
-   	<xsd:attribute name="description" type="xsd:string" />
-  		<xsd:attribute name="is-favorite" type="xsd:boolean" default="false"></xsd:attribute>
+      <xsd:attribute name="name" type="xsd:string"></xsd:attribute>
+      <xsd:attribute name="short-name" type="xsd:string"></xsd:attribute>
+      <xsd:attribute name="unit" type="event:unit" use="required"></xsd:attribute>
+      <xsd:attribute name="dose" type="xsd:string" use="required"></xsd:attribute>
+      <xsd:attribute name="description" type="xsd:string"/>
+      <xsd:attribute name="is-favorite" type="xsd:boolean" default="false"></xsd:attribute>
    </xsd:complexType>
    <xsd:complexType name="event-type">
       <xsd:sequence maxOccurs="unbounded" minOccurs="0">
@@ -18,7 +42,6 @@
       <xsd:attribute name="short-name" type="xsd:string" use="required"></xsd:attribute>
       <xsd:attribute name="description" type="xsd:string" use="optional"></xsd:attribute>
    </xsd:complexType>
-   
    <xsd:element name="root">
       <xsd:complexType>
          <xsd:sequence maxOccurs="unbounded" minOccurs="1">

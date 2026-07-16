@@ -1,10 +1,10 @@
 package test.dk.schioler.event.dao;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +18,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
-import dk.schioler.configuration.EventBaseConfiguration;
+import dk.schioler.event.base.EventBaseConfiguration;
 import dk.schioler.event.base.dao.EventDAO;
 import dk.schioler.event.base.dao.EventTemplateDAO;
 import dk.schioler.event.base.dao.EventTypeDAO;
@@ -33,12 +33,11 @@ import dk.schioler.shared.security.dao.LoginDAO;
 import dk.schioler.shared.security.entity.Login;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-//@ContextConfiguration("/ApplicationContext.xml")
 @ContextConfiguration(classes = EventBaseConfiguration.class, loader = AnnotationConfigContextLoader.class)
 public class EventCriteriaTest {
 
    static {
-      System.getProperties().setProperty("event.env", "dev1");
+      System.getProperties().setProperty("event.env", "dev");
    }
 
    Logger logger = LoggerFactory.getLogger(getClass());
@@ -59,13 +58,14 @@ public class EventCriteriaTest {
    @Autowired
    EventDAO eventDAO;
 
-   public Event createEvent(EventTemplate tmpl, LocalDateTime eventTS, BigDecimal dose, UNIT unit) {
+   public Event createEvent(EventType type, EventTemplate tmpl, LocalDateTime eventTS, String dose, UNIT unit) {
       Event e = new Event();
       e.setLoginId(tmpl.getLoginId());
       e.setCreated(LocalDateTime.now());
       e.setName(tmpl.getName());
       e.setShortName(tmpl.getShortName());
-      e.setParentId(tmpl.getId());
+      e.setParentId(type.getId());
+      e.setEventTemplateId(tmpl.getId());
       e.setDescription("descr");
       if (eventTS != null) {
          e.setEventTS(eventTS);
@@ -122,47 +122,84 @@ public class EventCriteriaTest {
       List<EventTemplate> templates = new ArrayList<EventTemplate>();
       List<EventType> types = new ArrayList<EventType>();
 
+      String typeName1 ="Parkinson Medicin";
+      String typeShortName1 = "PARMED";
+      
+      String typeName2 ="Anden Medicin";
+      String typeShortName2 = "ANDMED";
+      
+      String typeName3 ="Anden behandling";
+      String typeShortName3 = "ANDBEH";
+      
+      String eTmplName1="Sinemet 25/100"; // is favorite = true
+      String eTmplShortName1="SIN-25/100";
+      
+      String eTmplName2="Ropinirol";
+      String eTmplShortName2 ="PARROP";
+      
+      String eTmplName3="Fysioterapi, ene behandling";
+      String eTmplShortName3 ="FYSENE";
+      
+      boolean doCreate = true;
+      boolean doDelete = true;
+      
       try {
-         boolean doCreate = false;
-         boolean doDelete = false;
 
          if (doCreate) {
-
+//          3 eventyper
+//               
+            
+//          3 eventTemplates
+//
+//          9 events 
+/*
+*          2024 1212 130225
+*          2024 1223 100225 
+*          2024 1223,130225
+*          2024 1223 153225
+*          2024 1224 130225
+*          4 x now()  
+*/
+//            
             eventTypePark = new EventType();
             eventTypePark.setLoginId(owner.getId());
-            eventTypePark.setName("Parkinson Medicin");
-            eventTypePark.setShortName("PARMED");
+            eventTypePark.setName(typeName1);
+            eventTypePark.setShortName(typeShortName1);
             eventTypePark.setDescription("All medicin, target directly at Mr P");
             eventTypePark.setCreated(LocalDateTime.now());
             eventTypePark = eTypeDAO.insert(eventTypePark);
             types.add(eventTypePark);
 
+            
+            
             eventTypeAndMed = new EventType();
             eventTypeAndMed.setLoginId(owner.getId());
-            eventTypeAndMed.setName("Anden Medicin");
-            eventTypeAndMed.setShortName("ANDMED");
+            eventTypeAndMed.setName(typeName2);
+            eventTypeAndMed.setShortName(typeShortName2);
             eventTypeAndMed.setDescription("All other medicin");
             eventTypeAndMed.setCreated(LocalDateTime.now());
             eventTypeAndMed = eTypeDAO.insert(eventTypeAndMed);
             types.add(eventTypeAndMed);
 
+            
             eventTypeAndBeh = new EventType();
             eventTypeAndBeh.setLoginId(owner.getId());
-            eventTypeAndBeh.setName("Anden behandling");
-            eventTypeAndBeh.setShortName("ANDBEH");
+            eventTypeAndBeh.setName(typeName3);
+            eventTypeAndBeh.setShortName(typeShortName3);
             eventTypeAndBeh.setDescription("Anden behandling, ex fysioterapeut ");
             eventTypeAndBeh.setCreated(LocalDateTime.now());
             eventTypeAndBeh = eTypeDAO.insert(eventTypeAndBeh);
             types.add(eventTypeAndBeh);
 
+             
             eventTmplSinemet = new EventTemplate();
             eventTmplSinemet.setCreated(LocalDateTime.now());
             eventTmplSinemet.setLoginId(owner.getId());
-            eventTmplSinemet.setName("Sinemet 25/100");
+            eventTmplSinemet.setName(eTmplName1);
             eventTmplSinemet.setDescription("A very common pill based treatment of mr P");
-            eventTmplSinemet.setShortName("SIN-25/100");
+            eventTmplSinemet.setShortName(eTmplShortName1);
             eventTmplSinemet.setFavorite(true);
-            eventTmplSinemet.setDose(new BigDecimal("0.25"));
+            eventTmplSinemet.setDose(new String("0.25"));
             eventTmplSinemet.setUnit(UNIT.MILLIGRAM);
             eventTmplSinemet.setParentId(eventTypePark.getId());
             eventTmplSinemet = eTmplDAO.insert(eventTmplSinemet);
@@ -171,36 +208,37 @@ public class EventCriteriaTest {
             eventTmplRopinirol = new EventTemplate();
             eventTmplRopinirol.setCreated(LocalDateTime.now());
             eventTmplRopinirol.setLoginId(owner.getId());
-            eventTmplRopinirol.setName("Ropinirol");
+            eventTmplRopinirol.setName(eTmplName2);
             eventTmplRopinirol.setDescription("A very common pill based treatment of mr P");
-            eventTmplRopinirol.setShortName("PARROP");
-            eventTmplRopinirol.setDose(new BigDecimal("8"));
+            eventTmplRopinirol.setShortName(eTmplShortName2);
+            eventTmplRopinirol.setDose(new String("8"));
             eventTmplRopinirol.setUnit(UNIT.MILLIGRAM);
             eventTmplRopinirol.setParentId(eventTypePark.getId());
             eventTmplRopinirol = eTmplDAO.insert(eventTmplRopinirol);
             templates.add(eventTmplRopinirol);
 
+            
             eventTmplFysEne = new EventTemplate();
             eventTmplFysEne.setCreated(LocalDateTime.now());
             eventTmplFysEne.setLoginId(owner.getId());
-            eventTmplFysEne.setName("Fysioterapi, ene behandling");
+            eventTmplFysEne.setName(eTmplName3);
             eventTmplFysEne.setDescription("Ene fys");
-            eventTmplFysEne.setShortName("FYSENE");
-            eventTmplFysEne.setDose(new BigDecimal("0.5"));
+            eventTmplFysEne.setShortName(eTmplShortName3);
+            eventTmplFysEne.setDose(new String("0.5"));
             eventTmplFysEne.setUnit(UNIT.HOURS);
             eventTmplFysEne.setParentId(eventTypeAndBeh.getId());
             eventTmplFysEne = eTmplDAO.insert(eventTmplFysEne);
             templates.add(eventTmplFysEne);
 
-            event1 = createEvent(eventTmplSinemet, null, null, null);
-            event2 = createEvent(eventTmplSinemet, LocalDateTime.of(2024, 12, 24, 13, 02, 25), null, null);
-            event3 = createEvent(eventTmplRopinirol, null, null, null);
-            event4 = createEvent(eventTmplRopinirol, null, new BigDecimal(10), UNIT.MILLIGRAM);
-            event5 = createEvent(eventTmplSinemet, LocalDateTime.of(2024, 12, 23, 13, 02, 25), BigDecimal.valueOf(12), UNIT.MILLIGRAM);
-            event6 = createEvent(eventTmplFysEne, null, null, null);
-            event7 = createEvent(eventTmplSinemet, LocalDateTime.of(2024, 12, 23, 15, 32, 25), null, null);
-            event8 = createEvent(eventTmplRopinirol, LocalDateTime.of(2024, 12, 23, 10, 02, 25), null, null);
-            event9 = createEvent(eventTmplFysEne, LocalDateTime.of(2024, 12, 12, 13, 02, 25), null, null);
+            event1 = createEvent(eventTypePark, eventTmplSinemet, null, null, null);
+            event3 = createEvent(eventTypePark,eventTmplRopinirol, null, null, null);
+            event4 = createEvent(eventTypePark,eventTmplRopinirol, null, new String("10"), UNIT.MILLIGRAM);
+            event6 = createEvent(eventTypeAndBeh, eventTmplFysEne, null, null, null);
+            event9 = createEvent(eventTypeAndBeh, eventTmplFysEne, LocalDateTime.of(2024, 12, 12, 13, 02, 25), null, null);
+            event8 = createEvent(eventTypePark,eventTmplRopinirol, LocalDateTime.of(2024, 12, 23, 10, 02, 25), null, null);
+            event5 = createEvent(eventTypePark,eventTmplSinemet, LocalDateTime.of(2024, 12, 23, 13, 02, 25), String.valueOf(12), UNIT.MILLIGRAM);
+            event7 = createEvent(eventTypePark,eventTmplSinemet, LocalDateTime.of(2024, 12, 23, 15, 32, 25), null, null);
+            event2 = createEvent(eventTypePark,eventTmplSinemet, LocalDateTime.of(2024, 12, 24, 13, 02, 25), null, null);
 
             events.add(event1);
             events.add(event2);
@@ -214,11 +252,11 @@ public class EventCriteriaTest {
             events.add(event9);
 
          } else {
-
+            logger.debug("doCreate=false");
          }
 
          EventTypeCriteria eTypeCrit = new EventTypeCriteria();
-         eTypeCrit.setShortName("PARMED");
+         eTypeCrit.setShortName(typeShortName1);
          List<EventType> list = eTypeDAO.retrieve(eTypeCrit, 0);
          for (EventType e : list) {
             logger.debug(e.toString());
@@ -227,23 +265,29 @@ public class EventCriteriaTest {
          assertNotNull(list);
          assertTrue(list.size() == 1);
          EventType eventType = list.get(0);
-         assertEquals("Parkinson Medicin", eventType.getName());
+         assertEquals(typeName1, eventType.getName());
          logger.debug("typeCrit1");
          
+
          EventTemplateCriteria tmplCriteria = new EventTemplateCriteria();
-         tmplCriteria.addId(7);
-         tmplCriteria.addId(10);
+         tmplCriteria.addId(eventTmplRopinirol.getId());
+         tmplCriteria.addId(eventTmplFysEne.getId());
+               
          List<EventTemplate> tmplList = eTmplDAO.retrieve(tmplCriteria, 0);
+         
          for (EventTemplate e : tmplList) {
             logger.debug(e.toString());
          }
 
+
          assertNotNull(tmplList);
-         assertTrue(tmplList.size() == 1);
+         assertTrue(tmplList.size() == 2);
+         
          EventTemplate eventTemplate = tmplList.get(0);
-         assertTrue(eventTemplate.getId().equals(7));
-         assertTrue(eventTemplate.isFavorite());
+         assertTrue(eventTemplate.getId().equals(eventTmplRopinirol.getId()));
+         assertFalse(eventTemplate.isFavorite());
          logger.debug("tmplCrit1");
+         
          
          tmplCriteria = new EventTemplateCriteria();
          tmplCriteria.setFavourite(true);
@@ -252,10 +296,11 @@ public class EventCriteriaTest {
             logger.debug(e.toString());
          }
          assertNotNull(tmplList);
-         assertTrue(tmplList.size() == 1);
+         assertTrue(tmplList.size() == 1);   
          eventTemplate = tmplList.get(0);
-         assertTrue("SIN-25/100".equals(eventTemplate.getShortName()));
+         assertTrue(eTmplShortName1.equals(eventTemplate.getShortName()));
          logger.debug("tmplCrit2");
+         
          
          tmplCriteria = new EventTemplateCriteria();
          tmplCriteria.setFavourite(false);
@@ -267,68 +312,72 @@ public class EventCriteriaTest {
          assertTrue(tmplList.size() == 2);
          logger.debug("tmplCrit3");
          
-         tmplCriteria = new EventTemplateCriteria();
-         tmplCriteria.setDoseMin(BigDecimal.valueOf(0));
-         tmplCriteria.setDoseMax(BigDecimal.valueOf(1));         
-         tmplList = eTmplDAO.retrieve(tmplCriteria, 0);
-         for (EventTemplate e : tmplList) {
-            logger.debug(e.toString());
-         }
-         assertNotNull(tmplList);
-         assertTrue(tmplList.size() == 2);
-         logger.debug("tmplCrit4");
-         
-         tmplCriteria = new EventTemplateCriteria();
-         tmplCriteria.setDoseMin(BigDecimal.valueOf(5));
-         tmplCriteria.setDoseMax(BigDecimal.valueOf(10));         
-         tmplList = eTmplDAO.retrieve(tmplCriteria, 0);
-         for (EventTemplate e : tmplList) {
-            logger.debug(e.toString());
-         }
-         assertNotNull(tmplList);
-         assertTrue(tmplList.size() == 1);
-         logger.debug("tmplCrit5");
-         
-         tmplCriteria = new EventTemplateCriteria();
-         tmplCriteria.setDoseMin(BigDecimal.valueOf(0));
-         tmplCriteria.setDoseMax(BigDecimal.valueOf(1));         
-         tmplCriteria.setUnit(UNIT.MILLIGRAM);
-         tmplList = eTmplDAO.retrieve(tmplCriteria, 0);
-         for (EventTemplate e : tmplList) {
-            logger.debug(e.toString());
-         }
-         assertNotNull(tmplList);
-         assertTrue(tmplList.size() == 1);
-         logger.debug("tmplCrit6");
-         
+//         tmplCriteria = new EventTemplateCriteria();
+//         tmplCriteria.setDoseMin("0");
+//         tmplCriteria.setDoseMax("1");         
+//         tmplList = eTmplDAO.retrieve(tmplCriteria, 0);
+//         for (EventTemplate e : tmplList) {
+//            logger.debug(e.toString());
+//         }
+//         assertNotNull(tmplList);
+//         assertTrue(tmplList.size() == 2);
+//         logger.debug("tmplCrit4");
+//         
+//         tmplCriteria = new EventTemplateCriteria();
+//         tmplCriteria.setDoseMin(String.valueOf(5));
+//         tmplCriteria.setDoseMax(String.valueOf(10));         
+//         tmplList = eTmplDAO.retrieve(tmplCriteria, 0);
+//         for (EventTemplate e : tmplList) {
+//            logger.debug(e.toString());
+//         }
+//         assertNotNull(tmplList);
+//         assertTrue(tmplList.size() == 1);
+//         logger.debug("tmplCrit5");
+//         
+//         tmplCriteria = new EventTemplateCriteria();
+//         tmplCriteria.setDoseMin(String.valueOf(0));
+//         tmplCriteria.setDoseMax(String.valueOf(1));         
+//         tmplCriteria.setUnit(UNIT.MILLIGRAM);
+//         tmplList = eTmplDAO.retrieve(tmplCriteria, 0);
+//         for (EventTemplate e : tmplList) {
+//            logger.debug(e.toString());
+//         }
+//         assertNotNull(tmplList);
+//         assertTrue(tmplList.size() == 1);
+//         logger.debug("tmplCrit6");
+//         
          // EVENTS: **********************************''''
-         EventCriteria ec = null;
-         
+         logger.debug("**************************");
+         logger.debug("criteria.  name = Ropinirol");
+         EventCriteria ec = null;         
          ec = new EventCriteria();
          ec.setName("Ropinirol");
+         logger.debug("eventCriteria="+ec);
          List<Event> eventList = eventDAO.retrieve(ec, 0);
          for (Event e : eventList) {
             logger.debug(e.toString());
          }
+         
          assertNotNull(eventList);
          assertEquals(3, eventList.size());
          logger.debug("eventCrit1");
          
+         
          ec = new EventCriteria();
-         ec.addEventTemplateId(7);
+         ec.addEventTemplateId(eventTmplFysEne.getId());
          eventList = eventDAO.retrieve(ec, 0);
          for (Event e : eventList) {
             logger.debug(e.toString());
          }
          assertNotNull(eventList);
-         assertEquals(4, eventList.size());
+         assertEquals(2, eventList.size());
          logger.debug("eventCrit2");
          
          ec = new EventCriteria();
          LocalDateTime start = LocalDateTime.of(2024, 12, 23, 0, 0, 0);
          LocalDateTime end = LocalDateTime.of(2024, 12, 23, 23, 59, 59);
-         ec.setEventTSStartDate(start);
-         ec.setEventTSEndDate(end);
+         ec.setEventTSInterval(start, end);
+         
          eventList = eventDAO.retrieve(ec, 0);
          for (Event e : eventList) {
             logger.debug(e.toString());
@@ -338,7 +387,7 @@ public class EventCriteriaTest {
          logger.debug("eventCrit3");
 
          ec = new EventCriteria();
-         ec.addEventTemplateId(Integer.valueOf(9));
+         ec.addEventTemplateId(eventTmplFysEne.getId());
           eventList = eventDAO.retrieve(ec, 0);
          for (Event e : eventList) {
             logger.debug(e.toString());
@@ -350,24 +399,24 @@ public class EventCriteriaTest {
       } catch (Exception e) {
          logger.error(e.getMessage(), e);
       } finally {
-//         if (doDelete) {
-//            if (events != null) {
-//               for (Event e : events) {
-//                  eventDAO.delete(e.getId(), null);
-//               }
-//            }
-//            if (templates != null) {
-//               for (EventTemplate tmpl : templates) {
-//                  eTmplDAO.delete(tmpl.getId(), null);
-//               }
-//            }
-//
-//            if (types != null) {
-//               for (EventType eventType : types) {
-//                  eTypeDAO.delete(eventType.getId(), eventType.getLoginId());
-//               }
-//            }
-//         }
+         if (doDelete) {
+            if (events != null) {
+               for (Event e : events) {
+                  eventDAO.delete(e.getId(), null);
+               }
+            }
+            if (templates != null) {
+               for (EventTemplate tmpl : templates) {
+                  eTmplDAO.delete(tmpl.getId(), null);
+               }
+            }
+
+            if (types != null) {
+               for (EventType eventType : types) {
+                  eTypeDAO.delete(eventType.getId(), eventType.getLoginId());
+               }
+            }
+         }
 
       }
    }

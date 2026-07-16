@@ -4,9 +4,10 @@ import org.junit.Test;
 
 public class CLoadTest {
 
-	@Test
-	public void test() {
-		ImplClass i = new ImplClass();
-	}
+   @Test
+   public void test() {
+      ImplLoad i = null;
+      System.out.println("" + i);
+   }
 
 }

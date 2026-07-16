@@ -1,0 +1,23 @@
+psql info memes
+\?  help
+
+\i FILE     
+
+\l  show databases
+
+\d  show relations
+
+\ag 
+
+\db list tablespaces
+
+\dconfig
+
+\dd 
+\dg list roles 
+
+\li list indexes
+
+\drg list role grants
+
+                     

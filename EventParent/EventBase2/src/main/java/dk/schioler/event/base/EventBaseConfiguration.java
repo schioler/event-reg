@@ -1,0 +1,81 @@
+package dk.schioler.event.base;
+
+import javax.sql.DataSource;
+
+import org.apache.commons.dbcp2.BasicDataSource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
+
+import dk.schioler.shared.security.encrypt.Encrypter;
+import dk.schioler.shared.security.encrypt.EncrypterSHA256;
+
+@Configuration
+@PropertySource("classpath:/event-${event.env}-base.properties")
+@ComponentScan("dk.schioler.event.base, dk.schioler.shared.security, dk.schioler.shared.timeline, dk.schioler.shared.bits")
+public class EventBaseConfiguration {
+
+   Logger logger = LoggerFactory.getLogger(getClass());
+
+   public EventBaseConfiguration() {
+      logger.trace("EventBaseConfiguration:conztructor called");
+      String property = System.getProperty("event.env");
+      logger.debug("event.env=" + property);
+   }
+   
+
+   @Value("${db.user}")
+   private String dbUser;
+
+   @Value("${db.password}")
+   private String dbPwd;
+
+   @Value("${db.url}")
+   private String dbUrl;
+
+   @Value("${salt}")
+   private String salt;
+
+   @Bean
+   public DataSource getDataSource() {
+      logger.debug("getDatasource: dbUrl = " + dbUrl);
+      BasicDataSource dataSource = new BasicDataSource();
+//		dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
+      dataSource.setDriverClassName("org.postgresql.Driver");
+      dataSource.setUrl(dbUrl);
+      dataSource.setUsername(dbUser);
+      dataSource.setPassword(dbPwd);
+
+      dataSource.setPoolPreparedStatements(true);
+      dataSource.setMaxOpenPreparedStatements(5);
+      dataSource.setLogAbandoned(true);
+      dataSource.setInitialSize(5);
+      dataSource.setDefaultAutoCommit(Boolean.TRUE);
+
+      return dataSource;
+   }
+
+   private Object encLock = new Object();
+
+	private Encrypter e = null;
+
+	@Bean
+	public Encrypter getEncrypter() {
+		logger.debug("getEncrypter called");
+		synchronized (encLock) {
+			logger.debug("in synchronized block");
+			if (this.e == null) {
+				logger.debug("e == null");
+				this.e = new EncrypterSHA256();
+				this.e.setSalt(salt);
+			}
+		}
+		logger.debug("returning: " + this.e);
+		return this.e;
+	}
+
+}

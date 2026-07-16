@@ -1,10 +1,11 @@
 package dk.schioler.event.base.entity;
 
+
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.fail;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import org.junit.Test;

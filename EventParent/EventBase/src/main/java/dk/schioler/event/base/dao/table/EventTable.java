@@ -7,6 +7,7 @@ public interface EventTable extends BaseSQLTableParentChild<Event> {
 
    // parent id
    public static final String FLD_EVENT_TEMPLATE_ID = "EVENT_TEMPLATE_ID";
+//   public static final String FLD_EVENT_TYPE_ID = "EVENT_TYPE_ID";
  
  
    public static final String FLD_NOTE = "NOTE";

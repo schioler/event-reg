@@ -7,42 +7,52 @@ import java.util.Objects;
 
 public class EventCriteria extends AbstractMeasureCriteria {
 
-	private List<Integer> eventTemplateId = new ArrayList<Integer>();
-	
-	private LocalDateTime eventTSStartDate;
-	
-	private LocalDateTime eventTSEndDate;
-
-	public List<Integer> getEventTemplateIds() {
-		return eventTemplateId;
-	}
-
-	public void addEventTemplateId(Integer eventTemplateId) {
-		this.eventTemplateId.add(eventTemplateId);
-	}
-
+   private List<Integer> eventTemplateIds = new ArrayList<Integer>();
    
-   public LocalDateTime getEventTSStartDate() {
-      return eventTSStartDate;
+//   private List<Integer> eventTypeIds = new ArrayList<Integer>();
+
+//	private LocalDateTime eventTSIntervalStartDate = DEFAULT_DATE_TIME;
+//	
+//	private LocalDateTime eventTSIntervalEndDate = DEFAULT_DATE_TIME;
+
+   private LocalDateTime eventTSIntervalStartDate = null;
+
+   private LocalDateTime eventTSIntervalEndDate = null;
+
+   public List<Integer> getEventTemplateIds() {
+      return eventTemplateIds;
    }
 
-   public void setEventTSStartDate(LocalDateTime eventTSStartDate) {
-      this.eventTSStartDate = eventTSStartDate;
+   public void  setEventTemplateIds(List<Integer> tmplIds) {
+      this.eventTemplateIds.addAll(tmplIds);
+   }
+
+   
+   public void addEventTemplateId(Integer eventTemplateId) {
+      this.eventTemplateIds.add(eventTemplateId);
+   }
+   
+   
+   public LocalDateTime getEventTSStartDate() {
+      return eventTSIntervalStartDate;
    }
 
    public LocalDateTime getEventTSEndDate() {
-      return eventTSEndDate;
+      return eventTSIntervalEndDate;
    }
 
-   public void setEventTSEndDate(LocalDateTime eventTSEndDate) {
-      this.eventTSEndDate = eventTSEndDate;
+   public void setEventTSInterval(LocalDateTime eventTSIntervalStartDate, LocalDateTime eventTSIntervalEndDate) {
+      this.eventTSIntervalStartDate = eventTSIntervalStartDate;
+      this.eventTSIntervalEndDate = eventTSIntervalEndDate;
    }
+
+
 
    @Override
    public int hashCode() {
       final int prime = 31;
       int result = super.hashCode();
-      result = prime * result + Objects.hash(eventTSEndDate, eventTSStartDate, eventTemplateId);
+      result = prime * result + Objects.hash(eventTSIntervalEndDate, eventTSIntervalStartDate, eventTemplateIds);
       return result;
    }
 
@@ -55,23 +65,26 @@ public class EventCriteria extends AbstractMeasureCriteria {
       if (getClass() != obj.getClass())
          return false;
       EventCriteria other = (EventCriteria) obj;
-      return Objects.equals(eventTSEndDate, other.eventTSEndDate) && Objects.equals(eventTSStartDate, other.eventTSStartDate)
-            && Objects.equals(eventTemplateId, other.eventTemplateId);
+      return Objects.equals(eventTSIntervalEndDate, other.eventTSIntervalEndDate)
+            && Objects.equals(eventTSIntervalStartDate, other.eventTSIntervalStartDate)
+            && Objects.equals(eventTemplateIds, other.eventTemplateIds);
    }
 
    @Override
    public String toString() {
       StringBuilder builder = new StringBuilder();
+      builder.append("EventCriteria [");
       builder.append(super.toString());
-      builder.append("EventCriteria [eventTemplateId=");
-      builder.append(eventTemplateId);
+//      builder.append(", eventTypeIds=");
+//      builder.append(eventTypeIds);
+      builder.append(", eventTemplateIds=");
+      builder.append(eventTemplateIds);
       builder.append(", eventTSStartDate=");
-      builder.append(eventTSStartDate);
+      builder.append(eventTSIntervalStartDate);
       builder.append(", eventTSEndDate=");
-      builder.append(eventTSEndDate);
+      builder.append(eventTSIntervalEndDate);
       builder.append("]");
       return builder.toString();
    }
-   
-   
+
 }

@@ -25,8 +25,8 @@ import dk.schioler.shared.security.dao.LoginDAO;
 import dk.schioler.shared.security.entity.Login;
 import dk.schioler.shared.security.entity.ROLE;
 
-@Service
-public abstract class AbstractIdDAOImpl<T extends AbstractEntityId> implements BaseIdDAO<T> {
+//@Service
+public class AbstractIdDAOImpl<T extends AbstractEntityId> implements BaseIdDAO<T> {
 
    protected Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -37,15 +37,23 @@ public abstract class AbstractIdDAOImpl<T extends AbstractEntityId> implements B
    }
 
    private NamedParameterJdbcTemplate jdbcTemplate;
-
+   private DataSource dataSource;
+   
    @Autowired
    public void setDataSource(DataSource dataSource) {
+      this.dataSource = dataSource; 
+      logger.trace("setDataSource:" + dataSource);
       jdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-      logger.trace("setDataSource:" + jdbcTemplate);
+   }
+   
+   @Override
+   public DataSource getDataSource() {
+      return this.dataSource;
    }
 
    protected NamedParameterJdbcTemplate getJDBCTemplate() {
-      return jdbcTemplate;
+     return jdbcTemplate;
+      
    }
 
    @Autowired
@@ -66,7 +74,7 @@ public abstract class AbstractIdDAOImpl<T extends AbstractEntityId> implements B
 
             KeyHolder keyHolder = new GeneratedKeyHolder();
 
-            int count = jdbcTemplate.update(sql.toString(), paramSource, keyHolder);
+            int count = getJDBCTemplate().update(sql.toString(), paramSource, keyHolder);
 
             logger.trace("insert added " + count + " rows");
 
@@ -106,7 +114,7 @@ public abstract class AbstractIdDAOImpl<T extends AbstractEntityId> implements B
       logger.trace("update: sql=" + sql);
       logger.trace("updateMappings=" + updateMappings);
 
-      int retVal = jdbcTemplate.update(sql.toString(), updateMappings);
+      int retVal = getJDBCTemplate().update(sql.toString(), updateMappings);
       return retVal;
 
    }
@@ -121,7 +129,7 @@ public abstract class AbstractIdDAOImpl<T extends AbstractEntityId> implements B
 
       MapSqlParameterSource paramSource = new MapSqlParameterSource(deleteMapping);
 
-      return jdbcTemplate.update(sb.toString(), paramSource);
+      return getJDBCTemplate().update(sb.toString(), paramSource);
    }
 
    @Override
@@ -134,7 +142,7 @@ public abstract class AbstractIdDAOImpl<T extends AbstractEntityId> implements B
 
       MapSqlParameterSource paramSource = new MapSqlParameterSource(retrieveMappings);
 
-      return jdbcTemplate.query(retrieveSQL.toString(), paramSource, table.getRowMapper());
+      return getJDBCTemplate().query(retrieveSQL.toString(), paramSource, table.getRowMapper());
 
    }
 
@@ -148,7 +156,7 @@ public abstract class AbstractIdDAOImpl<T extends AbstractEntityId> implements B
 
       MapSqlParameterSource paramSource = new MapSqlParameterSource(map);
 
-      List<T> query = jdbcTemplate.query(sql.toString(), paramSource, table.getRowMapper());
+      List<T> query = getJDBCTemplate().query(sql.toString(), paramSource, table.getRowMapper());
 
       return query.get(0);
    }

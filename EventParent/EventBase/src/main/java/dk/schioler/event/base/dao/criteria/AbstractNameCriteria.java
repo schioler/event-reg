@@ -7,12 +7,19 @@ import org.springframework.stereotype.Component;
 @Component
 public abstract class AbstractNameCriteria extends AbstractIdCriteria {
 
-   private String name;
+//   private String name = DEFAULT_STRING;
+//
+//   private String shortName = DEFAULT_STRING;
+//
+//   private String description = DEFAULT_STRING;
 
-   private String shortName;
+   private String name ;
+
+   private String shortName ;
 
    private String description;
 
+   
    public AbstractNameCriteria() {
    }
 
@@ -64,7 +71,7 @@ public abstract class AbstractNameCriteria extends AbstractIdCriteria {
    public String toString() {
       StringBuilder builder = new StringBuilder();
       builder.append(super.toString());
-      builder.append("AbstractNameCriteria [name=");
+      builder.append(", name=");
       builder.append(name);
       builder.append(", shortName=");
       builder.append(shortName);

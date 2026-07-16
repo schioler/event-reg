@@ -57,7 +57,12 @@ public class JspFilter implements Filter {
 				RequestDispatcher requestDispatcher = request.getRequestDispatcher(servletPath);
 				requestDispatcher.forward(request, response);
 //				logger.debug("will fwd req");
-			} else {
+			} else if (servletPath.indexOf("login.jsp") >= 0){
+			   logger.debug("kald: login.jsp");
+			   RequestDispatcher requestDispatcher = request.getRequestDispatcher("/login.jsp");
+            requestDispatcher.forward(request, response);
+			} else if (servletPath.indexOf("/secure/") >= 0)  {
+			   
 				logger.debug("will forward to protected jsp's");
 				RequestDispatcher requestDispatcher = request.getRequestDispatcher("/WEB-INF/views" + servletPath);
 				requestDispatcher.forward(request, response);
